@@ -1,0 +1,344 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-07-30T00:00:00.000Z",
+  "__export_source": "orders-web-api",
+  "resources": [
+    {
+      "_id": "wrk_ordersweb",
+      "_type": "workspace",
+      "name": "OrdersWeb API"
+    },
+    {
+      "_id": "env_ordersweb_base",
+      "_type": "environment",
+      "parentId": "wrk_ordersweb",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3333/api/v1",
+        "token": "",
+        "admin_user_id": "",
+        "manager_user_id": "",
+        "seller_user_id": "",
+        "customer_id": "",
+        "product_category_id": "",
+        "product_id": "",
+        "order_id": ""
+      }
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Auth"
+    },
+    {
+      "_id": "req_login_admin",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login Admin",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@ordersweb.com\",\n  \"password\": \"Admin@123456\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_login_manager",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login Manager",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"manager@ordersweb.com\",\n  \"password\": \"Manager@123456\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_me",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Current User",
+      "method": "GET",
+      "url": "{{ _.base_url }}/auth/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "fld_users",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Users"
+    },
+    {
+      "_id": "req_create_user",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "Create Seller User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Sales User\",\n  \"email\": \"sales.user@ordersweb.com\",\n  \"password\": \"Seller@123456\",\n  \"role\": \"seller\",\n  \"active\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_users",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "List Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_toggle_user_active",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "Toggle User Active",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users/{{ _.seller_user_id }}/toggle-active",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_activate_user",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "Activate User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users/{{ _.seller_user_id }}/activate",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "fld_customers",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Customers"
+    },
+    {
+      "_id": "req_create_customer",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Create Customer",
+      "method": "POST",
+      "url": "{{ _.base_url }}/customers",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cnpj\": \"12.345.678/0001-90\",\n  \"legalName\": \"TechSolutions Tecnologia Ltda\",\n  \"tradeName\": \"TechSolutions\",\n  \"phone\": \"1133445566\",\n  \"whatsapp\": \"11987654321\",\n  \"email\": \"contact@techsolutions.com\",\n  \"zipCode\": \"01311000\",\n  \"street\": \"Av. Paulista\",\n  \"number\": \"1000\",\n  \"district\": \"Bela Vista\",\n  \"city\": \"Sao Paulo\",\n  \"state\": \"SP\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_customers",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "List Customers",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "fld_products",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Products"
+    },
+    {
+      "_id": "fld_product_categories",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Product Categories"
+    },
+    {
+      "_id": "req_list_product_categories",
+      "_type": "request",
+      "parentId": "fld_product_categories",
+      "name": "List Product Categories",
+      "method": "GET",
+      "url": "{{ _.base_url }}/product-categories",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Create Product",
+      "method": "POST",
+      "url": "{{ _.base_url }}/products",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"code\": \"AIB-TESTE-001\",\n  \"name\": \"Vela teste\",\n  \"categoryId\": \"{{ _.product_category_id }}\",\n  \"description\": \"Embalagem: 12X1\",\n  \"unitPrice\": \"10,90\",\n  \"boxPrice\": \"130,80\",\n  \"active\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_products",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "List Products",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "fld_orders",
+      "_type": "request_group",
+      "parentId": "wrk_ordersweb",
+      "name": "Orders"
+    },
+    {
+      "_id": "req_create_order",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "Create Order",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"customerId\": \"{{ _.customer_id }}\",\n  \"items\": [\n    {\n      \"productId\": \"{{ _.product_id }}\",\n      \"unitQuantity\": 2,\n      \"boxQuantity\": 1\n    }\n  ],\n  \"sendWhatsapp\": false\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "List Orders",
+      "method": "GET",
+      "url": "{{ _.base_url }}/orders",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_orders_by_collaborator",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "List Orders By Collaborator",
+      "method": "GET",
+      "url": "{{ _.base_url }}/orders?createdById={{ _.seller_user_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_generate_pdf",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "Generate Order PDF",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders/{{ _.order_id }}/pdf",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_dashboard",
+      "_type": "request",
+      "parentId": "wrk_ordersweb",
+      "name": "Dashboard Summary",
+      "method": "GET",
+      "url": "{{ _.base_url }}/dashboard",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ]
+    }
+  ]
+}
