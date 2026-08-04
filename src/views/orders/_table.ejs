@@ -1,0 +1,49 @@
+<div class="table-responsive">
+  <table class="table table-sm table-hover mb-0 orders-table">
+    <thead>
+      <tr>
+        <th>N&uacute;mero</th>
+        <th>Cliente</th>
+        <th>Colaborador</th>
+        <th>Recebimento</th>
+        <th class="text-end orders-total-column">Total</th>
+        <th class="orders-status-column">Status</th>
+        <th>PDF</th>
+        <th class="text-end">A&ccedil;&otilde;es</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach((order) => { %>
+        <tr>
+          <td>
+            <a class="fw-semibold text-decoration-none" href="/orders/<%= order.id %>">
+              <%= order.orderNumber %>
+            </a>
+          </td>
+          <td><%= order.customerSnapshot.legalName %></td>
+          <td><%= order.createdBy?.name || 'N&atilde;o informado' %></td>
+          <td><%= order.receivedTime || '-' %></td>
+          <td class="text-end orders-total-column">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+          <td class="orders-status-column"><span class="badge text-bg-secondary"><%= order.status %></span></td>
+          <td>
+            <% if (order.pdfUrl) { %>
+              <a href="<%= order.pdfUrl %>" target="_blank">Abrir PDF</a>
+            <% } else { %>
+              <span class="text-muted">N&atilde;o gerado</span>
+            <% } %>
+          </td>
+          <td class="text-end">
+            <form action="/orders/<%= order.id %>/pdf" method="post" class="d-inline">
+              <button class="btn btn-sm btn-outline-primary" type="submit">Gerar PDF</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!orders.length) { %>
+        <tr>
+          <td colspan="8" class="text-center text-muted py-4">Nenhum pedido encontrado.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

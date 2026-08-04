@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="dashboard-shortcuts mb-4">
+        <a class="dashboard-shortcut dashboard-shortcut-primary" href="/orders/new">
+          <span class="dashboard-shortcut-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </span>
+          <span class="dashboard-shortcut-title">Gerar novo pedido</span>
+        </a>
+        <a class="dashboard-shortcut" href="/customers/new">
+          <span class="dashboard-shortcut-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M19 8v6"></path>
+              <path d="M22 11h-6"></path>
+            </svg>
+          </span>
+          <span class="dashboard-shortcut-title">Adicionar cliente</span>
+        </a>
+        <a class="dashboard-shortcut" href="/products">
+          <span class="dashboard-shortcut-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m7.5 4.27 9 5.15"></path>
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+              <path d="m3.3 7 8.7 5 8.7-5"></path>
+              <path d="M12 22V12"></path>
+            </svg>
+          </span>
+          <span class="dashboard-shortcut-title">Produtos</span>
+        </a>
+        <% if (currentUser.role === 'admin') { %>
+          <a class="dashboard-shortcut" href="/products/new">
+            <span class="dashboard-shortcut-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"></path>
+                <path d="m3.3 7 8.7 5 8.7-5"></path>
+                <path d="M12 22V12"></path>
+                <path d="M19 15v6"></path>
+                <path d="M22 18h-6"></path>
+              </svg>
+            </span>
+            <span class="dashboard-shortcut-title">Adicionar produto</span>
+          </a>
+        <% } %>
+      </section>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card p-3">
+            <div class="text-muted small">Pedidos hoje</div>
+            <div class="fs-3 fw-semibold"><%= summary.ordersToday %></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card p-3">
+            <div class="text-muted small">Clientes</div>
+            <div class="fs-3 fw-semibold"><%= summary.customerBase %></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card p-3">
+            <div class="text-muted small">Produtos ativos</div>
+            <div class="fs-3 fw-semibold"><%= summary.activeProducts %></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content-panel p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h6 mb-0">&Uacute;ltimos pedidos</h2>
+          <a class="btn btn-sm btn-primary" href="/orders/new">Novo pedido</a>
+        </div>
+        <%- include('../orders/_table', { orders: summary.recentOrders }) %>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

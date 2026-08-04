@@ -1,0 +1,60 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <div class="mb-3">
+          <h2 class="h6 mb-1">Colaboradores</h2>
+          <div class="small text-muted"><%= users.length %> colaborador(es) encontrado(s)</div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach((user) => { %>
+                <tr>
+                  <td>
+                    <a class="fw-semibold text-decoration-none" href="/collaborators/<%= user.id %>">
+                      <%= user.name %>
+                    </a>
+                  </td>
+                  <td><%= user.email %></td>
+                  <td><%= user.role %></td>
+                  <td>
+                    <span class="badge text-bg-<%= user.active ? 'success' : 'secondary' %>">
+                      <%= user.active ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <% if (currentUser.id !== user.id && user.role === 'seller') { %>
+                      <form action="/collaborators/<%= user.id %>/toggle-active" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-outline-<%= user.active ? 'danger' : 'primary' %>" type="submit">
+                          <%= user.active ? 'Desativar' : 'Ativar' %>
+                        </button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted small">Sem ação</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

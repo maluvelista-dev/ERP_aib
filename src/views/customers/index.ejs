@@ -1,0 +1,67 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h6 mb-0">Clientes</h2>
+          <a class="btn btn-sm btn-primary" href="/customers/new">Novo cliente</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0">
+            <thead>
+              <tr>
+                <th>CNPJ</th>
+                <th>Razao social</th>
+                <th>Nome fantasia</th>
+                <th>Endere&ccedil;o</th>
+                <th>WhatsApp</th>
+                <th>Cidade</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% customers.forEach((customer) => { %>
+                <tr>
+                  <td><%= customer.cnpj %></td>
+                  <td><%= customer.legalName %></td>
+                  <td><%= customer.tradeName || '-' %></td>
+                  <td><%= customer.street %>, <%= customer.number %> - <%= customer.district %></td>
+                  <td><%= customer.whatsapp %></td>
+                  <td><%= customer.city %>/<%= customer.state %></td>
+                  <td class="text-end">
+                    <% if (currentUser.role === 'admin') { %>
+                      <form action="/customers/<%= customer.id %>/toggle-active" method="post" class="d-inline js-customer-active-form">
+                        <div class="form-check form-switch d-inline-flex align-items-center gap-2 m-0">
+                          <input
+                            class="form-check-input js-customer-active-toggle"
+                            type="checkbox"
+                            role="switch"
+                            id="customer-active-<%= customer.id %>"
+                            data-storage-key="customer:<%= customer.id %>:active"
+                            <%= customer.active ? 'checked' : '' %>
+                          >
+                          <label class="form-check-label small" for="customer-active-<%= customer.id %>">
+                            <%= customer.active ? 'Ativo' : 'Inativo' %>
+                          </label>
+                        </div>
+                      </form>
+                    <% } else { %>
+                      <span class="badge text-bg-<%= customer.active ? 'success' : 'secondary' %>">
+                        <%= customer.active ? 'Ativo' : 'Inativo' %>
+                      </span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

@@ -1,0 +1,51 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+        <form action="/products" method="post" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Código</label>
+            <input class="form-control" name="code" value="<%= product.code || '' %>" required>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Nome</label>
+            <input class="form-control" name="name" value="<%= product.name || '' %>" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Categoria</label>
+            <select class="form-select" name="categoryId" required>
+              <option value="">Selecione a categoria</option>
+              <% categories.forEach((category) => { %>
+                <option value="<%= category.id %>" <%= product.categoryId === category.id ? 'selected' : '' %>>
+                  <%= category.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Preço unitário</label>
+            <input class="form-control" name="unitPrice" value="<%= product.unitPrice || '' %>" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Preço da caixa</label>
+            <input class="form-control" name="boxPrice" value="<%= product.boxPrice || '' %>">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Descrição</label>
+            <textarea class="form-control" name="description" rows="3"><%= product.description || '' %></textarea>
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary" type="submit">Salvar produto</button>
+            <a class="btn btn-outline-secondary" href="/products">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

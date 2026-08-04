@@ -1,0 +1,75 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+        <% if (!customers.length || !products.length) { %>
+          <div class="alert alert-warning">
+            Cadastre ao menos um cliente ativo e um produto ativo antes de criar pedidos.
+          </div>
+        <% } %>
+        <form action="/orders" method="post" class="d-grid gap-4">
+          <div>
+            <label class="form-label">Cliente</label>
+            <select class="form-select" name="customerId" required>
+              <option value="">Selecione o cliente</option>
+              <% customers.forEach((customer) => { %>
+                <option value="<%= customer.id %>"><%= customer.legalName %> - <%= customer.cnpj %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label" for="sellerPhone">Telefone do vendedor</label>
+              <input class="form-control" id="sellerPhone" name="sellerPhone" placeholder="(11) 99999-9999">
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label" for="receivedTime">Hor&aacute;rio de recebimento</label>
+              <input class="form-control" id="receivedTime" name="receivedTime" type="time">
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label" for="bonusProductId">Bonifica&ccedil;&atilde;o</label>
+              <select class="form-select" id="bonusProductId" name="bonusProductId">
+                <option value="">Sem bonifica&ccedil;&atilde;o</option>
+                <% products.forEach((product) => { %>
+                  <option value="<%= product.id %>"><%= product.code %> - <%= product.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="applyDiscount" name="applyDiscount">
+                <label class="form-check-label" for="applyDiscount">Aplicar 5% de desconto</label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h2 class="h6 mb-0">Itens</h2>
+            </div>
+            <div id="order-items">
+              <%- include('_item_row', { products }) %>
+            </div>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="sendWhatsapp" name="sendWhatsapp">
+            <label class="form-check-label" for="sendWhatsapp">Gerar e enviar pelo WhatsApp</label>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit" <%= (!customers.length || !products.length) ? 'disabled' : '' %>>Criar pedido</button>
+            <a class="btn btn-outline-secondary" href="/orders">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

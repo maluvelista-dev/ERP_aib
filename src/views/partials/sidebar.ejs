@@ -1,0 +1,64 @@
+<aside class="app-sidebar p-3 d-none d-lg-block">
+  <div class="app-brand">
+    <img class="app-brand-logo" src="/assets/images/velas-aib-logo-official.png" alt="Velas AIB">
+    <div class="app-brand-name">
+      <div class="small">Velas AIB</div>
+    </div>
+  </div>
+  <nav class="d-grid gap-1">
+    <a class="px-3 py-2 rounded" href="/dashboard">Dashboard</a>
+    <a class="px-3 py-2 rounded" href="/orders">Pedidos</a>
+    <a class="px-3 py-2 rounded" href="/customers">Clientes</a>
+    <a class="px-3 py-2 rounded" href="/products">Produtos</a>
+    <% if (currentUser.role === 'manager') { %>
+      <a class="px-3 py-2 rounded" href="/collaborators">Colaboradores</a>
+    <% } %>
+  </nav>
+</aside>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header">
+    <div class="app-brand mb-0">
+      <img class="mobile-brand-logo" src="/assets/images/velas-aib-logo-official.png" alt="Velas AIB">
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="d-grid gap-1">
+      <a class="px-3 py-2 rounded text-decoration-none" href="/dashboard">Dashboard</a>
+      <a class="px-3 py-2 rounded text-decoration-none" href="/orders">Pedidos</a>
+      <a class="px-3 py-2 rounded text-decoration-none" href="/customers">Clientes</a>
+      <a class="px-3 py-2 rounded text-decoration-none" href="/products">Produtos</a>
+      <% if (currentUser.role === 'manager') { %>
+        <a class="px-3 py-2 rounded text-decoration-none" href="/collaborators">Colaboradores</a>
+      <% } %>
+      <div class="mobile-theme-option px-3 py-2 rounded">
+        <span>Tema</span>
+        <label class="theme-switch" aria-label="Alternar tema" title="Alternar tema">
+          <input class="theme-switch-input" type="checkbox" data-theme-toggle>
+          <span class="theme-switch-track">
+            <span class="theme-switch-icon theme-switch-sun" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+              </svg>
+            </span>
+            <span class="theme-switch-icon theme-switch-moon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M20.99 13.28A8.5 8.5 0 1 1 10.72 3.01 6.5 6.5 0 1 0 20.99 13.28Z"></path>
+              </svg>
+            </span>
+            <span class="theme-switch-thumb"></span>
+          </span>
+        </label>
+      </div>
+    </nav>
+  </div>
+</div>

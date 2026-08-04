@@ -1,0 +1,38 @@
+<div class="row g-2 align-items-end mb-2">
+  <div class="col-lg-6">
+    <label class="form-label">Produto</label>
+    <input
+      class="form-control form-control-sm mb-2"
+      type="search"
+      placeholder="Pesquisar por nome, código ou categoria"
+      hx-get="/orders/product-options"
+      hx-trigger="keyup changed delay:300ms, search"
+      hx-target="next select"
+      hx-swap="innerHTML"
+      name="q"
+    >
+    <select class="form-select" name="productId" required>
+      <%- include('_product_options', { products }) %>
+    </select>
+  </div>
+  <div class="col-6 col-lg-2">
+    <label class="form-label">Unidades</label>
+    <input class="form-control" name="unitQuantity" type="number" min="0" value="0" required>
+  </div>
+  <div class="col-6 col-lg-2">
+    <label class="form-label">Caixas</label>
+    <input class="form-control" name="boxQuantity" type="number" min="0" value="0" required>
+  </div>
+  <div class="col-lg-2">
+    <div class="d-flex gap-2">
+      <button
+        class="btn btn-outline-primary flex-fill"
+        type="button"
+        hx-get="/orders/item-row"
+        hx-target="#order-items"
+        hx-swap="beforeend"
+      >Adicionar</button>
+      <button class="btn btn-outline-danger flex-fill js-remove-order-item" type="button">Remover</button>
+    </div>
+  </div>
+</div>

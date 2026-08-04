@@ -1,0 +1,40 @@
+<header class="app-topbar px-3 px-lg-4 py-3 d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-outline-secondary btn-sm d-lg-none menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-label="Abrir menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <h1 class="h5 mb-0"><%= title %></h1>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="small text-muted d-none d-sm-inline"><%= currentUser.name %> - <%= currentUser.role %></span>
+    <label class="theme-switch d-none d-lg-inline-flex" aria-label="Alternar tema" title="Alternar tema">
+      <input class="theme-switch-input" type="checkbox" data-theme-toggle>
+      <span class="theme-switch-track">
+        <span class="theme-switch-icon theme-switch-sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+        </span>
+        <span class="theme-switch-icon theme-switch-moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20.99 13.28A8.5 8.5 0 1 1 10.72 3.01 6.5 6.5 0 1 0 20.99 13.28Z"></path>
+          </svg>
+        </span>
+        <span class="theme-switch-thumb"></span>
+      </span>
+    </label>
+    <form action="/logout" method="post" class="m-0">
+      <button class="btn btn-sm btn-logout" type="submit">Sair</button>
+    </form>
+  </div>
+</header>

@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+          <div class="d-flex flex-column align-items-start gap-2">
+            <div>
+              <h2 class="h6 mb-1">Pedidos</h2>
+              <div class="small text-muted"><%= orders.length %> pedido(s) encontrado(s)</div>
+            </div>
+            <a class="btn btn-sm btn-primary" href="/orders/new">Novo pedido</a>
+          </div>
+
+          <% if (canFilterByCollaborator) { %>
+            <form action="/orders" method="get" class="product-filter d-flex gap-2 align-items-end">
+              <div>
+                <label class="form-label" for="createdById">Colaborador</label>
+                <select class="form-select form-select-sm" id="createdById" name="createdById">
+                  <option value="">Todos</option>
+                  <% collaborators.forEach((collaborator) => { %>
+                    <option value="<%= collaborator.id %>" <%= selectedCollaboratorId === collaborator.id ? 'selected' : '' %>>
+                      <%= collaborator.name %> - <%= collaborator.role %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <button class="btn btn-sm btn-primary" type="submit">Aplicar filtro</button>
+              <% if (selectedCollaboratorId) { %>
+                <a class="btn btn-sm btn-outline-secondary" href="/orders">Limpar</a>
+              <% } %>
+            </form>
+          <% } %>
+        </div>
+        <%- include('_table', { orders }) %>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

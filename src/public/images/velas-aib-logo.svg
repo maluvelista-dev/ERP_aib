@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="title desc">
+  <title id="title">Velas AIB</title>
+  <desc id="desc">Logotipo vetorial da marca Velas AIB</desc>
+  <rect width="360" height="120" rx="18" fill="#ffffff"/>
+  <g transform="translate(24 18)">
+    <path d="M46 4c18 20 27 38 27 54 0 18-12 30-29 30S16 76 16 58c0-14 10-25 20-38 1 13 6 22 16 29 5-15 3-29-6-45z" fill="#d71920"/>
+    <path d="M43 34c10 11 15 20 15 30 0 10-7 17-16 17s-16-7-16-17c0-8 6-15 12-23 0 8 4 13 10 17 3-9 1-17-5-24z" fill="#f5b335"/>
+    <path d="M15 94h58" stroke="#231f20" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g fill="#231f20" font-family="Arial, Helvetica, sans-serif">
+    <text x="118" y="57" font-size="36" font-weight="700" letter-spacing="0">Velas</text>
+    <text x="118" y="91" font-size="46" font-weight="800" letter-spacing="0">AIB</text>
+  </g>
+  <path d="M271 80h50" stroke="#d71920" stroke-width="7" stroke-linecap="round"/>
+</svg>

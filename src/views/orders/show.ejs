@@ -1,0 +1,134 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+
+      <section class="content-panel p-3 mb-3">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+          <div>
+            <h2 class="h6 mb-1">Pedido <%= order.orderNumber %></h2>
+            <div class="small text-muted">
+              Criado por <%= order.createdBy?.name || 'N&atilde;o informado' %> em
+              <%= new Date(order.createdAt).toLocaleString('pt-BR') %>
+            </div>
+          </div>
+          <div class="d-flex gap-2 align-items-start">
+            <% if (order.pdfUrl) { %>
+              <a class="btn btn-sm btn-outline-primary" href="<%= order.pdfUrl %>" target="_blank">Abrir PDF</a>
+            <% } %>
+            <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0">
+              <button class="btn btn-sm btn-primary" type="submit">Gerar PDF</button>
+            </form>
+            <a class="btn btn-sm btn-outline-secondary" href="/orders">Voltar</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="row g-3 mb-3">
+        <div class="col-lg-6">
+          <div class="content-panel p-3 h-100">
+            <h3 class="h6 mb-3">Cliente</h3>
+            <div class="fw-semibold"><%= order.customerSnapshot.legalName %></div>
+            <% if (order.customerSnapshot.tradeName) { %>
+              <div class="small text-muted"><%= order.customerSnapshot.tradeName %></div>
+            <% } %>
+            <div class="mt-2 small">CNPJ: <%= order.customerSnapshot.cnpj %></div>
+            <div class="small">WhatsApp: <%= order.customerSnapshot.whatsapp %></div>
+            <div class="small">
+              <%= order.customerSnapshot.street %>, <%= order.customerSnapshot.number %> -
+              <%= order.customerSnapshot.district %>, <%= order.customerSnapshot.city %>/<%= order.customerSnapshot.state %>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="content-panel p-3 h-100">
+            <h3 class="h6 mb-3">Resumo</h3>
+            <div class="mb-2">
+              <span class="badge text-bg-secondary"><%= order.status %></span>
+            </div>
+            <div class="small">Vendedor: <%= order.sellerSnapshot?.name || order.createdBy?.name || 'N&atilde;o informado' %></div>
+            <div class="small">Telefone vendedor: <%= order.sellerSnapshot?.phone || 'N&atilde;o informado' %></div>
+            <div class="small">Hor&aacute;rio de recebimento: <%= order.receivedTime || 'N&atilde;o informado' %></div>
+            <div class="small">PDF: <%= order.pdfUrl ? 'Gerado' : 'N&atilde;o gerado' %></div>
+            <div class="small">WhatsApp: <%= order.whatsappSent ? 'Enviado' : 'N&atilde;o enviado' %></div>
+            <% if (order.bonusProductSnapshot) { %>
+              <div class="small mt-2">Bonifica&ccedil;&atilde;o: <%= order.bonusProductSnapshot.code %> - <%= order.bonusProductSnapshot.name %></div>
+            <% } %>
+            <div class="small mt-3">
+              Subtotal: R$ <%= Number(order.subtotalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+            </div>
+            <div class="small">
+              Desconto: <%= Number(order.discountPercent ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>%
+              (R$ <%= Number(order.discountAmount ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>)
+            </div>
+            <div class="fs-5 fw-semibold mt-3">
+              Total: R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+            </div>
+            <% if (order.sentAt) { %>
+              <div class="small">Enviado em: <%= new Date(order.sentAt).toLocaleString('pt-BR') %></div>
+            <% } %>
+            <% if (order.whatsappError) { %>
+              <div class="small text-danger">Erro WhatsApp: <%= order.whatsappError %></div>
+            <% } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-panel p-3">
+        <h3 class="h6 mb-3">Itens do pedido</h3>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0">
+            <thead>
+              <tr>
+                <th>C&oacute;digo</th>
+                <th>Produto</th>
+                <th class="text-end">Unidades</th>
+                <th class="text-end">Pre&ccedil;o un.</th>
+                <th class="text-end">Caixas</th>
+                <th class="text-end">Pre&ccedil;o cx.</th>
+                <th class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.items.forEach((item) => { %>
+                <tr>
+                  <td><%= item.code %></td>
+                  <td><%= item.name %></td>
+                  <td class="text-end"><%= item.unitQuantity ?? item.quantity ?? 0 %></td>
+                  <td class="text-end">R$ <%= Number(item.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+                  <td class="text-end"><%= item.boxQuantity ?? 0 %></td>
+                  <td class="text-end">
+                    <% if (item.boxPrice) { %>
+                      R$ <%= Number(item.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+                    <% } else { %>
+                      <span class="text-muted">-</span>
+                    <% } %>
+                  </td>
+                  <td class="text-end fw-semibold">R$ <%= Number(item.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="6" class="text-end">Subtotal</th>
+                <th class="text-end">R$ <%= Number(order.subtotalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></th>
+              </tr>
+              <tr>
+                <th colspan="6" class="text-end">Desconto <%= Number(order.discountPercent ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>%</th>
+                <th class="text-end">R$ <%= Number(order.discountAmount ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></th>
+              </tr>
+              <tr>
+                <th colspan="6" class="text-end">Total do pedido</th>
+                <th class="text-end">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>

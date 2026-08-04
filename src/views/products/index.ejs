@@ -1,0 +1,168 @@
+<%- include('../partials/head') %>
+<div class="app-shell d-flex">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-grow-1">
+    <%- include('../partials/topbar') %>
+    <main class="p-4">
+      <%- include('../partials/flash') %>
+      <section class="content-panel p-3">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+          <div class="d-flex flex-column align-items-start gap-2">
+            <div>
+              <h2 class="h6 mb-1">Produtos</h2>
+              <div class="small text-muted"><%= products.length %> produto(s) encontrado(s)</div>
+            </div>
+            <% if (currentUser.role === 'admin') { %>
+              <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
+                <% if (editMode) { %>
+                  <a class="btn btn-sm btn-outline-secondary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>">Finalizar altera&ccedil;&otilde;es</a>
+                <% } else { %>
+                  <a class="btn btn-sm btn-outline-primary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true">Alterar itens</a>
+                <% } %>
+              </div>
+            <% } %>
+          </div>
+
+          <form action="/products" method="get" class="product-filter d-flex gap-2 align-items-end">
+            <% if (editMode) { %>
+              <input type="hidden" name="edit" value="true">
+            <% } %>
+            <div>
+              <label class="form-label" for="q">Pesquisar vela</label>
+              <input
+                class="form-control form-control-sm"
+                id="q"
+                name="q"
+                value="<%= search || '' %>"
+                placeholder="Nome, c&oacute;digo ou categoria"
+              >
+            </div>
+            <div>
+              <label class="form-label" for="categoryId">Categoria</label>
+              <select class="form-select form-select-sm" id="categoryId" name="categoryId">
+                <option value="">Todas</option>
+                <% categories.forEach((category) => { %>
+                  <option value="<%= category.id %>" <%= selectedCategoryId === category.id ? 'selected' : '' %>>
+                    <%= category.name %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+            <button class="btn btn-sm btn-primary" type="submit">Pesquisar</button>
+            <% if (selectedCategoryId || search) { %>
+              <a class="btn btn-sm btn-outline-secondary" href="/products">Limpar</a>
+            <% } %>
+          </form>
+        </div>
+
+        <div class="table-responsive product-table-wrapper">
+          <table class="table table-sm table-hover mb-0 product-table">
+            <thead>
+              <tr>
+                <th>C&oacute;digo</th>
+                <th>Nome e descri&ccedil;&atilde;o</th>
+                <th>Categoria</th>
+                <th>Pre&ccedil;o unit&aacute;rio</th>
+                <th>Pre&ccedil;o da caixa</th>
+                <th>Status</th>
+                <% if (editMode) { %>
+                  <th>A&ccedil;&otilde;es</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% products.forEach((product) => { %>
+                <% const formId = `product-update-${product.id}`; %>
+                <tr>
+                  <% if (editMode) { %>
+                    <td>
+                      <input class="form-control form-control-sm product-table-input" name="code" value="<%= product.code %>" form="<%= formId %>" required>
+                    </td>
+                    <td class="product-name-cell">
+                      <input class="form-control form-control-sm product-table-input mb-2" name="name" value="<%= product.name %>" form="<%= formId %>" required>
+                      <textarea class="form-control form-control-sm product-table-input" name="description" rows="2" form="<%= formId %>" placeholder="Descri&ccedil;&atilde;o"><%= product.description || '' %></textarea>
+                    </td>
+                    <td>
+                      <select class="form-select form-select-sm product-table-input" name="categoryId" form="<%= formId %>" required>
+                        <% categories.forEach((category) => { %>
+                          <option value="<%= category.id %>" <%= product.categoryId === category.id ? 'selected' : '' %>>
+                            <%= category.name %>
+                          </option>
+                        <% }) %>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        class="form-control form-control-sm product-table-input"
+                        name="unitPrice"
+                        value="<%= Number(product.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>"
+                        form="<%= formId %>"
+                        required
+                      >
+                    </td>
+                    <td>
+                      <input
+                        class="form-control form-control-sm product-table-input"
+                        name="boxPrice"
+                        value="<%= product.boxPrice ? Number(product.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '' %>"
+                        form="<%= formId %>"
+                      >
+                    </td>
+                    <td>
+                      <select class="form-select form-select-sm product-table-input" name="active" form="<%= formId %>">
+                        <option value="true" <%= product.active ? 'selected' : '' %>>Ativo</option>
+                        <option value="false" <%= product.active ? '' : 'selected' %>>Inativo</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" type="submit" form="<%= formId %>">Salvar</button>
+                      <form id="<%= formId %>" action="/products/<%= product.id %>" method="post">
+                        <input
+                          type="hidden"
+                          name="returnTo"
+                          value="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true"
+                        >
+                      </form>
+                    </td>
+                  <% } %>
+                  <% if (!editMode) { %>
+                  <td><%= product.code %></td>
+                  <td>
+                    <div class="fw-semibold"><%= product.name %></div>
+                    <% if (product.description) { %>
+                      <div class="small text-muted"><%= product.description %></div>
+                    <% } %>
+                  </td>
+                  <td><%= product.productCategory?.name || product.category %></td>
+                  <td>R$ <%= Number(product.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+                  <td>
+                    <% if (product.boxPrice) { %>
+                      R$ <%= Number(product.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+                    <% } else { %>
+                      <span class="text-muted">Sem pre&ccedil;o</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="badge text-bg-<%= product.active ? 'success' : 'secondary' %>">
+                      <%= product.active ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+                  <% } %>
+                </tr>
+              <% }) %>
+              <% if (!products.length) { %>
+                <tr>
+                  <td colspan="<%= editMode ? 7 : 6 %>" class="text-center text-muted py-4">
+                    Nenhum produto encontrado.
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<%- include('../partials/foot') %>
