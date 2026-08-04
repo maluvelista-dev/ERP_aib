@@ -1,0 +1,1433 @@
+[
+  {
+    "code": "7898908838435",
+    "name": "MAÇO N° 04 – 120 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 4.5,
+    "boxPrice": 108.0,
+    "active": true
+  },
+  {
+    "code": "7898908838442",
+    "name": "MAÇO N° 05 – 175 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 5.9,
+    "boxPrice": 141.6,
+    "active": true
+  },
+  {
+    "code": "7898908838459",
+    "name": "MAÇO N° 06 – 215 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 7.3,
+    "boxPrice": 175.2,
+    "active": true
+  },
+  {
+    "code": "7898908838473",
+    "name": "MAÇO N° 08 – 245 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 8.2,
+    "boxPrice": 196.8,
+    "active": true
+  },
+  {
+    "code": "7898908837612",
+    "name": "MAÇO No 12 – 300 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 12X6",
+    "unitPrice": 10.6,
+    "boxPrice": 127.2,
+    "active": true
+  },
+  {
+    "code": "7898908838992",
+    "name": "MAÇO No 15 - 480 GR BRANCA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 12X6",
+    "unitPrice": 15.7,
+    "boxPrice": 188.4,
+    "active": true
+  },
+  {
+    "code": "7898908831368",
+    "name": "MAÇO N° 06 – 215 GR MEL",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 9.4,
+    "boxPrice": 225.6,
+    "active": true
+  },
+  {
+    "code": "7898908833911",
+    "name": "MAÇO N° 06 – 215 GR CANELA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 9.4,
+    "boxPrice": 225.6,
+    "active": true
+  },
+  {
+    "code": "7898908833898",
+    "name": "MAÇO N° 06 – 215 GR FIGO",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 9.4,
+    "boxPrice": 225.6,
+    "active": true
+  },
+  {
+    "code": "7898908833904",
+    "name": "MAÇO N° 06 – 215 GR BAUNILHA",
+    "category": "Velas Maço",
+    "description": "Embalagem: 24X8",
+    "unitPrice": 9.4,
+    "boxPrice": 225.6,
+    "active": true
+  },
+  {
+    "code": "7898908838398",
+    "name": "VOTIVA 42 mm – 180 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 6.7,
+    "boxPrice": 160.8,
+    "active": true
+  },
+  {
+    "code": "7898908838015",
+    "name": "VOTIVA 50 mm – 250 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908832914",
+    "name": "VOTIVA 50 mm – 220 GR PVC",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908838190",
+    "name": "VOTIVA 50 mm – 250 GR 7 CORES",
+    "category": "Votiva Cores",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 10.2,
+    "boxPrice": 244.8,
+    "active": true
+  },
+  {
+    "code": "7898908838206",
+    "name": "VOTIVA 57 mm – 310 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 10.6,
+    "boxPrice": 254.4,
+    "active": true
+  },
+  {
+    "code": "AIB-001",
+    "name": "VOTIVA 63 mm – 400 GR",
+    "category": "Velas Votivas",
+    "description": null,
+    "unitPrice": 12.5,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908838817",
+    "name": "VOTIVA NOVENA – 380 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 12.5,
+    "boxPrice": 150.0,
+    "active": true
+  },
+  {
+    "code": "7898931507162",
+    "name": "VOTIVA 21 DIAS – 1,850 KG",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 58.6,
+    "boxPrice": 351.6,
+    "active": true
+  },
+  {
+    "code": "AIB-002",
+    "name": "VELA AVULSA POR QUILO",
+    "category": "Velas Avulsas",
+    "description": null,
+    "unitPrice": 26.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908833621",
+    "name": "VELA COPO 3 DIAS",
+    "category": "Velas Copo",
+    "description": "Embalagem: 48X1",
+    "unitPrice": 4.4,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908832365",
+    "name": "VELA COPO 24 HORAS",
+    "category": "Velas Copo",
+    "description": "Embalagem: 48X1",
+    "unitPrice": 4.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-003",
+    "name": "VELA 5 DIAS 175 GR",
+    "category": "Velas Comuns",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 6.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-004",
+    "name": "VELA DE BATISMO COM ADESIVO",
+    "category": "Velas Sacramentais",
+    "description": null,
+    "unitPrice": 3.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-005",
+    "name": "VELA LAMPARINA LATA – 14g",
+    "category": "Lamparinas",
+    "description": null,
+    "unitPrice": 1.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-006",
+    "name": "VELA LAMPARINA 2 CM - 14g",
+    "category": "Lamparinas",
+    "description": null,
+    "unitPrice": 0.7,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-007",
+    "name": "VELA LAMPARINA 3 CM – 24g",
+    "category": "Lamparinas",
+    "description": null,
+    "unitPrice": 0.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-008",
+    "name": "VELA LAMPARINA 4 CM – 34g",
+    "category": "Lamparinas",
+    "description": null,
+    "unitPrice": 1.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-009",
+    "name": "VELA LAMPARINA 5 CM – 40g",
+    "category": "Lamparinas",
+    "description": null,
+    "unitPrice": 1.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-010",
+    "name": "VELA CILINDRICA 4 X 5 – 60g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 2.1,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-011",
+    "name": "VELA CILINDRICA 5 X 3 – 50g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 2.1,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-012",
+    "name": "VELA CILINDRICA 5 X 4 – 70g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 2.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-013",
+    "name": "VELA CILINDRICA 5 X 5 – 88g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 2.9,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908837025",
+    "name": "APARECIDA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837032",
+    "name": "SAGRADO CORAÇÃO DE JESUS",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837049",
+    "name": "SANTA TEREZINHA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837056",
+    "name": "SANTA EDWIGES",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837063",
+    "name": "JESUS CRISTO",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837070",
+    "name": "FATIMA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837087",
+    "name": "DESATADORA DOS NÓS",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837094",
+    "name": "LOURDES",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837100",
+    "name": "SÃO JORGE",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837117",
+    "name": "SAGRADA FAMILIA",
+    "category": "Velas Comuns",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837124",
+    "name": "ANJO DA GUARDA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837131",
+    "name": "SENHORA DAS GRAÇAS",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837148",
+    "name": "RITA DE CASSIA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837155",
+    "name": "SAGRADO CORAÇÃO DE MARIA",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837162",
+    "name": "SENHORA DA PAZ",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837179",
+    "name": "SANTO ANTONIO",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837186",
+    "name": "SANTO EXPEDITO",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908837193",
+    "name": "SÃO JUDAS",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908833256",
+    "name": "SAO JOSE",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908832457",
+    "name": "DINO ESPIRITO SANTO",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908832440",
+    "name": "SAO MIGUEL",
+    "category": "Votiva PVC Santo",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 8.3,
+    "boxPrice": 199.2,
+    "active": true
+  },
+  {
+    "code": "7898908833874",
+    "name": "VELA VOTIVA BAUNILHA 250 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833881",
+    "name": "VELA VOTIVA CANELA 250 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833867",
+    "name": "VELA VOTIVA FIGO 250 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908838183",
+    "name": "VELA VOTIVA MEL 250 GR",
+    "category": "Velas Votivas",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833348",
+    "name": "VELA VOTIVA DINHEIRO / CANELA 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833386",
+    "name": "VELA VOTIVA MAU OLHADO / ARRUDA 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833331",
+    "name": "VELA VOTIVA INVEJA / ALFAZEMA 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833393",
+    "name": "VELA VOTIVA AMOR / ROSA VERMELHA 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833355",
+    "name": "VELA VOTIVA ABRE CAMINHO / CRAVO 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908833362",
+    "name": "VELA VOTIVA PAZ / ROSA BRANCA 220 GR",
+    "category": "Velas Votivas Apelos",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 10.2,
+    "boxPrice": 122.4,
+    "active": true
+  },
+  {
+    "code": "7898908830026",
+    "name": "VELA AROMA 90GR BAUNILHA COM LARANJA",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 7.8,
+    "boxPrice": 46.8,
+    "active": true
+  },
+  {
+    "code": "7898908833249",
+    "name": "VELA AROMA 90GR CITRONELA",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 7.8,
+    "boxPrice": 46.8,
+    "active": true
+  },
+  {
+    "code": "7898908830019",
+    "name": "VELA AROMA 90GR FRUTAS VERMELHAS",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 7.8,
+    "boxPrice": 46.8,
+    "active": true
+  },
+  {
+    "code": "7898908830033",
+    "name": "VELA AROMA 90GR LAVANDA PROVENCE",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 7.8,
+    "boxPrice": 46.8,
+    "active": true
+  },
+  {
+    "code": "7898908830040",
+    "name": "VELA AROMA 90GR CAPIM LIMÃO",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 7.8,
+    "boxPrice": 46.8,
+    "active": true
+  },
+  {
+    "code": "AIB-014",
+    "name": "VELA ALTAR 7 X 15 – 500g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 19.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-015",
+    "name": "VELA ALTAR 7 X 20 – 750g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 25.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-016",
+    "name": "VELA ALTAR 7 X 30 – 1.000g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 38.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-017",
+    "name": "VELA 2,5 X 30",
+    "category": "Velas Comuns",
+    "description": null,
+    "unitPrice": 5.1,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-018",
+    "name": "VELA 2,5 X 40",
+    "category": "Velas Comuns",
+    "description": null,
+    "unitPrice": 7.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-019",
+    "name": "VELA 3 X 30",
+    "category": "Velas Comuns",
+    "description": null,
+    "unitPrice": 7.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-020",
+    "name": "VELA 3 X 40",
+    "category": "Velas Comuns",
+    "description": null,
+    "unitPrice": 9.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908838978",
+    "name": "CITROLIFE LAMPARINA",
+    "category": "Velas Citronela",
+    "description": "Embalagem: 12X6",
+    "unitPrice": 12.0,
+    "boxPrice": 144.0,
+    "active": true
+  },
+  {
+    "code": "AIB-021",
+    "name": "CITROLIFE VELA COPO 100 GR",
+    "category": "Velas Citronela",
+    "description": "Embalagem: 12X1 | Codigo original: 7898908833249",
+    "unitPrice": 7.9,
+    "boxPrice": 94.8,
+    "active": true
+  },
+  {
+    "code": "7898908838763",
+    "name": "CITROLIFE VELA COM 2 UNIDADES",
+    "category": "Óleo de Citronela",
+    "description": "Embalagem: 12X2",
+    "unitPrice": 15.9,
+    "boxPrice": 190.8,
+    "active": true
+  },
+  {
+    "code": "7898908838787",
+    "name": "CITROLIFE 500 ML",
+    "category": "Óleo de Citronela",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 19.7,
+    "boxPrice": 236.4,
+    "active": true
+  },
+  {
+    "code": "7898908838794",
+    "name": "CITROLIFE 1 LITRO",
+    "category": "Óleo de Citronela",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 34.5,
+    "boxPrice": 414.0,
+    "active": true
+  },
+  {
+    "code": "7898908838800",
+    "name": "CITROLIFE 5 LITROS",
+    "category": "Óleo de Citronela",
+    "description": "Embalagem: 2X1",
+    "unitPrice": 146.6,
+    "boxPrice": 293.6,
+    "active": true
+  },
+  {
+    "code": "7898908838961",
+    "name": "LIFE OIL 500 ml",
+    "category": "Life Oil",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 14.9,
+    "boxPrice": 178.8,
+    "active": true
+  },
+  {
+    "code": "7898908838985",
+    "name": "LIFE OIL 1 Litro",
+    "category": "Life Oil",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 27.0,
+    "boxPrice": 324.0,
+    "active": true
+  },
+  {
+    "code": "7898908838954",
+    "name": "LIFE OIL 5 Litros",
+    "category": "Life Oil",
+    "description": "Embalagem: 2X1",
+    "unitPrice": 130.9,
+    "boxPrice": 261.8,
+    "active": true
+  },
+  {
+    "code": "7898908838909",
+    "name": "LATA PARA TOCHEIRO",
+    "category": "Tocheiros",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 10.9,
+    "boxPrice": 65.4,
+    "active": true
+  },
+  {
+    "code": "7898908838824",
+    "name": "PAVIO PARA TOCHEIRO",
+    "category": "Tocheiros",
+    "description": "Embalagem: 12X2",
+    "unitPrice": 6.1,
+    "boxPrice": 73.2,
+    "active": true
+  },
+  {
+    "code": "7898908833836",
+    "name": "VELA 3,5 X 3,5 COM 10 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 24X10",
+    "unitPrice": 18.6,
+    "boxPrice": 446.4,
+    "active": true
+  },
+  {
+    "code": "7898908832945",
+    "name": "VELA 2 X 26 CASTIÇAL COM 2 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 25X2",
+    "unitPrice": 9.6,
+    "boxPrice": 240.0,
+    "active": true
+  },
+  {
+    "code": "7898908836776",
+    "name": "VELA 5X5 COM 6 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X6",
+    "unitPrice": 21.5,
+    "boxPrice": 258.0,
+    "active": true
+  },
+  {
+    "code": "7898908832006",
+    "name": "VELA BOLA 08 COM 1 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 13.2,
+    "boxPrice": 316.8,
+    "active": true
+  },
+  {
+    "code": "7898908833829",
+    "name": "VELA BOLA 06 COM 3 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 20X3",
+    "unitPrice": 15.2,
+    "boxPrice": 304.0,
+    "active": true
+  },
+  {
+    "code": "7898908839197",
+    "name": "VELA FLUTUANTE 06 COM 3 ACETATO",
+    "category": "Linha Premium",
+    "description": "Embalagem: 20X3",
+    "unitPrice": 15.1,
+    "boxPrice": 302.0,
+    "active": true
+  },
+  {
+    "code": "AIB-022",
+    "name": "VELA COPO LISO",
+    "category": "Velas Copo",
+    "description": "Embalagem: 30X1",
+    "unitPrice": 12.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "7898908839302",
+    "name": "RECHAUD COM 10 UNIDADES",
+    "category": "Linha Premium",
+    "description": "Embalagem: 24X10",
+    "unitPrice": 11.0,
+    "boxPrice": 264.0,
+    "active": true
+  },
+  {
+    "code": "7898908840063",
+    "name": "VELA COPO LISO CANELA",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 16.8,
+    "boxPrice": 100.8,
+    "active": true
+  },
+  {
+    "code": "7898908840070",
+    "name": "VELA COPO LISO BAMBOO",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 16.8,
+    "boxPrice": 100.8,
+    "active": true
+  },
+  {
+    "code": "7898908840087",
+    "name": "VELA COPO LISO BLUEBERRY",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 16.8,
+    "boxPrice": 100.8,
+    "active": true
+  },
+  {
+    "code": "7898908840100",
+    "name": "VELA COPO LISO BAUNILHA",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 16.8,
+    "boxPrice": 100.8,
+    "active": true
+  },
+  {
+    "code": "7898908840094",
+    "name": "VELA COPO LISO FLORAL",
+    "category": "Velas Copo Aroma",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 16.8,
+    "boxPrice": 100.8,
+    "active": true
+  },
+  {
+    "code": "AIB-023",
+    "name": "LUMINÁRIA QUADRADA 8X8X8",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 7.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-024",
+    "name": "LUMINÁRIA QUADRADA 10X10X10",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 11.4,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-025",
+    "name": "LUMINÁRIA QUADRADA 12X12X12",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 19.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-026",
+    "name": "LUMINÁRIA QUADRADA 15X15X15",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 35.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-027",
+    "name": "LUMINÁRIA QUADRADA 20X20X20",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 76.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-028",
+    "name": "LUMINÁRIA BOLA 15",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 26.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-029",
+    "name": "LUMINÁRIA BOLA 20",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 56.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-030",
+    "name": "LUMINÁRIA BOLA 25",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 87.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-031",
+    "name": "LUMINÁRIA BOLA 30",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 116.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-032",
+    "name": "LUMINÁRIA RETANGULAR 12X12X20",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 29.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-033",
+    "name": "LUMINÁRIA RETANGULAR 12X12X25",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 48.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-034",
+    "name": "LUMINÁRIA RETANGULAR 12X12X30",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 55.4,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-035",
+    "name": "LUMINÁRIA RETANGULAR 15X15X20",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 44.9,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-036",
+    "name": "LUMINÁRIA RETANGULAR 15X15X30",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 72.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-037",
+    "name": "LUMINÁRIA RETANGULAR 15X15X40",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 103.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-038",
+    "name": "LUMINÁRIA RETANGULAR 15X15X50",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 138.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-039",
+    "name": "LUMINÁRIA RETANGULAR 20X20X30",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 116.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-040",
+    "name": "LUMINÁRIA RETANGULAR 20X20X40",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 165.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-041",
+    "name": "LUMINÁRIA RETANGULAR 20X20X50",
+    "category": "Luminárias",
+    "description": null,
+    "unitPrice": 191.4,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-042",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 12X10",
+    "unitPrice": 18.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-043",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 12X15",
+    "unitPrice": 21.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-044",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 12X20",
+    "unitPrice": 27.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-045",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 12X25",
+    "unitPrice": 52.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-046",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 12X30",
+    "unitPrice": 60.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-047",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 14X14",
+    "unitPrice": 22.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-048",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 14X20",
+    "unitPrice": 36.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-049",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 14X30",
+    "unitPrice": 66.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-050",
+    "name": "LUMINÁRIA CILINDRICA",
+    "category": "Luminárias",
+    "description": "Embalagem: 14X40",
+    "unitPrice": 99.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-051",
+    "name": "VELA QUADRADA 65 X 07 – 250g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 11.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-052",
+    "name": "VELA QUADRADA 65 X 10 – 380g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 14.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-053",
+    "name": "VELA QUADRADA 65 X 15 – 590g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 20.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-054",
+    "name": "VELA QUADRADA 65 X 18",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 37.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-055",
+    "name": "VELA QUADRADA 95 X 07",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 19.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-056",
+    "name": "VELA QUADRADA 95 X 10",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 27.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-057",
+    "name": "VELA QUADRADA 95 X 12",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 32.4,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-058",
+    "name": "VELA QUADRADA 95 X 15",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 39.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-059",
+    "name": "VELA QUADRADA 95 X 18",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 41.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-060",
+    "name": "VELA CILINDRICA 63 X 07 – 200g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 24X1",
+    "unitPrice": 7.9,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-061",
+    "name": "VELA CILINDRICA 63 X 09 – 250g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 11.2,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-062",
+    "name": "VELA CILINDRICA 63 X 14 – 405g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 17.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-063",
+    "name": "VELA CILINDRICA 63 X 17 – 530g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 19.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-064",
+    "name": "VELA CILINDRICA 80 X 07 – 290g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 12.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-065",
+    "name": "VELA CILINDRICA 80 X 10 – 430g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 16.1,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-066",
+    "name": "VELA CILINDRICA 80 X 15 – 570g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 21.5,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-067",
+    "name": "VELA CILINDRICA 80 X 20",
+    "category": "Linha Premium",
+    "description": "Embalagem: 12X1",
+    "unitPrice": 30.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-068",
+    "name": "VELA CILINDRICA 95 X 07 – 500g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 17.1,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-069",
+    "name": "VELA CILINDRICA 95 X 12 – 700g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 26.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-070",
+    "name": "VELA CILINDRICA 95 X 18 – 1.000g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 37.3,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-071",
+    "name": "VELA CILINDRICA 120 X 10",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 34.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-072",
+    "name": "VELA CILINDRICA 120 X 15",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 48.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-073",
+    "name": "VELA CILINDRICA 120 X 20",
+    "category": "Linha Premium",
+    "description": "Embalagem: 6X1",
+    "unitPrice": 59.5,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-074",
+    "name": "VELA BOLA 06 – 100g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 3.5,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-075",
+    "name": "VELA BOLA 08 – 190g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 6.7,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-076",
+    "name": "VELA BOLA 10 – 380g",
+    "category": "Linha Premium",
+    "description": null,
+    "unitPrice": 13.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-077",
+    "name": "VELA FLUTUANTE 63 X 35 – 90g",
+    "category": "Linha Premium",
+    "description": "Embalagem: 3X1",
+    "unitPrice": 3.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-078",
+    "name": "VELA ALTAR 9,5 X 20 – 1,230g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 42.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-079",
+    "name": "VELA ALTAR 9,5 X 30 – 1,850g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 63.6,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-080",
+    "name": "VELA ALTAR 9,5 X 40 – 2,460g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 84.0,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-081",
+    "name": "VELA ALTAR 9,5 X 50 – 3,080g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 106.8,
+    "boxPrice": null,
+    "active": true
+  },
+  {
+    "code": "AIB-082",
+    "name": "VELA ALTAR 9,5 X 60 – 3,700g",
+    "category": "Velas de Altar e Eucaristia",
+    "description": null,
+    "unitPrice": 120.0,
+    "boxPrice": null,
+    "active": true
+  }
+]

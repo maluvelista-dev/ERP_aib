@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `order_items` ADD COLUMN `boxQuantity` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `unitQuantity` INTEGER NOT NULL DEFAULT 0;

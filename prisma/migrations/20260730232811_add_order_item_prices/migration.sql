@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `order_items` ADD COLUMN `boxPrice` DECIMAL(10, 2) NULL,
+    ADD COLUMN `totalPrice` DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    ADD COLUMN `unitPrice` DECIMAL(10, 2) NOT NULL DEFAULT 0;
