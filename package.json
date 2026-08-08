@@ -17,7 +17,8 @@
     "prisma:status": "prisma migrate status",
     "prisma:studio": "prisma studio",
     "seed": "prisma db seed",
-    "import:products": "node prisma/import-products.js"
+    "import:products": "node prisma/import-products.js",
+    "catalog:sql": "node scripts/generate-catalog-sql.mjs"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.9.1",
