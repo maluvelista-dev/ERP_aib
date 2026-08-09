@@ -49,6 +49,50 @@
             </div>
           </div>
 
+          <fieldset>
+            <legend class="form-label mb-2">Dias dispon&iacute;veis para entrega</legend>
+            <div class="d-flex flex-wrap gap-3">
+              <% [
+                ['MON', 'S', 'Segunda-feira'],
+                ['TUE', 'T', 'Ter&ccedil;a-feira'],
+                ['WED', 'Q', 'Quarta-feira'],
+                ['THU', 'Q', 'Quinta-feira'],
+                ['FRI', 'S', 'Sexta-feira'],
+                ['SAT', 'S', 'S&aacute;bado'],
+                ['SUN', 'D', 'Domingo']
+              ].forEach(([value, initial, label]) => { %>
+                <div class="form-check" title="<%- label %>">
+                  <input class="form-check-input" type="checkbox" name="deliveryDays" value="<%= value %>" id="deliveryDay<%= value %>">
+                  <label class="form-check-label" for="deliveryDay<%= value %>">
+                    <strong><%= initial %></strong> <span class="small text-muted"><%- label %></span>
+                  </label>
+                </div>
+              <% }) %>
+            </div>
+          </fieldset>
+
+          <div class="row g-3">
+            <div class="col-lg-4">
+              <label class="form-label" for="fiscalEmail">E-mail para documentos fiscais</label>
+              <input class="form-control" id="fiscalEmail" name="fiscalEmail" type="email" maxlength="191" placeholder="fiscal@empresa.com.br">
+              <div class="form-text">Destinado ao envio futuro da NF-e e do DANFE.</div>
+            </div>
+            <div class="col-lg-4">
+              <label class="form-label" for="contactEmail">E-mail de contato</label>
+              <input class="form-control" id="contactEmail" name="contactEmail" type="email" maxlength="191" placeholder="comprador@empresa.com.br">
+              <div class="form-text">E-mail do comprador respons&aacute;vel ou contato geral da empresa.</div>
+            </div>
+            <div class="col-lg-4">
+              <label class="form-label" for="paymentTerm">Prazo de pagamento</label>
+              <input class="form-control" id="paymentTerm" name="paymentTerm" maxlength="191" placeholder="Ex.: 28 dias ou 28/35/42 dias">
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label" for="notes">Observa&ccedil;&atilde;o</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Informa&ccedil;&otilde;es adicionais para o pedido e para a nota"></textarea>
+          </div>
+
           <div>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h2 class="h6 mb-0">Itens</h2>

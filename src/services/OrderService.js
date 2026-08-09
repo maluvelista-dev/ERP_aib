@@ -84,6 +84,11 @@ class OrderService {
         state: customer.state
       },
       receivedTime: data.receivedTime || null,
+      deliveryDays: data.deliveryDays,
+      notes: data.notes || null,
+      fiscalEmail: data.fiscalEmail || null,
+      contactEmail: data.contactEmail || null,
+      paymentTerm: data.paymentTerm || null,
       sellerSnapshot: {
         name: user.name,
         email: user.email,

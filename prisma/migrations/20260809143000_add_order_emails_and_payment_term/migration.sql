@@ -1,0 +1,4 @@
+ALTER TABLE `orders`
+  ADD COLUMN `fiscalEmail` VARCHAR(191) NULL,
+  ADD COLUMN `contactEmail` VARCHAR(191) NULL,
+  ADD COLUMN `paymentTerm` VARCHAR(191) NULL;

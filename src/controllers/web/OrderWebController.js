@@ -67,6 +67,9 @@ class OrderWebController {
       const productIds = Array.isArray(req.body.productId) ? req.body.productId : [req.body.productId];
       const unitQuantities = Array.isArray(req.body.unitQuantity) ? req.body.unitQuantity : [req.body.unitQuantity];
       const boxQuantities = Array.isArray(req.body.boxQuantity) ? req.body.boxQuantity : [req.body.boxQuantity];
+      const deliveryDays = !req.body.deliveryDays
+        ? []
+        : Array.isArray(req.body.deliveryDays) ? req.body.deliveryDays : [req.body.deliveryDays];
       const items = productIds
         .map((productId, index) => ({
           productId,
@@ -80,6 +83,11 @@ class OrderWebController {
           customerId: req.body.customerId,
           sellerPhone: req.body.sellerPhone,
           receivedTime: req.body.receivedTime,
+          deliveryDays,
+          notes: req.body.notes,
+          fiscalEmail: req.body.fiscalEmail,
+          contactEmail: req.body.contactEmail,
+          paymentTerm: req.body.paymentTerm,
           discountPercent: req.body.applyDiscount === 'on' ? 5 : 0,
           bonusProductId: req.body.bonusProductId,
           items,

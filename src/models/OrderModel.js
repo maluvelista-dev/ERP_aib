@@ -5,6 +5,14 @@ const orderSchema = Joi.object({
   customerId: Joi.string().required(),
   sellerPhone: Joi.string().allow('', null),
   receivedTime: Joi.string().pattern(/^([01]\d|2[0-3]):[0-5]\d$/).allow('', null),
+  deliveryDays: Joi.array()
+    .items(Joi.string().valid('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'))
+    .unique()
+    .default([]),
+  notes: Joi.string().trim().max(1000).allow('', null),
+  fiscalEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null),
+  contactEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null),
+  paymentTerm: Joi.string().trim().max(191).allow('', null),
   discountPercent: Joi.number().valid(0, 5).default(0),
   bonusProductId: Joi.string().allow('', null),
   items: Joi.array()

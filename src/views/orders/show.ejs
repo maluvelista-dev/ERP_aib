@@ -52,6 +52,19 @@
             <div class="small">Vendedor: <%= order.sellerSnapshot?.name || order.createdBy?.name || 'N&atilde;o informado' %></div>
             <div class="small">Telefone vendedor: <%= order.sellerSnapshot?.phone || 'N&atilde;o informado' %></div>
             <div class="small">Hor&aacute;rio de recebimento: <%= order.receivedTime || 'N&atilde;o informado' %></div>
+            <% const deliveryDayLabels = { MON: 'Segunda', TUE: 'Ter&ccedil;a', WED: 'Quarta', THU: 'Quinta', FRI: 'Sexta', SAT: 'S&aacute;bado', SUN: 'Domingo' }; %>
+            <div class="small">
+              Dias para entrega:
+              <%= Array.isArray(order.deliveryDays) && order.deliveryDays.length
+                ? order.deliveryDays.map((day) => deliveryDayLabels[day] || day).join(', ')
+                : 'N&atilde;o informado' %>
+            </div>
+            <% if (order.notes) { %>
+              <div class="small mt-2"><strong>Observa&ccedil;&atilde;o:</strong> <%= order.notes %></div>
+            <% } %>
+            <div class="small mt-2">E-mail fiscal: <%= order.fiscalEmail || 'N&atilde;o informado' %></div>
+            <div class="small">E-mail de contato: <%= order.contactEmail || 'N&atilde;o informado' %></div>
+            <div class="small">Prazo de pagamento: <%= order.paymentTerm || 'N&atilde;o informado' %></div>
             <div class="small">PDF: <%= order.pdfUrl ? 'Gerado' : 'N&atilde;o gerado' %></div>
             <div class="small">WhatsApp: <%= order.whatsappSent ? 'Enviado' : 'N&atilde;o enviado' %></div>
             <% if (order.bonusProductSnapshot) { %>

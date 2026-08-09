@@ -10,7 +10,7 @@ const PAGE = {
 
 const table = {
   x: 36,
-  y: 344,
+  y: 407,
   width: 523,
   rowHeight: 20,
   headerHeight: 22,
@@ -43,7 +43,7 @@ class PdfService {
     this.#drawHeader(doc, order);
     this.#drawCustomerBox(doc, order);
     const tableBottomY = this.#drawItemsTable(doc, order);
-    this.#drawFooter(doc, tableBottomY);
+    this.#drawFooter(doc, tableBottomY, order);
   }
 
   #drawHeader(doc, order) {
@@ -89,7 +89,7 @@ class PdfService {
     const boxX = table.x;
     const boxY = 186;
     const boxW = table.width;
-    const boxH = 142;
+    const boxH = 205;
     const customer = order.customerSnapshot;
     const seller = order.sellerSnapshot ?? {};
 
@@ -106,11 +106,14 @@ class PdfService {
     this.#field(doc, 'Estado:', customer.state, 458, 247, 92);
     this.#field(doc, 'Inscr. Est:', '', 55, 268, 230);
     this.#field(doc, 'Inscr. CNPJ:', customer.cnpj, 290, 268, 260);
-    this.#field(doc, 'Cond. Pagto.:', '', 55, 289, 245);
+    this.#field(doc, 'Cond. Pagto.:', order.paymentTerm ?? '', 55, 289, 245);
     this.#field(doc, 'Transportadora:', '', 305, 289, 245);
     this.#field(doc, 'Vendedor:', seller.name ?? order.createdBy?.name ?? '', 55, 310, 245);
     this.#field(doc, 'Fone vendedor:', seller.phone ?? '', 305, 310, 142);
     this.#field(doc, 'Receb.:', order.receivedTime ?? '', 452, 310, 98);
+    this.#field(doc, 'Dias de entrega:', this.#formatDeliveryDays(order.deliveryDays), 55, 331, 495);
+    this.#field(doc, 'E-mail fiscal:', order.fiscalEmail ?? '', 55, 352, 495);
+    this.#field(doc, 'E-mail contato:', order.contactEmail ?? '', 55, 373, 495);
   }
 
   #drawItemsTable(doc, order) {
@@ -189,13 +192,30 @@ class PdfService {
     return bottomY;
   }
 
-  #drawFooter(doc, contentBottomY) {
-    const notesY = Math.max(contentBottomY + 22, 520);
+  #drawFooter(doc, contentBottomY, order) {
+    let notesY = Math.max(contentBottomY + 22, 582);
+    const observation = String(order.notes ?? '').trim();
+
+    if (observation) {
+      const observationHeight = 54;
+      doc.roundedRect(36, notesY, 523, observationHeight, 6)
+        .lineWidth(0.8)
+        .strokeColor('#231f20')
+        .stroke();
+      doc.font('Helvetica-Bold').fontSize(9).text('OBSERVAÇÃO:', 45, notesY + 8);
+      doc.font('Helvetica').fontSize(8.5).text(observation, 45, notesY + 21, {
+        width: 505,
+        height: 27,
+        ellipsis: true
+      });
+      notesY += observationHeight + 12;
+    }
+
     const signatureY = notesY + 54;
 
     if (signatureY > PAGE.height - 22) {
       doc.addPage();
-      this.#drawFooter(doc, PAGE.margin);
+      this.#drawFooter(doc, PAGE.margin, order);
       return;
     }
 
@@ -300,6 +320,22 @@ class PdfService {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })}`;
+  }
+
+  #formatDeliveryDays(deliveryDays) {
+    const labels = {
+      MON: 'Seg',
+      TUE: 'Ter',
+      WED: 'Qua',
+      THU: 'Qui',
+      FRI: 'Sex',
+      SAT: 'Sáb',
+      SUN: 'Dom'
+    };
+
+    return Array.isArray(deliveryDays)
+      ? deliveryDays.map((day) => labels[day]).filter(Boolean).join(', ')
+      : '';
   }
 
   #drawLine(doc, fromX, y, toX) {
