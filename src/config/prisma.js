@@ -2,7 +2,23 @@ import 'dotenv/config';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '../generated/prisma/client.js';
 
-const databaseUrl = new URL(process.env.DATABASE_URL);
+const databaseUrlValue = process.env.DATABASE_URL;
+
+if (!databaseUrlValue) {
+  throw new Error('DATABASE_URL is required');
+}
+
+if (!databaseUrlValue.startsWith('mysql://')) {
+  throw new Error('DATABASE_URL must be a MySQL connection URL starting with mysql://');
+}
+
+let databaseUrl;
+
+try {
+  databaseUrl = new URL(databaseUrlValue);
+} catch {
+  throw new Error('DATABASE_URL is not a valid MySQL connection URL');
+}
 const sslMode = databaseUrl.searchParams.get('ssl')
   ?? databaseUrl.searchParams.get('sslmode')
   ?? databaseUrl.searchParams.get('sslaccept');

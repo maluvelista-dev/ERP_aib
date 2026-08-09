@@ -19,7 +19,8 @@
     "seed": "prisma db seed",
     "import:products": "node prisma/import-products.js",
     "catalog:sql": "node scripts/generate-catalog-sql.mjs",
-    "catalog:verify": "node scripts/verify-catalog-import.mjs"
+    "catalog:verify": "node scripts/verify-catalog-import.mjs",
+    "users:bootstrap": "node scripts/bootstrap-production-users.mjs"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.9.1",
