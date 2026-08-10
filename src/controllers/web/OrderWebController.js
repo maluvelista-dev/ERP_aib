@@ -154,6 +154,12 @@ class OrderWebController {
     req.session.flash = { success: `PDF gerado para o pedido ${order.orderNumber}.` };
     res.redirect(req.get('Referer') || '/orders');
   }
+
+  async remove(req, res) {
+    const order = await OrderService.remove(req.params.id);
+    req.session.flash = { success: `Pedido ${order.orderNumber} excluído com sucesso.` };
+    res.redirect('/orders');
+  }
 }
 
 export default new OrderWebController();

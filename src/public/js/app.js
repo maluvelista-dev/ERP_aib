@@ -114,3 +114,18 @@ document.addEventListener('change', (event) => {
 
   toggle.closest('form')?.requestSubmit();
 });
+
+document.addEventListener('submit', (event) => {
+  const deleteOrderForm = event.target.closest('.js-delete-order-form');
+
+  if (!deleteOrderForm) {
+    return;
+  }
+
+  const orderNumber = deleteOrderForm.dataset.orderNumber || '';
+  const confirmed = window.confirm(`Excluir definitivamente o pedido ${orderNumber}?`);
+
+  if (!confirmed) {
+    event.preventDefault();
+  }
+});

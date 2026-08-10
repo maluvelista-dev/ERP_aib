@@ -114,6 +114,10 @@ class OrderRepository extends BaseRepository {
       whatsappError: errorMessage
     });
   }
+
+  async destroy(id) {
+    return this.model.delete({ where: { id } });
+  }
 }
 
 export default new OrderRepository();

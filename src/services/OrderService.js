@@ -142,6 +142,14 @@ class OrderService {
     }
   }
 
+  async remove(id) {
+    const order = await this.findById(id);
+    await OrderRepository.destroy(id);
+    await StorageService.deletePdf(order.pdfUrl);
+
+    return order;
+  }
+
   async #buildItems(requestedItems) {
     const items = [];
 

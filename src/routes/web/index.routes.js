@@ -13,6 +13,7 @@ import { OrderPolicy } from '../../policies/OrderPolicy.js';
 import { ProductPolicy } from '../../policies/ProductPolicy.js';
 import { UserPolicy } from '../../policies/UserPolicy.js';
 import UserRepository from '../../repositories/UserRepository.js';
+import OrderRepository from '../../repositories/OrderRepository.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 
 const router = Router();
@@ -153,6 +154,12 @@ router.post(
   requireWebAuth,
   webAuthorize(OrderPolicy, 'generatePdf'),
   asyncHandler((req, res) => OrderWebController.generatePdf(req, res))
+);
+router.post(
+  '/orders/:id/delete',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'destroy', (req) => OrderRepository.findById(req.params.id)),
+  asyncHandler((req, res) => OrderWebController.remove(req, res))
 );
 router.post(
   '/customers/:id/activate',

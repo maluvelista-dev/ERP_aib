@@ -20,4 +20,9 @@ export class OrderPolicy extends ApplicationPolicy {
   sendWhatsapp() {
     return this.index();
   }
+
+  destroy() {
+    return this.isAdminOrManager()
+      || Boolean(this.user?.id && this.record?.createdById === this.user.id);
+  }
 }
