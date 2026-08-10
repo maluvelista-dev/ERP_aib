@@ -12,16 +12,16 @@
               <h2 class="h6 mb-1">Produtos</h2>
               <div class="small text-muted"><%= products.length %> produto(s) encontrado(s)</div>
             </div>
-            <% if (currentUser.role === 'admin') { %>
-              <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
+            <div class="d-flex flex-wrap gap-2">
+              <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
+              <% if (currentUser.role === 'admin') { %>
                 <% if (editMode) { %>
                   <a class="btn btn-sm btn-outline-secondary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>">Finalizar altera&ccedil;&otilde;es</a>
                 <% } else { %>
                   <a class="btn btn-sm btn-outline-primary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true">Alterar itens</a>
                 <% } %>
-              </div>
-            <% } %>
+              <% } %>
+            </div>
           </div>
 
           <form action="/products" method="get" class="product-filter d-flex gap-2 align-items-end">

@@ -52,6 +52,10 @@ class OrderWebController {
     });
   }
 
+  manualItemRow(_req, res) {
+    res.render('orders/_manual_item_row');
+  }
+
   async productOptions(req, res) {
     const products = await ProductService.list({
       search: req.query.q
@@ -85,6 +89,28 @@ class OrderWebController {
             : Number(customBoxPrices[index])
         }))
         .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
+      const manualNames = !req.body.manualProductName
+        ? []
+        : Array.isArray(req.body.manualProductName) ? req.body.manualProductName : [req.body.manualProductName];
+      const manualQuantities = Array.isArray(req.body.manualQuantity) ? req.body.manualQuantity : [req.body.manualQuantity];
+      const manualPrices = Array.isArray(req.body.manualPrice) ? req.body.manualPrice : [req.body.manualPrice];
+
+      manualNames.forEach((manualName, index) => {
+        const unitQuantity = Number(manualQuantities[index] ?? 0);
+
+        if (manualName?.trim() && unitQuantity > 0) {
+          items.push({
+            productId: null,
+            manualName: manualName.trim(),
+            unitQuantity,
+            boxQuantity: 0,
+            customUnitPrice: manualPrices[index] === '' || manualPrices[index] === undefined
+              ? null
+              : Number(manualPrices[index]),
+            customBoxPrice: null
+          });
+        }
+      });
 
       const order = await OrderService.create(
         {

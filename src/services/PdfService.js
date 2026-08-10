@@ -289,7 +289,7 @@ class PdfService {
         rows.push({
           quantity: `${unitQuantity} UN`,
           code: item.code,
-          description: item.name,
+          description: this.#formatItemDescription(item),
           unitPrice,
           totalPrice: unitQuantity * unitPrice
         });
@@ -299,7 +299,7 @@ class PdfService {
         rows.push({
           quantity: `${boxQuantity} CX`,
           code: item.code,
-          description: item.name,
+          description: this.#formatItemDescription(item),
           unitPrice: boxPrice,
           totalPrice: boxQuantity * boxPrice
         });
@@ -308,7 +308,7 @@ class PdfService {
       return rows.length ? rows : [{
         quantity: '0 UN',
         code: item.code,
-        description: item.name,
+        description: this.#formatItemDescription(item),
         unitPrice,
         totalPrice: 0
       }];
@@ -320,6 +320,10 @@ class PdfService {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })}`;
+  }
+
+  #formatItemDescription(item) {
+    return [item.name, item.category].filter(Boolean).join(' - ');
   }
 
   #formatDeliveryDays(deliveryDays) {

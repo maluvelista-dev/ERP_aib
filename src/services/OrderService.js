@@ -146,6 +146,25 @@ class OrderService {
     const items = [];
 
     for (const requestedItem of requestedItems) {
+      if (!requestedItem.productId) {
+        const unitQuantity = requestedItem.unitQuantity ?? requestedItem.quantity ?? 0;
+        const unitPrice = Number(requestedItem.customUnitPrice ?? 0);
+
+        items.push({
+          productId: null,
+          code: 'MANUAL',
+          name: requestedItem.manualName,
+          category: null,
+          quantity: unitQuantity,
+          unitQuantity,
+          boxQuantity: 0,
+          unitPrice,
+          boxPrice: null,
+          totalPrice: unitQuantity * unitPrice
+        });
+        continue;
+      }
+
       const product = await ProductRepository.findById(requestedItem.productId);
 
       if (!product || product.active === false) {
@@ -166,6 +185,7 @@ class OrderService {
         productId: product.id,
         code: product.code,
         name: product.name,
+        category: product.productCategory?.name || product.category || null,
         quantity: unitQuantity,
         unitQuantity,
         boxQuantity,

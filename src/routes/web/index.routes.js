@@ -125,6 +125,12 @@ router.get(
   asyncHandler((req, res) => OrderWebController.itemRow(req, res))
 );
 router.get(
+  '/orders/manual-item-row',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'create'),
+  (req, res) => OrderWebController.manualItemRow(req, res)
+);
+router.get(
   '/orders/product-options',
   requireWebAuth,
   webAuthorize(OrderPolicy, 'create'),

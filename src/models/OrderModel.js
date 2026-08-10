@@ -21,7 +21,8 @@ const orderSchema = Joi.object({
   items: Joi.array()
     .items(
       Joi.object({
-        productId: Joi.string().required(),
+        productId: Joi.string().allow('', null),
+        manualName: Joi.string().trim().max(191).allow('', null),
         quantity: Joi.number().integer().min(1),
         unitQuantity: Joi.number().integer().min(0).default(0),
         boxQuantity: Joi.number().integer().min(0).default(0),
@@ -35,6 +36,14 @@ const orderSchema = Joi.object({
 
           if (unitQuantity + boxQuantity < 1) {
             return helpers.error('any.invalid');
+          }
+
+          if (!item.productId && !item.manualName) {
+            return helpers.message({ custom: 'Informe um produto do catálogo ou o nome do produto manual' });
+          }
+
+          if (!item.productId && (item.customUnitPrice === null || item.customUnitPrice === undefined)) {
+            return helpers.message({ custom: 'Informe o preço do produto manual' });
           }
 
           return item;

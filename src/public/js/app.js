@@ -48,6 +48,13 @@ document.addEventListener('click', (event) => {
     return;
   }
 
+  const removeManualButton = event.target.closest('.js-remove-manual-order-item');
+
+  if (removeManualButton) {
+    removeManualButton.closest('.manual-order-item-row')?.remove();
+    return;
+  }
+
   const priceButton = event.target.closest('.js-toggle-custom-price');
 
   if (priceButton) {

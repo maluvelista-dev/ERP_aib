@@ -39,6 +39,7 @@ class OrderRepository extends BaseRepository {
             productId: item.productId,
             code: item.code,
             name: item.name,
+            category: item.category,
             quantity: item.quantity,
             unitQuantity: item.unitQuantity,
             boxQuantity: item.boxQuantity,
