@@ -87,7 +87,7 @@ model Order {
   createdById      String
   customerSnapshot Json
   sellerSnapshot   Json?
-  receivedTime     String?     @db.VarChar(5)
+  receivedTime     String?     @db.VarChar(30)
   deliveryDays     Json?
   notes            String?     @db.Text
   fiscalEmail      String?

@@ -109,8 +109,8 @@ class PdfService {
     this.#field(doc, 'Cond. Pagto.:', order.paymentTerm ?? '', 55, 289, 245);
     this.#field(doc, 'Transportadora:', '', 305, 289, 245);
     this.#field(doc, 'Vendedor:', seller.name ?? order.createdBy?.name ?? '', 55, 310, 245);
-    this.#field(doc, 'Fone vendedor:', seller.phone ?? '', 305, 310, 142);
-    this.#field(doc, 'Receb.:', order.receivedTime ?? '', 452, 310, 98);
+    this.#field(doc, 'Fone:', seller.phone ?? '', 305, 310, 115);
+    this.#field(doc, 'Receb.:', this.#formatReceivedTime(order.receivedTime), 425, 310, 125);
     this.#field(doc, 'Dias de entrega:', this.#formatDeliveryDays(order.deliveryDays), 55, 331, 495);
     this.#field(doc, 'E-mail fiscal:', order.fiscalEmail ?? '', 55, 352, 495);
     this.#field(doc, 'E-mail contato:', order.contactEmail ?? '', 55, 373, 495);
@@ -340,6 +340,16 @@ class PdfService {
     return Array.isArray(deliveryDays)
       ? deliveryDays.map((day) => labels[day]).filter(Boolean).join(', ')
       : '';
+  }
+
+  #formatReceivedTime(receivedTime) {
+    const labels = {
+      BUSINESS_HOURS: 'Horário comercial',
+      MORNING: 'Manhã',
+      AFTERNOON: 'Tarde'
+    };
+
+    return labels[receivedTime] || receivedTime || '';
   }
 
   #drawLine(doc, fromX, y, toX) {

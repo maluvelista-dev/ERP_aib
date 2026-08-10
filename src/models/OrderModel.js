@@ -4,8 +4,9 @@ import { BaseModel } from './BaseModel.js';
 const orderSchema = Joi.object({
   customerId: Joi.string().required(),
   sellerPhone: Joi.string().allow('', null),
-  receivedTime: Joi.string().pattern(/^([01]\d|2[0-3]):[0-5]\d$/).allow('', null)
-    .messages({ 'string.pattern.base': 'O horário de recebimento deve estar no formato HH:MM' }),
+  receivedTime: Joi.string()
+    .valid('BUSINESS_HOURS', 'MORNING', 'AFTERNOON')
+    .allow('', null),
   deliveryDays: Joi.array()
     .items(Joi.string().valid('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'))
     .unique()
@@ -16,7 +17,7 @@ const orderSchema = Joi.object({
   contactEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null)
     .messages({ 'string.email': 'O e-mail de contato é inválido' }),
   paymentTerm: Joi.string().trim().max(191).allow('', null),
-  discountPercent: Joi.number().valid(0, 5).default(0),
+  discountPercent: Joi.number().min(0).max(100).precision(2).default(0),
   bonusProductId: Joi.string().allow('', null),
   items: Joi.array()
     .items(

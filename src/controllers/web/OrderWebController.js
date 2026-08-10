@@ -122,7 +122,9 @@ class OrderWebController {
           fiscalEmail: req.body.fiscalEmail,
           contactEmail: req.body.contactEmail,
           paymentTerm: req.body.paymentTerm,
-          discountPercent: req.body.applyDiscount === 'on' ? 5 : 0,
+          discountPercent: req.body.discountPercent === '' || req.body.discountPercent === undefined
+            ? 0
+            : Number(req.body.discountPercent),
           bonusProductId: req.body.bonusProductId,
           items,
           sendWhatsapp: req.body.sendWhatsapp === 'on'
