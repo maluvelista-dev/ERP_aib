@@ -5,10 +5,11 @@
     data-unit-price="<%= Number(product.unitPrice ?? 0).toFixed(2) %>"
     data-box-price="<%= product.boxPrice === null || product.boxPrice === undefined ? '' : Number(product.boxPrice).toFixed(2) %>"
   >
-    <%= product.code %> - <%= product.name %> - <%= product.productCategory?.name || product.category %> - Un. R$ <%= Number(product.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+    <%= product.name.toUpperCase() %> - <%= product.productCategory?.name || product.category %> - Un. R$ <%= Number(product.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
     <% if (product.boxPrice) { %>
       | Cx. R$ <%= Number(product.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
     <% } %>
+    | C&oacute;d. <%= product.code %>
   </option>
 <% }) %>
 <% if (!products.length) { %>

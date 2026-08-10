@@ -70,9 +70,9 @@ for (let index = 0; index < products.length; index += chunkSize) {
   const chunk = products.slice(index, index + chunkSize);
   lines.push(
     'INSERT INTO `products`',
-    '  (`id`, `code`, `name`, `category`, `categoryId`, `description`, `unitPrice`, `boxPrice`, `active`, `createdAt`, `updatedAt`)',
+    '  (`id`, `code`, `name`, `category`, `categoryId`, `description`, `unitPrice`, `boxPrice`, `sortOrder`, `active`, `createdAt`, `updatedAt`)',
     'VALUES',
-    chunk.map((product) => [
+    chunk.map((product, chunkIndex) => [
       '  (UUID()',
       quote(product.code),
       quote(product.name),
@@ -81,6 +81,7 @@ for (let index = 0; index < products.length; index += chunkSize) {
       quote(product.description),
       decimal(product.unitPrice),
       decimal(product.boxPrice),
+      String(index + chunkIndex + 1),
       `${product.active ? 'TRUE' : 'FALSE'}, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))`
     ].join(', ')).join(',\n'),
     'ON DUPLICATE KEY UPDATE',
@@ -90,6 +91,7 @@ for (let index = 0; index < products.length; index += chunkSize) {
     '  `description` = VALUES(`description`),',
     '  `unitPrice` = VALUES(`unitPrice`),',
     '  `boxPrice` = VALUES(`boxPrice`),',
+    '  `sortOrder` = VALUES(`sortOrder`),',
     '  `active` = VALUES(`active`),',
     '  `updatedAt` = CURRENT_TIMESTAMP(3);',
     ''

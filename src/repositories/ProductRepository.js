@@ -37,7 +37,10 @@ class ProductRepository extends BaseRepository {
           : {})
       },
       take: limit,
-      orderBy: { name: 'asc' },
+      orderBy: [
+        { sortOrder: { sort: 'asc', nulls: 'last' } },
+        { name: 'asc' }
+      ],
       include: { productCategory: true }
     });
   }
@@ -47,6 +50,14 @@ class ProductRepository extends BaseRepository {
       where: { id },
       include: { productCategory: true }
     });
+  }
+
+  async nextSortOrder() {
+    const result = await this.model.aggregate({
+      _max: { sortOrder: true }
+    });
+
+    return Number(result._max.sortOrder ?? 0) + 1;
   }
 }
 

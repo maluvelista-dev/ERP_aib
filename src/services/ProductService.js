@@ -32,12 +32,14 @@ class ProductService {
     }
 
     const category = await this.#resolveCategory(data);
+    const sortOrder = await ProductRepository.nextSortOrder();
 
     return ProductRepository.create({
       ...data,
       categoryId: category.id,
       category: category.name,
       code,
+      sortOrder,
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
       boxPrice: ProductModel.normalizeMoney(data.boxPrice)
     });

@@ -35,7 +35,7 @@ for (const category of categories) {
 
 let imported = 0;
 
-for (const product of products) {
+for (const [index, product] of products.entries()) {
   const category = categoryByName.get(product.category) ?? categoryByName.get('Linha Premium');
 
   await prisma.product.upsert({
@@ -47,6 +47,7 @@ for (const product of products) {
       description: product.description,
       unitPrice: product.unitPrice,
       boxPrice: product.boxPrice,
+      sortOrder: index + 1,
       active: product.active
     },
     create: {
@@ -57,6 +58,7 @@ for (const product of products) {
       description: product.description,
       unitPrice: product.unitPrice,
       boxPrice: product.boxPrice,
+      sortOrder: index + 1,
       active: product.active
     }
   });
