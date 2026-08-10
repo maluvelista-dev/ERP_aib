@@ -67,6 +67,8 @@ class OrderWebController {
       const productIds = Array.isArray(req.body.productId) ? req.body.productId : [req.body.productId];
       const unitQuantities = Array.isArray(req.body.unitQuantity) ? req.body.unitQuantity : [req.body.unitQuantity];
       const boxQuantities = Array.isArray(req.body.boxQuantity) ? req.body.boxQuantity : [req.body.boxQuantity];
+      const customUnitPrices = Array.isArray(req.body.customUnitPrice) ? req.body.customUnitPrice : [req.body.customUnitPrice];
+      const customBoxPrices = Array.isArray(req.body.customBoxPrice) ? req.body.customBoxPrice : [req.body.customBoxPrice];
       const deliveryDays = !req.body.deliveryDays
         ? []
         : Array.isArray(req.body.deliveryDays) ? req.body.deliveryDays : [req.body.deliveryDays];
@@ -74,7 +76,13 @@ class OrderWebController {
         .map((productId, index) => ({
           productId,
           unitQuantity: Number(unitQuantities[index] ?? 0),
-          boxQuantity: Number(boxQuantities[index] ?? 0)
+          boxQuantity: Number(boxQuantities[index] ?? 0),
+          customUnitPrice: customUnitPrices[index] === '' || customUnitPrices[index] === undefined
+            ? null
+            : Number(customUnitPrices[index]),
+          customBoxPrice: customBoxPrices[index] === '' || customBoxPrices[index] === undefined
+            ? null
+            : Number(customBoxPrices[index])
         }))
         .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
 

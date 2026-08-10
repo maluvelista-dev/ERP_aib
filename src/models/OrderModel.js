@@ -24,7 +24,9 @@ const orderSchema = Joi.object({
         productId: Joi.string().required(),
         quantity: Joi.number().integer().min(1),
         unitQuantity: Joi.number().integer().min(0).default(0),
-        boxQuantity: Joi.number().integer().min(0).default(0)
+        boxQuantity: Joi.number().integer().min(0).default(0),
+        customUnitPrice: Joi.number().min(0).precision(2).allow(null),
+        customBoxPrice: Joi.number().min(0).precision(2).allow(null)
       })
         .or('quantity', 'unitQuantity', 'boxQuantity')
         .custom((item, helpers) => {

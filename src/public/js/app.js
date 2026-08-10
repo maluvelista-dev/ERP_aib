@@ -41,13 +41,29 @@ function applyTheme(theme) {
 applyTheme(getPreferredTheme());
 
 document.addEventListener('click', (event) => {
-  const button = event.target.closest('.js-remove-order-item');
+  const removeButton = event.target.closest('.js-remove-order-item');
 
-  if (!button) {
+  if (removeButton) {
+    removeButton.closest('.order-item-row')?.remove();
     return;
   }
 
-  button.closest('.row')?.remove();
+  const priceButton = event.target.closest('.js-toggle-custom-price');
+
+  if (priceButton) {
+    const panel = priceButton.closest('.order-item-row')?.querySelector('.js-custom-price-panel');
+    const willOpen = panel?.classList.contains('d-none');
+
+    panel?.classList.toggle('d-none', !willOpen);
+    priceButton.setAttribute('aria-expanded', String(willOpen));
+    priceButton.innerHTML = willOpen ? 'Usar pre&ccedil;o original' : 'Personalizar pre&ccedil;o';
+
+    if (!willOpen && panel) {
+      panel.querySelectorAll('input').forEach((input) => {
+        input.value = '';
+      });
+    }
+  }
 });
 
 document.addEventListener('change', (event) => {
@@ -55,6 +71,27 @@ document.addEventListener('change', (event) => {
 
   if (themeToggle) {
     applyTheme(themeToggle.checked ? 'dark' : 'light');
+    return;
+  }
+
+  const productSelect = event.target.closest('.js-order-product');
+
+  if (productSelect) {
+    const row = productSelect.closest('.order-item-row');
+    const option = productSelect.selectedOptions[0];
+    const unitPrice = option?.dataset.unitPrice;
+    const boxPrice = option?.dataset.boxPrice;
+    const money = (value) => Number(value).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    row?.querySelector('.js-original-unit-price')?.replaceChildren(
+      document.createTextNode(unitPrice ? `Preço original: R$ ${money(unitPrice)}` : 'Preço original não informado.')
+    );
+    row?.querySelector('.js-original-box-price')?.replaceChildren(
+      document.createTextNode(boxPrice ? `Preço original: R$ ${money(boxPrice)}` : 'Preço por caixa não informado.')
+    );
     return;
   }
 

@@ -154,8 +154,12 @@ class OrderService {
 
       const unitQuantity = requestedItem.unitQuantity ?? requestedItem.quantity ?? 0;
       const boxQuantity = requestedItem.boxQuantity ?? 0;
-      const unitPrice = Number(product.unitPrice ?? 0);
-      const boxPrice = product.boxPrice === null || product.boxPrice === undefined ? null : Number(product.boxPrice);
+      const unitPrice = requestedItem.customUnitPrice === null || requestedItem.customUnitPrice === undefined
+        ? Number(product.unitPrice ?? 0)
+        : Number(requestedItem.customUnitPrice);
+      const boxPrice = requestedItem.customBoxPrice === null || requestedItem.customBoxPrice === undefined
+        ? (product.boxPrice === null || product.boxPrice === undefined ? null : Number(product.boxPrice))
+        : Number(requestedItem.customBoxPrice);
       const totalPrice = unitQuantity * unitPrice + boxQuantity * (boxPrice ?? 0);
 
       items.push({

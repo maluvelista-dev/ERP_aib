@@ -1,38 +1,64 @@
-<div class="row g-2 align-items-end mb-2">
-  <div class="col-lg-6">
-    <label class="form-label">Produto</label>
-    <input
-      class="form-control form-control-sm mb-2"
-      type="search"
-      placeholder="Pesquisar por nome, código ou categoria"
-      hx-get="/orders/product-options"
-      hx-trigger="keyup changed delay:300ms, search"
-      hx-target="next select"
-      hx-swap="innerHTML"
-      name="q"
-    >
-    <select class="form-select" name="productId" required>
-      <%- include('_product_options', { products }) %>
-    </select>
+<div class="order-item-row border rounded p-3 mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-lg-5">
+      <label class="form-label">Produto</label>
+      <input
+        class="form-control form-control-sm mb-2"
+        type="search"
+        placeholder="Pesquisar por nome, c&oacute;digo ou categoria"
+        hx-get="/orders/product-options"
+        hx-trigger="keyup changed delay:300ms, search"
+        hx-target="next select"
+        hx-swap="innerHTML"
+        name="q"
+      >
+      <select class="form-select js-order-product" name="productId" required>
+        <%- include('_product_options', { products }) %>
+      </select>
+    </div>
+    <div class="col-6 col-lg-1">
+      <label class="form-label">Unidades</label>
+      <input class="form-control" name="unitQuantity" type="number" min="0" value="0" required>
+    </div>
+    <div class="col-6 col-lg-1">
+      <label class="form-label">Caixas</label>
+      <input class="form-control" name="boxQuantity" type="number" min="0" value="0" required>
+    </div>
+    <div class="col-lg-2">
+      <button class="btn btn-outline-secondary w-100 js-toggle-custom-price" type="button" aria-expanded="false">
+        Personalizar pre&ccedil;o
+      </button>
+    </div>
+    <div class="col-lg-3">
+      <div class="d-flex gap-2">
+        <button
+          class="btn btn-outline-primary flex-fill"
+          type="button"
+          hx-get="/orders/item-row"
+          hx-target="#order-items"
+          hx-swap="beforeend"
+        >Adicionar</button>
+        <button class="btn btn-outline-danger flex-fill js-remove-order-item" type="button">Remover</button>
+      </div>
+    </div>
   </div>
-  <div class="col-6 col-lg-2">
-    <label class="form-label">Unidades</label>
-    <input class="form-control" name="unitQuantity" type="number" min="0" value="0" required>
-  </div>
-  <div class="col-6 col-lg-2">
-    <label class="form-label">Caixas</label>
-    <input class="form-control" name="boxQuantity" type="number" min="0" value="0" required>
-  </div>
-  <div class="col-lg-2">
-    <div class="d-flex gap-2">
-      <button
-        class="btn btn-outline-primary flex-fill"
-        type="button"
-        hx-get="/orders/item-row"
-        hx-target="#order-items"
-        hx-swap="beforeend"
-      >Adicionar</button>
-      <button class="btn btn-outline-danger flex-fill js-remove-order-item" type="button">Remover</button>
+
+  <div class="row g-2 mt-2 d-none js-custom-price-panel">
+    <div class="col-md-6">
+      <label class="form-label">Pre&ccedil;o personalizado por unidade</label>
+      <div class="input-group">
+        <span class="input-group-text">R$</span>
+        <input class="form-control js-custom-unit-price" name="customUnitPrice" type="number" min="0" step="0.01" placeholder="Usar pre&ccedil;o original">
+      </div>
+      <div class="form-text js-original-unit-price">Selecione um produto para consultar o pre&ccedil;o original.</div>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Pre&ccedil;o personalizado por caixa</label>
+      <div class="input-group">
+        <span class="input-group-text">R$</span>
+        <input class="form-control js-custom-box-price" name="customBoxPrice" type="number" min="0" step="0.01" placeholder="Usar pre&ccedil;o original">
+      </div>
+      <div class="form-text js-original-box-price">Selecione um produto para consultar o pre&ccedil;o original.</div>
     </div>
   </div>
 </div>

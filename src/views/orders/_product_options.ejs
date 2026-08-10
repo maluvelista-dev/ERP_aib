@@ -1,6 +1,10 @@
 <option value="">Selecione o produto</option>
 <% products.forEach((product) => { %>
-  <option value="<%= product.id %>">
+  <option
+    value="<%= product.id %>"
+    data-unit-price="<%= Number(product.unitPrice ?? 0).toFixed(2) %>"
+    data-box-price="<%= product.boxPrice === null || product.boxPrice === undefined ? '' : Number(product.boxPrice).toFixed(2) %>"
+  >
     <%= product.code %> - <%= product.name %> - <%= product.productCategory?.name || product.category %> - Un. R$ <%= Number(product.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
     <% if (product.boxPrice) { %>
       | Cx. R$ <%= Number(product.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
