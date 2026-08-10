@@ -49,6 +49,18 @@ router.post(
   webAuthorize(CustomerPolicy, 'create'),
   asyncHandler((req, res) => CustomerWebController.create(req, res))
 );
+router.get(
+  '/customers/:id/edit',
+  requireWebAuth,
+  webAuthorize(CustomerPolicy, 'update'),
+  asyncHandler((req, res) => CustomerWebController.edit(req, res))
+);
+router.post(
+  '/customers/:id',
+  requireWebAuth,
+  webAuthorize(CustomerPolicy, 'update'),
+  asyncHandler((req, res) => CustomerWebController.update(req, res))
+);
 
 router.get(
   '/products',

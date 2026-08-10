@@ -46,14 +46,14 @@ class CustomerService {
   async create(payload) {
     const data = CustomerModel.validateCreate(payload);
     const cnpj = CustomerModel.normalizeCnpj(data.cnpj);
-    const existing = await CustomerRepository.findByCnpj(cnpj);
+    const existing = cnpj ? await CustomerRepository.findByCnpj(cnpj) : null;
 
     if (existing) {
       throw new AppError('A customer with this CNPJ already exists', 409);
     }
 
     return CustomerRepository.create({
-      ...data,
+      ...this.#nullifyEmptyFields(data),
       cnpj,
       active: true,
       searchKeywords: CustomerModel.buildSearchKeywords({ ...data, cnpj })
@@ -64,9 +64,14 @@ class CustomerService {
     await this.findById(id);
     const data = CustomerModel.validateUpdate(payload);
     const cnpj = CustomerModel.normalizeCnpj(data.cnpj);
+    const existing = cnpj ? await CustomerRepository.findByCnpj(cnpj) : null;
+
+    if (existing && existing.id !== id) {
+      throw new AppError('A customer with this CNPJ already exists', 409);
+    }
 
     return CustomerRepository.update(id, {
-      ...data,
+      ...this.#nullifyEmptyFields(data),
       cnpj,
       searchKeywords: CustomerModel.buildSearchKeywords({ ...data, cnpj })
     });
@@ -83,6 +88,12 @@ class CustomerService {
 
   return CustomerRepository.findActive();
 }
+
+  #nullifyEmptyFields(data) {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [key, value === '' ? null : value])
+    );
+  }
 }
 
 export default new CustomerService();

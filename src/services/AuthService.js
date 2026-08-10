@@ -8,7 +8,7 @@ import { AppError } from '../utils/AppError.js';
 class AuthService {
   async login(payload) {
     const data = AuthModel.validateLogin(payload);
-    const user = await UserRepository.findByEmail(data.email);
+    const user = await this.#findUserWithWakeRetry(data.email);
 
     if (!user || user.active === false) {
       throw new AppError('Invalid credentials', 401);
@@ -41,6 +41,33 @@ class AuthService {
         role
       }
     };
+  }
+
+  async #findUserWithWakeRetry(email) {
+    const retryDelays = [2000, 4000, 6000, 8000];
+
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await UserRepository.findByEmail(email);
+      } catch (error) {
+        if (attempt >= retryDelays.length || !this.#isTransientDatabaseError(error)) {
+          throw error;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
+      }
+    }
+  }
+
+  #isTransientDatabaseError(error) {
+    const code = error?.code ?? error?.cause?.code;
+    const message = String(error?.message ?? '').toLowerCase();
+
+    return ['P1001', 'ECONNREFUSED', 'ETIMEDOUT'].includes(code)
+      || message.includes("can't reach database server")
+      || message.includes('connection timeout')
+      || message.includes('failed to create socket')
+      || message.includes('econnrefused');
   }
 }
 

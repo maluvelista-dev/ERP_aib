@@ -7,21 +7,22 @@
       <%- include('../partials/flash') %>
       <section class="content-panel p-3">
         <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
-        <form action="/customers" method="post" class="row g-3">
-          <div class="col-md-4"><label class="form-label">CNPJ</label><input class="form-control" name="cnpj" value="<%= customer.cnpj || '' %>" required></div>
-          <div class="col-md-8"><label class="form-label">Razão social</label><input class="form-control" name="legalName" value="<%= customer.legalName || '' %>" required></div>
+        <form action="<%= customer.id ? `/customers/${customer.id}` : '/customers' %>" method="post" class="row g-3">
+          <div class="col-12"><div class="alert alert-info mb-0">Preencha apenas as informa&ccedil;&otilde;es dispon&iacute;veis. Todos os campos podem ser completados ou alterados posteriormente.</div></div>
+          <div class="col-md-4"><label class="form-label">CNPJ</label><input class="form-control" name="cnpj" value="<%= customer.cnpj || '' %>"></div>
+          <div class="col-md-8"><label class="form-label">Raz&atilde;o social</label><input class="form-control" name="legalName" value="<%= customer.legalName || '' %>"></div>
           <div class="col-md-6"><label class="form-label">Nome fantasia</label><input class="form-control" name="tradeName" value="<%= customer.tradeName || '' %>"></div>
           <div class="col-md-3"><label class="form-label">Telefone</label><input class="form-control" name="phone" value="<%= customer.phone || '' %>"></div>
-          <div class="col-md-3"><label class="form-label">WhatsApp</label><input class="form-control" name="whatsapp" value="<%= customer.whatsapp || '' %>" required></div>
+          <div class="col-md-3"><label class="form-label">WhatsApp</label><input class="form-control" name="whatsapp" value="<%= customer.whatsapp || '' %>"></div>
           <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" value="<%= customer.email || '' %>"></div>
           <div class="col-md-3"><label class="form-label">CEP</label><input class="form-control" name="zipCode" value="<%= customer.zipCode || '' %>"></div>
-          <div class="col-md-3"><label class="form-label">UF</label><input class="form-control" name="state" maxlength="2" value="<%= customer.state || '' %>" required></div>
-          <div class="col-md-6"><label class="form-label">Endereço</label><input class="form-control" name="street" value="<%= customer.street || '' %>" required></div>
-          <div class="col-md-2"><label class="form-label">Número</label><input class="form-control" name="number" value="<%= customer.number || '' %>" required></div>
-          <div class="col-md-4"><label class="form-label">Bairro</label><input class="form-control" name="district" value="<%= customer.district || '' %>" required></div>
-          <div class="col-md-6"><label class="form-label">Cidade</label><input class="form-control" name="city" value="<%= customer.city || '' %>" required></div>
+          <div class="col-md-3"><label class="form-label">UF</label><input class="form-control" name="state" maxlength="2" value="<%= customer.state || '' %>"></div>
+          <div class="col-md-6"><label class="form-label">Endere&ccedil;o</label><input class="form-control" name="street" value="<%= customer.street || '' %>"></div>
+          <div class="col-md-2"><label class="form-label">N&uacute;mero</label><input class="form-control" name="number" value="<%= customer.number || '' %>"></div>
+          <div class="col-md-4"><label class="form-label">Bairro</label><input class="form-control" name="district" value="<%= customer.district || '' %>"></div>
+          <div class="col-md-6"><label class="form-label">Cidade</label><input class="form-control" name="city" value="<%= customer.city || '' %>"></div>
           <div class="col-12 d-flex gap-2">
-            <button class="btn btn-primary" type="submit">Salvar cliente</button>
+            <button class="btn btn-primary" type="submit"><%= customer.id ? 'Salvar alterações' : 'Salvar cliente' %></button>
             <a class="btn btn-outline-secondary" href="/customers">Cancelar</a>
           </div>
         </form>

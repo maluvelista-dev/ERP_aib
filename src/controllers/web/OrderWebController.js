@@ -103,7 +103,12 @@ class OrderWebController {
       req.session.flash = { success: `Pedido ${order.orderNumber} criado com sucesso.` };
       res.redirect('/orders');
     } catch (error) {
-      req.session.flash = { error: `Nao foi possivel criar o pedido: ${error.message}` };
+      const validationDetails = Array.isArray(error.details) && error.details.length
+        ? ` (${error.details.join('; ')})`
+        : '';
+      req.session.flash = {
+        error: `Não foi possível criar o pedido: ${error.message}${validationDetails}`
+      };
       res.redirect('/orders/new');
     }
   }

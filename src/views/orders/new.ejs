@@ -18,7 +18,7 @@
             <select class="form-select" name="customerId" required>
               <option value="">Selecione o cliente</option>
               <% customers.forEach((customer) => { %>
-                <option value="<%= customer.id %>"><%= customer.legalName %> - <%= customer.cnpj %></option>
+                <option value="<%= customer.id %>"><%= customer.legalName || customer.tradeName || 'Cliente sem nome' %><%= customer.cnpj ? ` - ${customer.cnpj}` : '' %></option>
               <% }) %>
             </select>
           </div>

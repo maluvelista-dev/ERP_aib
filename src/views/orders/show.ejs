@@ -31,15 +31,14 @@
         <div class="col-lg-6">
           <div class="content-panel p-3 h-100">
             <h3 class="h6 mb-3">Cliente</h3>
-            <div class="fw-semibold"><%= order.customerSnapshot.legalName %></div>
+            <div class="fw-semibold"><%= order.customerSnapshot.legalName || order.customerSnapshot.tradeName || 'Cliente sem nome' %></div>
             <% if (order.customerSnapshot.tradeName) { %>
               <div class="small text-muted"><%= order.customerSnapshot.tradeName %></div>
             <% } %>
-            <div class="mt-2 small">CNPJ: <%= order.customerSnapshot.cnpj %></div>
-            <div class="small">WhatsApp: <%= order.customerSnapshot.whatsapp %></div>
+            <div class="mt-2 small">CNPJ: <%= order.customerSnapshot.cnpj || 'Não informado' %></div>
+            <div class="small">WhatsApp: <%= order.customerSnapshot.whatsapp || 'Não informado' %></div>
             <div class="small">
-              <%= order.customerSnapshot.street %>, <%= order.customerSnapshot.number %> -
-              <%= order.customerSnapshot.district %>, <%= order.customerSnapshot.city %>/<%= order.customerSnapshot.state %>
+              <%= [order.customerSnapshot.street, order.customerSnapshot.number, order.customerSnapshot.district, order.customerSnapshot.city, order.customerSnapshot.state].filter(Boolean).join(', ') || 'Endereço não informado' %>
             </div>
           </div>
         </div>

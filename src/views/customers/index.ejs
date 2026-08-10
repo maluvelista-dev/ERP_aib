@@ -21,17 +21,18 @@
                 <th>WhatsApp</th>
                 <th>Cidade</th>
                 <th>Status</th>
+                <th>A&ccedil;&otilde;es</th>
               </tr>
             </thead>
             <tbody>
               <% customers.forEach((customer) => { %>
                 <tr>
-                  <td><%= customer.cnpj %></td>
-                  <td><%= customer.legalName %></td>
+                  <td><%= customer.cnpj || '-' %></td>
+                  <td><%= customer.legalName || 'Cliente sem nome' %></td>
                   <td><%= customer.tradeName || '-' %></td>
-                  <td><%= customer.street %>, <%= customer.number %> - <%= customer.district %></td>
-                  <td><%= customer.whatsapp %></td>
-                  <td><%= customer.city %>/<%= customer.state %></td>
+                  <td><%= [customer.street, customer.number, customer.district].filter(Boolean).join(', ') || '-' %></td>
+                  <td><%= customer.whatsapp || '-' %></td>
+                  <td><%= [customer.city, customer.state].filter(Boolean).join('/') || '-' %></td>
                   <td class="text-end">
                     <% if (currentUser.role === 'admin') { %>
                       <form action="/customers/<%= customer.id %>/toggle-active" method="post" class="d-inline js-customer-active-form">
@@ -55,6 +56,7 @@
                       </span>
                     <% } %>
                   </td>
+                  <td><a class="btn btn-sm btn-outline-primary" href="/customers/<%= customer.id %>/edit">Editar</a></td>
                 </tr>
               <% }) %>
             </tbody>

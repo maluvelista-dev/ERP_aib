@@ -24,18 +24,18 @@ model User {
 
 model Customer {
   id             String   @id @default(uuid())
-  cnpj           String   @unique
-  legalName      String
+  cnpj           String?  @unique
+  legalName      String?
   tradeName      String?
   phone          String?
-  whatsapp       String
+  whatsapp       String?
   email          String?
   zipCode        String?
-  street         String
-  number         String
-  district       String
-  city           String
-  state          String
+  street         String?
+  number         String?
+  district       String?
+  city           String?
+  state          String?
   active         Boolean  @default(true)
   searchKeywords Json?
   createdAt      DateTime @default(now())

@@ -20,7 +20,7 @@
               <%= order.orderNumber %>
             </a>
           </td>
-          <td><%= order.customerSnapshot.legalName %></td>
+          <td><%= order.customerSnapshot.legalName || order.customerSnapshot.tradeName || 'Cliente sem nome' %></td>
           <td><%= order.createdBy?.name || 'N&atilde;o informado' %></td>
           <td><%= order.receivedTime || '-' %></td>
           <td class="text-end orders-total-column">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>

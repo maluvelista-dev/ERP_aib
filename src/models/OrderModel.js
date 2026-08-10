@@ -4,14 +4,17 @@ import { BaseModel } from './BaseModel.js';
 const orderSchema = Joi.object({
   customerId: Joi.string().required(),
   sellerPhone: Joi.string().allow('', null),
-  receivedTime: Joi.string().pattern(/^([01]\d|2[0-3]):[0-5]\d$/).allow('', null),
+  receivedTime: Joi.string().pattern(/^([01]\d|2[0-3]):[0-5]\d$/).allow('', null)
+    .messages({ 'string.pattern.base': 'O horário de recebimento deve estar no formato HH:MM' }),
   deliveryDays: Joi.array()
     .items(Joi.string().valid('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'))
     .unique()
     .default([]),
   notes: Joi.string().trim().max(1000).allow('', null),
-  fiscalEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null),
-  contactEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null),
+  fiscalEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null)
+    .messages({ 'string.email': 'O e-mail para documentos fiscais é inválido' }),
+  contactEmail: Joi.string().trim().email({ tlds: { allow: false } }).max(191).allow('', null)
+    .messages({ 'string.email': 'O e-mail de contato é inválido' }),
   paymentTerm: Joi.string().trim().max(191).allow('', null),
   discountPercent: Joi.number().valid(0, 5).default(0),
   bonusProductId: Joi.string().allow('', null),
@@ -36,7 +39,8 @@ const orderSchema = Joi.object({
         })
     )
     .min(1)
-    .required(),
+    .required()
+    .messages({ 'array.min': 'Adicione ao menos um produto com quantidade maior que zero' }),
   sendWhatsapp: Joi.boolean().default(false)
 });
 

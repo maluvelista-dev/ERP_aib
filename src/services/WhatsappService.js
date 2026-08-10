@@ -9,8 +9,13 @@ class WhatsappService {
       throw new AppError('WhatsApp integration is not configured', 503);
     }
 
+    if (!customer.whatsapp) {
+      throw new AppError('O cliente não possui WhatsApp cadastrado', 422);
+    }
+
     const url = `https://graph.facebook.com/${env.whatsapp.apiVersion}/${env.whatsapp.phoneNumberId}/messages`;
-    const filename = `order_${order.orderNumber.replace('#', '')}_${customer.legalName.replace(/\W+/g, '_').toLowerCase()}.pdf`;
+    const customerName = customer.legalName || customer.tradeName || 'cliente';
+    const filename = `order_${order.orderNumber.replace('#', '')}_${customerName.replace(/\W+/g, '_').toLowerCase()}.pdf`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -25,7 +30,7 @@ class WhatsappService {
         document: {
           link: pdfUrl,
           filename,
-          caption: `Hello, ${customer.legalName}! Your order ${order.orderNumber} is attached.`
+          caption: `Hello, ${customerName}! Your order ${order.orderNumber} is attached.`
         }
       })
     });
