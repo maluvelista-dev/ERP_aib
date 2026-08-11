@@ -116,6 +116,63 @@ class OrderService {
     return this.#withTotals(order);
   }
 
+  async update(id, payload) {
+    const currentOrder = await this.findById(id);
+    const data = OrderModel.validateCreate(payload);
+    const customer = await CustomerRepository.findById(data.customerId);
+
+    if (!customer || customer.active === false) {
+      throw new AppError('Invalid customer for order issuance', 422);
+    }
+
+    const items = await this.#buildItems(data.items);
+    const subtotalPrice = items.reduce((sum, item) => sum + Number(item.totalPrice ?? 0), 0);
+    const discountPercent = Number(data.discountPercent ?? 0);
+    const discountAmount = subtotalPrice * (discountPercent / 100);
+    const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId);
+    const order = await OrderRepository.replaceItemsAndUpdate(id, {
+      customerId: customer.id,
+      customerSnapshot: {
+        cnpj: customer.cnpj,
+        legalName: customer.legalName,
+        tradeName: customer.tradeName,
+        whatsapp: customer.whatsapp,
+        zipCode: customer.zipCode,
+        street: customer.street,
+        number: customer.number,
+        district: customer.district,
+        city: customer.city,
+        state: customer.state
+      },
+      receivedTime: data.receivedTime || null,
+      deliveryDays: data.deliveryDays,
+      notes: data.notes || null,
+      fiscalEmail: data.fiscalEmail || null,
+      contactEmail: data.contactEmail || null,
+      paymentTerm: data.paymentTerm || null,
+      sellerSnapshot: {
+        ...(currentOrder.sellerSnapshot ?? {}),
+        phone: data.sellerPhone || ''
+      },
+      discountPercent,
+      discountAmount,
+      bonusProductSnapshot,
+      status: 'DRAFT',
+      pdfUrl: null,
+      whatsappSent: false,
+      sentAt: null,
+      whatsappError: null
+    }, items);
+
+    await StorageService.deletePdf(currentOrder.pdfUrl);
+
+    if (data.sendWhatsapp) {
+      return this.generatePdfAndSendWhatsapp(order.id);
+    }
+
+    return this.#withTotals(order);
+  }
+
   async generatePdf(id) {
     const order = await this.findById(id);
     const buffer = await PdfService.generateOrderPdf(order);

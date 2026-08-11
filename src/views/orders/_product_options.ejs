@@ -2,6 +2,7 @@
 <% products.forEach((product) => { %>
   <option
     value="<%= product.id %>"
+    <%= String(typeof selectedProductId === 'undefined' ? '' : selectedProductId) === String(product.id) ? 'selected' : '' %>
     data-unit-price="<%= Number(product.unitPrice ?? 0).toFixed(2) %>"
     data-box-price="<%= product.boxPrice === null || product.boxPrice === undefined ? '' : Number(product.boxPrice).toFixed(2) %>"
   >

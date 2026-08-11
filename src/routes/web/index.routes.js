@@ -120,6 +120,12 @@ router.get(
   asyncHandler((req, res) => OrderWebController.new(req, res))
 );
 router.get(
+  '/orders/:id/edit',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'update', (req) => OrderRepository.findById(req.params.id)),
+  asyncHandler((req, res) => OrderWebController.edit(req, res))
+);
+router.get(
   '/orders/item-row',
   requireWebAuth,
   webAuthorize(OrderPolicy, 'create'),
@@ -148,6 +154,12 @@ router.post(
   requireWebAuth,
   webAuthorize(OrderPolicy, 'create'),
   asyncHandler((req, res) => OrderWebController.create(req, res))
+);
+router.post(
+  '/orders/:id',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'update', (req) => OrderRepository.findById(req.params.id)),
+  asyncHandler((req, res) => OrderWebController.update(req, res))
 );
 router.post(
   '/orders/:id/pdf',

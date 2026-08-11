@@ -25,4 +25,8 @@ export class OrderPolicy extends ApplicationPolicy {
     return this.isAdminOrManager()
       || Boolean(this.user?.id && this.record?.createdById === this.user.id);
   }
+
+  update() {
+    return this.destroy();
+  }
 }

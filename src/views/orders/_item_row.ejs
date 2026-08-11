@@ -1,3 +1,8 @@
+<%
+  const item = typeof currentItem === 'undefined' ? null : currentItem;
+  const selectedProduct = item ? products.find((product) => String(product.id) === String(item.productId)) : null;
+  const hasSavedPrices = Boolean(item);
+%>
 <div class="order-item-row border rounded p-3 mb-3">
   <div class="row g-2 align-items-end">
     <div class="col-lg-5">
@@ -13,20 +18,20 @@
         name="q"
       >
       <select class="form-select js-order-product" name="productId">
-        <%- include('_product_options', { products }) %>
+        <%- include('_product_options', { products, selectedProductId: item?.productId }) %>
       </select>
     </div>
     <div class="col-6 col-lg-1">
       <label class="form-label">Unidades</label>
-      <input class="form-control" name="unitQuantity" type="number" min="0" value="0" required>
+      <input class="form-control" name="unitQuantity" type="number" min="0" value="<%= item?.unitQuantity ?? 0 %>" required>
     </div>
     <div class="col-6 col-lg-1">
       <label class="form-label">Caixas</label>
-      <input class="form-control" name="boxQuantity" type="number" min="0" value="0" required>
+      <input class="form-control" name="boxQuantity" type="number" min="0" value="<%= item?.boxQuantity ?? 0 %>" required>
     </div>
     <div class="col-lg-2">
-      <button class="btn btn-outline-secondary w-100 js-toggle-custom-price" type="button" aria-expanded="false">
-        Personalizar pre&ccedil;o
+      <button class="btn btn-outline-secondary w-100 js-toggle-custom-price" type="button" aria-expanded="<%= hasSavedPrices ? 'true' : 'false' %>">
+        <%- hasSavedPrices ? 'Usar pre&ccedil;o original' : 'Personalizar pre&ccedil;o' %>
       </button>
     </div>
     <div class="col-lg-3">
@@ -43,22 +48,22 @@
     </div>
   </div>
 
-  <div class="row g-2 mt-2 d-none js-custom-price-panel">
+  <div class="row g-2 mt-2 <%= hasSavedPrices ? '' : 'd-none' %> js-custom-price-panel">
     <div class="col-md-6">
       <label class="form-label">Pre&ccedil;o personalizado por unidade</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
-        <input class="form-control js-custom-unit-price" name="customUnitPrice" type="number" min="0" step="0.01" placeholder="Usar pre&ccedil;o original">
+        <input class="form-control js-custom-unit-price" name="customUnitPrice" type="number" min="0" step="0.01" value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="Usar pre&ccedil;o original">
       </div>
-      <div class="form-text js-original-unit-price">Selecione um produto para consultar o pre&ccedil;o original.</div>
+      <div class="form-text js-original-unit-price"><%- selectedProduct ? `Pre&ccedil;o original: R$ ${Number(selectedProduct.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Selecione um produto para consultar o pre&ccedil;o original.' %></div>
     </div>
     <div class="col-md-6">
       <label class="form-label">Pre&ccedil;o personalizado por caixa</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
-        <input class="form-control js-custom-box-price" name="customBoxPrice" type="number" min="0" step="0.01" placeholder="Usar pre&ccedil;o original">
+        <input class="form-control js-custom-box-price" name="customBoxPrice" type="number" min="0" step="0.01" value="<%= item?.boxPrice === null || item?.boxPrice === undefined ? '' : Number(item.boxPrice).toFixed(2) %>" placeholder="Usar pre&ccedil;o original">
       </div>
-      <div class="form-text js-original-box-price">Selecione um produto para consultar o pre&ccedil;o original.</div>
+      <div class="form-text js-original-box-price"><%- selectedProduct?.boxPrice ? `Pre&ccedil;o original: R$ ${Number(selectedProduct.boxPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Pre&ccedil;o por caixa n&atilde;o informado.' %></div>
     </div>
   </div>
 </div>

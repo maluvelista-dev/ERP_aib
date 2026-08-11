@@ -1,3 +1,4 @@
+<% const item = typeof currentItem === 'undefined' ? null : currentItem; %>
 <div class="manual-order-item-row border border-secondary rounded p-3 mb-3">
   <div class="d-flex justify-content-between align-items-center mb-2">
     <span class="badge text-bg-secondary">Produto manual</span>
@@ -6,17 +7,17 @@
   <div class="row g-2 align-items-end">
     <div class="col-lg-6">
       <label class="form-label">Nome do produto</label>
-      <input class="form-control" name="manualProductName" maxlength="191" required placeholder="Digite o nome ou a descrição do produto">
+      <input class="form-control" name="manualProductName" maxlength="191" required value="<%= item?.productName || '' %>" placeholder="Digite o nome ou a descri&ccedil;&atilde;o do produto">
     </div>
     <div class="col-md-3 col-lg-2">
       <label class="form-label">Quantidade</label>
-      <input class="form-control" name="manualQuantity" type="number" min="1" value="1" required>
+      <input class="form-control" name="manualQuantity" type="number" min="1" value="<%= item?.unitQuantity ?? 1 %>" required>
     </div>
     <div class="col-md-5 col-lg-3">
       <label class="form-label">Preço unitário</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
-        <input class="form-control" name="manualPrice" type="number" min="0" step="0.01" required placeholder="0,00">
+        <input class="form-control" name="manualPrice" type="number" min="0" step="0.01" required value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="0,00">
       </div>
     </div>
   </div>

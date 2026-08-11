@@ -3,6 +3,66 @@ import OrderService from '../../services/OrderService.js';
 import ProductService from '../../services/ProductService.js';
 import UserService from '../../services/UserService.js';
 
+const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
+
+const buildOrderPayload = (body) => {
+  const productIds = asArray(body.productId);
+  const unitQuantities = asArray(body.unitQuantity);
+  const boxQuantities = asArray(body.boxQuantity);
+  const customUnitPrices = asArray(body.customUnitPrice);
+  const customBoxPrices = asArray(body.customBoxPrice);
+  const items = productIds
+    .map((productId, index) => ({
+      productId,
+      unitQuantity: Number(unitQuantities[index] ?? 0),
+      boxQuantity: Number(boxQuantities[index] ?? 0),
+      customUnitPrice: customUnitPrices[index] === '' || customUnitPrices[index] === undefined
+        ? null
+        : Number(customUnitPrices[index]),
+      customBoxPrice: customBoxPrices[index] === '' || customBoxPrices[index] === undefined
+        ? null
+        : Number(customBoxPrices[index])
+    }))
+    .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
+  const manualNames = asArray(body.manualProductName);
+  const manualQuantities = asArray(body.manualQuantity);
+  const manualPrices = asArray(body.manualPrice);
+
+  manualNames.forEach((manualName, index) => {
+    const unitQuantity = Number(manualQuantities[index] ?? 0);
+
+    if (manualName?.trim() && unitQuantity > 0) {
+      items.push({
+        productId: null,
+        manualName: manualName.trim(),
+        unitQuantity,
+        boxQuantity: 0,
+        customUnitPrice: manualPrices[index] === '' || manualPrices[index] === undefined
+          ? null
+          : Number(manualPrices[index]),
+        customBoxPrice: null
+      });
+    }
+  });
+
+  return {
+    customerId: body.customerId,
+    sellerPhone: body.sellerPhone,
+    receivedTime: body.receivedTime,
+    deliveryDays: asArray(body.deliveryDays),
+    notes: body.notes,
+    fiscalEmail: body.fiscalEmail,
+    contactEmail: body.contactEmail,
+    paymentTerm: body.paymentTerm,
+    discountPercent: body.discountPercent === '' || body.discountPercent === undefined
+      ? 0
+      : Number(body.discountPercent),
+    bonusProductId: body.bonusProductId,
+    items,
+    sendWhatsapp: body.sendWhatsapp === 'on'
+  };
+};
+
 class OrderWebController {
   async index(req, res) {
     const selectedCollaboratorId = req.query.createdById ?? '';
@@ -31,6 +91,23 @@ class OrderWebController {
       title: 'Novo Pedido',
       customers,
       products,
+      order: null,
+      error: res.locals.flash?.error ?? null
+    });
+  }
+
+  async edit(req, res) {
+    const [order, customers, products] = await Promise.all([
+      OrderService.findById(req.params.id),
+      CustomerService.list(),
+      ProductService.list()
+    ]);
+
+    res.render('orders/new', {
+      title: `Editar Pedido ${order.orderNumber}`,
+      customers,
+      products,
+      order,
       error: res.locals.flash?.error ?? null
     });
   }
@@ -68,67 +145,8 @@ class OrderWebController {
 
   async create(req, res) {
     try {
-      const productIds = Array.isArray(req.body.productId) ? req.body.productId : [req.body.productId];
-      const unitQuantities = Array.isArray(req.body.unitQuantity) ? req.body.unitQuantity : [req.body.unitQuantity];
-      const boxQuantities = Array.isArray(req.body.boxQuantity) ? req.body.boxQuantity : [req.body.boxQuantity];
-      const customUnitPrices = Array.isArray(req.body.customUnitPrice) ? req.body.customUnitPrice : [req.body.customUnitPrice];
-      const customBoxPrices = Array.isArray(req.body.customBoxPrice) ? req.body.customBoxPrice : [req.body.customBoxPrice];
-      const deliveryDays = !req.body.deliveryDays
-        ? []
-        : Array.isArray(req.body.deliveryDays) ? req.body.deliveryDays : [req.body.deliveryDays];
-      const items = productIds
-        .map((productId, index) => ({
-          productId,
-          unitQuantity: Number(unitQuantities[index] ?? 0),
-          boxQuantity: Number(boxQuantities[index] ?? 0),
-          customUnitPrice: customUnitPrices[index] === '' || customUnitPrices[index] === undefined
-            ? null
-            : Number(customUnitPrices[index]),
-          customBoxPrice: customBoxPrices[index] === '' || customBoxPrices[index] === undefined
-            ? null
-            : Number(customBoxPrices[index])
-        }))
-        .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
-      const manualNames = !req.body.manualProductName
-        ? []
-        : Array.isArray(req.body.manualProductName) ? req.body.manualProductName : [req.body.manualProductName];
-      const manualQuantities = Array.isArray(req.body.manualQuantity) ? req.body.manualQuantity : [req.body.manualQuantity];
-      const manualPrices = Array.isArray(req.body.manualPrice) ? req.body.manualPrice : [req.body.manualPrice];
-
-      manualNames.forEach((manualName, index) => {
-        const unitQuantity = Number(manualQuantities[index] ?? 0);
-
-        if (manualName?.trim() && unitQuantity > 0) {
-          items.push({
-            productId: null,
-            manualName: manualName.trim(),
-            unitQuantity,
-            boxQuantity: 0,
-            customUnitPrice: manualPrices[index] === '' || manualPrices[index] === undefined
-              ? null
-              : Number(manualPrices[index]),
-            customBoxPrice: null
-          });
-        }
-      });
-
       const order = await OrderService.create(
-        {
-          customerId: req.body.customerId,
-          sellerPhone: req.body.sellerPhone,
-          receivedTime: req.body.receivedTime,
-          deliveryDays,
-          notes: req.body.notes,
-          fiscalEmail: req.body.fiscalEmail,
-          contactEmail: req.body.contactEmail,
-          paymentTerm: req.body.paymentTerm,
-          discountPercent: req.body.discountPercent === '' || req.body.discountPercent === undefined
-            ? 0
-            : Number(req.body.discountPercent),
-          bonusProductId: req.body.bonusProductId,
-          items,
-          sendWhatsapp: req.body.sendWhatsapp === 'on'
-        },
+        buildOrderPayload(req.body),
         {
           sub: req.currentUser.id,
           name: req.currentUser.name,
@@ -146,6 +164,22 @@ class OrderWebController {
         error: `Não foi possível criar o pedido: ${error.message}${validationDetails}`
       };
       res.redirect('/orders/new');
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const order = await OrderService.update(req.params.id, buildOrderPayload(req.body));
+      req.session.flash = { success: `Pedido ${order.orderNumber} atualizado. Gere um novo PDF.` };
+      res.redirect(`/orders/${order.id}`);
+    } catch (error) {
+      const validationDetails = Array.isArray(error.details) && error.details.length
+        ? ` (${error.details.join('; ')})`
+        : '';
+      req.session.flash = {
+        error: `Não foi possível atualizar o pedido: ${error.message}${validationDetails}`
+      };
+      res.redirect(`/orders/${req.params.id}/edit`);
     }
   }
 

@@ -14,6 +14,19 @@ const includeOrderRelations = {
   }
 };
 
+const itemCreateData = (item) => ({
+  productId: item.productId,
+  code: item.code,
+  name: item.name,
+  category: item.category,
+  quantity: item.quantity,
+  unitQuantity: item.unitQuantity,
+  boxQuantity: item.boxQuantity,
+  unitPrice: item.unitPrice,
+  boxPrice: item.boxPrice,
+  totalPrice: item.totalPrice
+});
+
 class OrderRepository extends BaseRepository {
   constructor() {
     super(prisma.order);
@@ -35,18 +48,7 @@ class OrderRepository extends BaseRepository {
         status: 'DRAFT',
         createdById: createdBy.id,
         items: {
-          create: items.map((item) => ({
-            productId: item.productId,
-            code: item.code,
-            name: item.name,
-            category: item.category,
-            quantity: item.quantity,
-            unitQuantity: item.unitQuantity,
-            boxQuantity: item.boxQuantity,
-            unitPrice: item.unitPrice,
-            boxPrice: item.boxPrice,
-            totalPrice: item.totalPrice
-          }))
+          create: items.map(itemCreateData)
         }
       },
       include: includeOrderRelations
@@ -112,6 +114,21 @@ class OrderRepository extends BaseRepository {
     return this.update(id, {
       status: 'WHATSAPP_ERROR',
       whatsappError: errorMessage
+    });
+  }
+
+  async replaceItemsAndUpdate(id, data, items) {
+    return prisma.$transaction(async (transaction) => {
+      await transaction.orderItem.deleteMany({ where: { orderId: id } });
+
+      return transaction.order.update({
+        where: { id },
+        data: {
+          ...data,
+          items: { create: items.map(itemCreateData) }
+        },
+        include: includeOrderRelations
+      });
     });
   }
 

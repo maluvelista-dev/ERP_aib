@@ -1,4 +1,10 @@
 <%- include('../partials/head') %>
+<%
+  const editing = Boolean(order);
+  const selectedDeliveryDays = new Set(order?.deliveryDays || []);
+  const catalogItems = order?.items?.filter((item) => item.productId) || [];
+  const manualItems = order?.items?.filter((item) => !item.productId) || [];
+%>
 <div class="app-shell d-flex">
   <%- include('../partials/sidebar') %>
   <div class="flex-grow-1">
@@ -7,18 +13,18 @@
       <%- include('../partials/flash') %>
       <section class="content-panel p-3">
         <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
-        <% if (!customers.length || !products.length) { %>
+        <% if (!customers.length) { %>
           <div class="alert alert-warning">
-            Cadastre ao menos um cliente ativo e um produto ativo antes de criar pedidos.
+            Cadastre ao menos um cliente ativo antes de criar pedidos.
           </div>
         <% } %>
-        <form action="/orders" method="post" class="d-grid gap-4">
+        <form action="<%= editing ? `/orders/${order.id}` : '/orders' %>" method="post" class="d-grid gap-4">
           <div>
             <label class="form-label">Cliente</label>
             <select class="form-select" name="customerId" required>
               <option value="">Selecione o cliente</option>
               <% customers.forEach((customer) => { %>
-                <option value="<%= customer.id %>"><%= customer.legalName || customer.tradeName || 'Cliente sem nome' %><%= customer.cnpj ? ` - ${customer.cnpj}` : '' %></option>
+                <option value="<%= customer.id %>" <%= String(order?.customerId || '') === String(customer.id) ? 'selected' : '' %>><%= customer.legalName || customer.tradeName || 'Cliente sem nome' %><%= customer.cnpj ? ` - ${customer.cnpj}` : '' %></option>
               <% }) %>
             </select>
           </div>
@@ -26,21 +32,21 @@
           <div class="row g-3">
             <div class="col-md-6 col-lg-4">
               <label class="form-label" for="sellerPhone">Telefone do vendedor</label>
-              <input class="form-control" id="sellerPhone" name="sellerPhone" placeholder="(11) 99999-9999">
+              <input class="form-control" id="sellerPhone" name="sellerPhone" value="<%= order?.sellerPhone || '' %>" placeholder="(11) 99999-9999">
             </div>
             <div class="col-md-6 col-lg-4">
               <label class="form-label" for="bonusProductId">Bonifica&ccedil;&atilde;o</label>
               <select class="form-select" id="bonusProductId" name="bonusProductId">
                 <option value="">Sem bonifica&ccedil;&atilde;o</option>
                 <% products.forEach((product) => { %>
-                  <option value="<%= product.id %>"><%= product.code %> - <%= product.name %></option>
+                  <option value="<%= product.id %>" <%= String(order?.bonusProductId || '') === String(product.id) ? 'selected' : '' %>><%= product.code %> - <%= product.name %></option>
                 <% }) %>
               </select>
             </div>
             <div class="col-md-6 col-lg-4">
               <label class="form-label" for="discountPercent">Desconto personalizado</label>
               <div class="input-group">
-                <input class="form-control" id="discountPercent" name="discountPercent" type="number" min="0" max="100" step="0.01" value="0">
+                <input class="form-control" id="discountPercent" name="discountPercent" type="number" min="0" max="100" step="0.01" value="<%= order ? Number(order.discountPercent || 0) : 0 %>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
@@ -59,7 +65,7 @@
                 ['SUN', 'D', 'Domingo']
               ].forEach(([value, initial, label]) => { %>
                 <div class="form-check" title="<%- label %>">
-                  <input class="form-check-input" type="checkbox" name="deliveryDays" value="<%= value %>" id="deliveryDay<%= value %>">
+                  <input class="form-check-input" type="checkbox" name="deliveryDays" value="<%= value %>" id="deliveryDay<%= value %>" <%= selectedDeliveryDays.has(value) ? 'checked' : '' %>>
                   <label class="form-check-label" for="deliveryDay<%= value %>">
                     <strong><%= initial %></strong> <span class="small text-muted"><%- label %></span>
                   </label>
@@ -77,7 +83,7 @@
                 ['AFTERNOON', 'Hor&aacute;rio da tarde']
               ].forEach(([value, label]) => { %>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="receivedTime" value="<%= value %>" id="receivedTime<%= value %>">
+                  <input class="form-check-input" type="radio" name="receivedTime" value="<%= value %>" id="receivedTime<%= value %>" <%= order?.receivedTime === value ? 'checked' : '' %>>
                   <label class="form-check-label" for="receivedTime<%= value %>"><%- label %></label>
                 </div>
               <% }) %>
@@ -87,17 +93,17 @@
           <div class="row g-3">
             <div class="col-lg-4">
               <label class="form-label" for="fiscalEmail">E-mail para documentos fiscais</label>
-              <input class="form-control" id="fiscalEmail" name="fiscalEmail" type="email" maxlength="191" placeholder="fiscal@empresa.com.br">
+              <input class="form-control" id="fiscalEmail" name="fiscalEmail" type="email" maxlength="191" value="<%= order?.fiscalEmail || '' %>" placeholder="fiscal@empresa.com.br">
               <div class="form-text">Destinado ao envio futuro da NF-e e do DANFE.</div>
             </div>
             <div class="col-lg-4">
               <label class="form-label" for="contactEmail">E-mail de contato</label>
-              <input class="form-control" id="contactEmail" name="contactEmail" type="email" maxlength="191" placeholder="comprador@empresa.com.br">
+              <input class="form-control" id="contactEmail" name="contactEmail" type="email" maxlength="191" value="<%= order?.contactEmail || '' %>" placeholder="comprador@empresa.com.br">
               <div class="form-text">E-mail do comprador respons&aacute;vel ou contato geral da empresa.</div>
             </div>
             <div class="col-lg-4">
               <label class="form-label" for="paymentTerm">Prazo de pagamento</label>
-              <input class="form-control" id="paymentTerm" name="paymentTerm" maxlength="191" placeholder="Ex.: 28 dias ou 28/35/42 dias">
+              <input class="form-control" id="paymentTerm" name="paymentTerm" maxlength="191" value="<%= order?.paymentTerm || '' %>" placeholder="Ex.: 28 dias ou 28/35/42 dias">
             </div>
           </div>
 
@@ -113,14 +119,24 @@
               >Adicionar produto manualmente</button>
             </div>
             <div id="order-items">
-              <%- include('_item_row', { products }) %>
+              <% if (catalogItems.length) { %>
+                <% catalogItems.forEach((currentItem) => { %>
+                  <%- include('_item_row', { products, currentItem }) %>
+                <% }) %>
+              <% } else { %>
+                <%- include('_item_row', { products, currentItem: null }) %>
+              <% } %>
             </div>
-            <div id="manual-order-items"></div>
+            <div id="manual-order-items">
+              <% manualItems.forEach((currentItem) => { %>
+                <%- include('_manual_item_row', { currentItem }) %>
+              <% }) %>
+            </div>
           </div>
 
           <div>
             <label class="form-label" for="notes">Observa&ccedil;&atilde;o</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Informa&ccedil;&otilde;es adicionais para o pedido e para a nota"></textarea>
+            <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Informa&ccedil;&otilde;es adicionais para o pedido e para a nota"><%= order?.notes || '' %></textarea>
           </div>
 
           <div class="form-check">
@@ -129,7 +145,7 @@
           </div>
 
           <div class="d-flex gap-2">
-            <button class="btn btn-primary" type="submit" <%= (!customers.length || !products.length) ? 'disabled' : '' %>>Criar pedido</button>
+            <button class="btn btn-primary" type="submit" <%= !customers.length ? 'disabled' : '' %>><%= editing ? 'Salvar altera&ccedil;&otilde;es' : 'Criar pedido' %></button>
             <a class="btn btn-outline-secondary" href="/orders">Cancelar</a>
           </div>
         </form>
