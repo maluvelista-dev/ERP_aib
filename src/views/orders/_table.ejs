@@ -15,6 +15,14 @@
     </thead>
     <tbody>
       <% orders.forEach((order) => { %>
+        <%
+          const tableSubtotal = (order.items || []).reduce(
+            (sum, item) => sum + Number(item.totalPrice || 0),
+            0
+          );
+          const tableDiscount = Number(order.discountAmount || 0);
+          const tableTotal = Math.max(tableSubtotal - tableDiscount, 0);
+        %>
         <tr>
           <td>
             <a class="fw-semibold text-decoration-none" href="/orders/<%= order.id %>">
@@ -24,12 +32,12 @@
           <td>
             <div><%= order.customerSnapshot.legalName || order.customerSnapshot.tradeName || 'Cliente sem nome' %></div>
             <div class="d-md-none mt-1 fw-semibold">
-              Total: R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+              Total: R$ <%= tableTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
             </div>
           </td>
           <td><%= order.createdBy?.name || 'N&atilde;o informado' %></td>
           <td><%- receivedTimeLabels[order.receivedTime] || order.receivedTime || '-' %></td>
-          <td class="text-end orders-total-column d-none d-md-table-cell">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+          <td class="text-end orders-total-column d-none d-md-table-cell">R$ <%= tableTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
           <td class="orders-status-column"><span class="badge text-bg-secondary"><%= order.status %></span></td>
           <td>
             <% if (order.pdfUrl) { %>
