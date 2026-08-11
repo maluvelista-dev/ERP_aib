@@ -2,7 +2,11 @@ import { BaseRepository } from './BaseRepository.js';
 import { prisma } from '../config/prisma.js';
 
 const includeOrderRelations = {
-  items: true,
+  items: {
+    include: {
+      product: true
+    }
+  },
   customer: true,
   createdBy: {
     select: {

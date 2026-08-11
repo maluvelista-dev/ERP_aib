@@ -309,8 +309,17 @@ class OrderService {
       const unitQuantity = storedUnitQuantity > 0 || boxQuantity > 0
         ? storedUnitQuantity
         : legacyQuantity;
-      const unitPrice = Number(item.unitPrice ?? 0);
-      const boxPrice = Number(item.boxPrice ?? 0);
+      const storedUnitPrice = Number(item.unitPrice ?? 0);
+      const storedBoxPrice = Number(item.boxPrice ?? 0);
+      const legacyItemWithoutPrices = Number(item.totalPrice ?? 0) === 0
+        && storedUnitPrice === 0
+        && storedBoxPrice === 0;
+      const unitPrice = legacyItemWithoutPrices && item.product
+        ? Number(item.product.unitPrice ?? 0)
+        : storedUnitPrice;
+      const boxPrice = legacyItemWithoutPrices && item.product
+        ? Number(item.product.boxPrice ?? 0)
+        : storedBoxPrice;
       const calculatedTotal = unitQuantity * unitPrice + boxQuantity * boxPrice;
       const storedTotal = Number(item.totalPrice ?? 0);
 
@@ -318,6 +327,8 @@ class OrderService {
         ...item,
         unitQuantity,
         boxQuantity,
+        unitPrice,
+        boxPrice: item.boxPrice === null && !item.product?.boxPrice ? null : boxPrice,
         totalPrice: calculatedTotal || storedTotal
       };
     });
