@@ -35,7 +35,7 @@
           </td>
           <td class="text-end">
             <div class="d-inline-flex flex-wrap justify-content-end gap-1">
-              <form action="/orders/<%= order.id %>/pdf" method="post" class="d-inline">
+              <form action="/orders/<%= order.id %>/pdf" method="post" class="d-inline" target="_blank">
                 <button class="btn btn-sm btn-outline-primary" type="submit">Gerar PDF</button>
               </form>
               <% if (currentUser.role === 'admin' || currentUser.role === 'manager' || order.createdById === currentUser.id) { %>

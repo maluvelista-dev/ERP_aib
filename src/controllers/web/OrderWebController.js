@@ -185,8 +185,7 @@ class OrderWebController {
 
   async generatePdf(req, res) {
     const order = await OrderService.generatePdf(req.params.id);
-    req.session.flash = { success: `PDF gerado para o pedido ${order.orderNumber}.` };
-    res.redirect(req.get('Referer') || '/orders');
+    res.redirect(order.pdfUrl);
   }
 
   async remove(req, res) {

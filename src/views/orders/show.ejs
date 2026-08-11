@@ -11,7 +11,7 @@
           <div>
             <h2 class="h6 mb-1">Pedido <%= order.orderNumber %></h2>
             <div class="small text-muted">
-              Criado por <%= order.createdBy?.name || 'N&atilde;o informado' %> em
+              Criado por <%= order.createdBy?.name || 'Não informado' %> em
               <%= new Date(order.createdAt).toLocaleString('pt-BR') %>
             </div>
           </div>
@@ -19,7 +19,7 @@
             <% if (order.pdfUrl) { %>
               <a class="btn btn-sm btn-outline-primary" href="<%= order.pdfUrl %>" target="_blank">Abrir PDF</a>
             <% } %>
-            <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0">
+            <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0" target="_blank">
               <button class="btn btn-sm btn-primary" type="submit">Gerar PDF</button>
             </form>
             <a class="btn btn-sm btn-outline-secondary" href="/orders">Voltar</a>
@@ -48,25 +48,25 @@
             <div class="mb-2">
               <span class="badge text-bg-secondary"><%= order.status %></span>
             </div>
-            <div class="small">Vendedor: <%= order.sellerSnapshot?.name || order.createdBy?.name || 'N&atilde;o informado' %></div>
-            <div class="small">Telefone vendedor: <%= order.sellerSnapshot?.phone || 'N&atilde;o informado' %></div>
-            <% const receivedTimeLabels = { BUSINESS_HOURS: 'Hor&aacute;rio comercial', MORNING: 'Hor&aacute;rio da manh&atilde;', AFTERNOON: 'Hor&aacute;rio da tarde' }; %>
-            <div class="small">Hor&aacute;rio de recebimento: <%- receivedTimeLabels[order.receivedTime] || order.receivedTime || 'N&atilde;o informado' %></div>
-            <% const deliveryDayLabels = { MON: 'Segunda', TUE: 'Ter&ccedil;a', WED: 'Quarta', THU: 'Quinta', FRI: 'Sexta', SAT: 'S&aacute;bado', SUN: 'Domingo' }; %>
+            <div class="small">Vendedor: <%= order.sellerSnapshot?.name || order.createdBy?.name || 'Não informado' %></div>
+            <div class="small">Telefone vendedor: <%= order.sellerSnapshot?.phone || 'Não informado' %></div>
+            <% const receivedTimeLabels = { BUSINESS_HOURS: 'Horário comercial', MORNING: 'Horário da manhã', AFTERNOON: 'Horário da tarde' }; %>
+            <div class="small">Horário de recebimento: <%= receivedTimeLabels[order.receivedTime] || order.receivedTime || 'Não informado' %></div>
+            <% const deliveryDayLabels = { MON: 'Segunda', TUE: 'Terça', WED: 'Quarta', THU: 'Quinta', FRI: 'Sexta', SAT: 'Sábado', SUN: 'Domingo' }; %>
             <div class="small">
               Dias para entrega:
               <%= Array.isArray(order.deliveryDays) && order.deliveryDays.length
                 ? order.deliveryDays.map((day) => deliveryDayLabels[day] || day).join(', ')
-                : 'N&atilde;o informado' %>
+                : 'Não informado' %>
             </div>
             <% if (order.notes) { %>
               <div class="small mt-2"><strong>Observa&ccedil;&atilde;o:</strong> <%= order.notes %></div>
             <% } %>
-            <div class="small mt-2">E-mail fiscal: <%= order.fiscalEmail || 'N&atilde;o informado' %></div>
-            <div class="small">E-mail de contato: <%= order.contactEmail || 'N&atilde;o informado' %></div>
-            <div class="small">Prazo de pagamento: <%= order.paymentTerm || 'N&atilde;o informado' %></div>
-            <div class="small">PDF: <%= order.pdfUrl ? 'Gerado' : 'N&atilde;o gerado' %></div>
-            <div class="small">WhatsApp: <%= order.whatsappSent ? 'Enviado' : 'N&atilde;o enviado' %></div>
+            <div class="small mt-2">E-mail fiscal: <%= order.fiscalEmail || 'Não informado' %></div>
+            <div class="small">E-mail de contato: <%= order.contactEmail || 'Não informado' %></div>
+            <div class="small">Prazo de pagamento: <%= order.paymentTerm || 'Não informado' %></div>
+            <div class="small">PDF: <%= order.pdfUrl ? 'Gerado' : 'Não gerado' %></div>
+            <div class="small">WhatsApp: <%= order.whatsappSent ? 'Enviado' : 'Não enviado' %></div>
             <% if (order.bonusProductSnapshot) { %>
               <div class="small mt-2">Bonifica&ccedil;&atilde;o: <%= order.bonusProductSnapshot.code %> - <%= order.bonusProductSnapshot.name %></div>
             <% } %>
