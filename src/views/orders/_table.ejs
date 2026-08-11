@@ -7,7 +7,7 @@
         <th>Cliente</th>
         <th>Colaborador</th>
         <th>Recebimento</th>
-        <th class="text-end orders-total-column">Total</th>
+        <th class="text-end orders-total-column d-none d-md-table-cell">Total</th>
         <th class="orders-status-column">Status</th>
         <th>PDF</th>
         <th class="text-end">A&ccedil;&otilde;es</th>
@@ -21,10 +21,15 @@
               <%= order.orderNumber %>
             </a>
           </td>
-          <td><%= order.customerSnapshot.legalName || order.customerSnapshot.tradeName || 'Cliente sem nome' %></td>
+          <td>
+            <div><%= order.customerSnapshot.legalName || order.customerSnapshot.tradeName || 'Cliente sem nome' %></div>
+            <div class="d-md-none mt-1 fw-semibold">
+              Total: R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+            </div>
+          </td>
           <td><%= order.createdBy?.name || 'N&atilde;o informado' %></td>
           <td><%- receivedTimeLabels[order.receivedTime] || order.receivedTime || '-' %></td>
-          <td class="text-end orders-total-column">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
+          <td class="text-end orders-total-column d-none d-md-table-cell">R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
           <td class="orders-status-column"><span class="badge text-bg-secondary"><%= order.status %></span></td>
           <td>
             <% if (order.pdfUrl) { %>

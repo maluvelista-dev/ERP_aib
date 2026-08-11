@@ -302,7 +302,25 @@ class OrderService {
   }
 
   #withTotals(order) {
-    const items = order.items ?? [];
+    const items = (order.items ?? []).map((item) => {
+      const storedUnitQuantity = Number(item.unitQuantity ?? 0);
+      const boxQuantity = Number(item.boxQuantity ?? 0);
+      const legacyQuantity = Number(item.quantity ?? 0);
+      const unitQuantity = storedUnitQuantity > 0 || boxQuantity > 0
+        ? storedUnitQuantity
+        : legacyQuantity;
+      const unitPrice = Number(item.unitPrice ?? 0);
+      const boxPrice = Number(item.boxPrice ?? 0);
+      const calculatedTotal = unitQuantity * unitPrice + boxQuantity * boxPrice;
+      const storedTotal = Number(item.totalPrice ?? 0);
+
+      return {
+        ...item,
+        unitQuantity,
+        boxQuantity,
+        totalPrice: calculatedTotal || storedTotal
+      };
+    });
     const subtotalPrice = items.reduce((sum, item) => sum + Number(item.totalPrice ?? 0), 0);
     const discountPercent = Number(order.discountPercent ?? 0);
     const discountAmount = Number(order.discountAmount ?? subtotalPrice * (discountPercent / 100));
@@ -310,6 +328,7 @@ class OrderService {
 
     return {
       ...order,
+      items,
       subtotalPrice,
       discountPercent,
       discountAmount,
