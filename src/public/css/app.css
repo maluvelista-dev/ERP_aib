@@ -305,6 +305,12 @@ body {
   opacity: .75;
 }
 
+.input-group-text {
+  color: var(--brand-ink);
+  background-color: var(--brand-surface-soft);
+  border-color: var(--brand-input-border);
+}
+
 textarea.form-control {
   min-height: 104px;
 }

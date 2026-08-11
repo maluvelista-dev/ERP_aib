@@ -52,7 +52,13 @@ app.use(
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
-app.use('/files', express.static('storage'));
+app.use('/files', express.static('storage', {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-store');
+  }
+}));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });

@@ -7,6 +7,17 @@ import PdfService from './PdfService.js';
 import StorageService from './StorageService.js';
 import WhatsappService from './WhatsappService.js';
 
+const filenamePart = (value, fallback = 'cliente') => {
+  const normalized = String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return normalized || fallback;
+};
+
 class OrderService {
   async list(filters = {}, currentUser = null) {
     const canFilterByCollaborator = currentUser?.role === 'manager';
@@ -176,10 +187,18 @@ class OrderService {
   async generatePdf(id) {
     const order = await this.findById(id);
     const buffer = await PdfService.generateOrderPdf(order);
-    const destination = `orders/${order.id}/order_${order.orderNumber.replace('#', '')}.pdf`;
+    const customerName = order.customerSnapshot?.legalName || order.customerSnapshot?.tradeName;
+    const customerFilename = filenamePart(customerName);
+    const orderNumber = filenamePart(order.orderNumber, 'pedido');
+    const destination = `orders/${order.id}/${customerFilename}_pedido_${orderNumber}.pdf`;
     const pdfUrl = await StorageService.uploadPdf(buffer, destination);
+    const updatedOrder = await OrderRepository.markPdfGenerated(id, pdfUrl);
 
-    return this.#withTotals(await OrderRepository.markPdfGenerated(id, pdfUrl));
+    if (order.pdfUrl !== pdfUrl) {
+      await StorageService.deletePdf(order.pdfUrl);
+    }
+
+    return this.#withTotals(updatedOrder);
   }
 
   async generatePdfAndSendWhatsapp(id) {
