@@ -63,9 +63,11 @@ class AuthService {
     const code = error?.code ?? error?.cause?.code;
     const message = String(error?.message ?? '').toLowerCase();
 
-    return ['P1001', 'ECONNREFUSED', 'ETIMEDOUT'].includes(code)
+    return ['P1001', 'P2039', '45028', 'ECONNREFUSED', 'ETIMEDOUT'].includes(String(code))
       || message.includes("can't reach database server")
       || message.includes('connection timeout')
+      || message.includes('pool timeout')
+      || message.includes('failed to retrieve a connection from pool')
       || message.includes('failed to create socket')
       || message.includes('econnrefused');
   }

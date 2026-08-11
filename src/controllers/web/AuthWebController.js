@@ -13,8 +13,18 @@ class AuthWebController {
       const result = await AuthService.login(req.body);
       req.session.userId = result.user.id;
       res.redirect('/dashboard');
-    } catch (_error) {
-      req.session.flash = { error: 'E-mail ou senha inválidos.' };
+    } catch (error) {
+      const invalidCredentials = error?.statusCode === 401 || error?.statusCode === 422;
+
+      if (!invalidCredentials) {
+        console.error('Falha ao acessar o banco durante o login:', error);
+      }
+
+      req.session.flash = {
+        error: invalidCredentials
+          ? 'E-mail ou senha inválidos.'
+          : 'O banco de dados está temporariamente indisponível. Aguarde alguns segundos e tente novamente.'
+      };
       res.redirect('/login');
     }
   }
