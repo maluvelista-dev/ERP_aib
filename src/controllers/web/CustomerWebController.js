@@ -68,6 +68,12 @@ class CustomerWebController {
     };
     res.redirect('/customers');
   }
+
+  async remove(req, res) {
+    await CustomerService.remove(req.params.id);
+    req.session.flash = { success: 'Cliente excluído com sucesso.' };
+    res.redirect('/customers');
+  }
 }
 
 export default new CustomerWebController();

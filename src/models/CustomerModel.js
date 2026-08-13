@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { BaseModel } from './BaseModel.js';
 
 const customerSchema = Joi.object({
-  cnpj: Joi.string().min(14).max(18).allow('', null),
+  cnpj: Joi.string().min(11).max(18).allow('', null),
   legalName: Joi.string().min(2).allow('', null),
   tradeName: Joi.string().allow('', null),
   phone: Joi.string().allow('', null),

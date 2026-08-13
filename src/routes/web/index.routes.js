@@ -185,4 +185,10 @@ router.post(
   webAuthorize(CustomerPolicy, 'toggleActive'),
   asyncHandler((req, res) => CustomerWebController.toggleActive(req, res))
 );
+router.post(
+  '/customers/:id/delete',
+  requireWebAuth,
+  webAuthorize(CustomerPolicy, 'destroy'),
+  asyncHandler((req, res) => CustomerWebController.remove(req, res))
+);
 export default router;
