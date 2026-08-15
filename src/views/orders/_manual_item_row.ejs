@@ -10,15 +10,25 @@
       <input class="form-control" name="manualProductName" maxlength="191" required value="<%= item?.name || '' %>" placeholder="Digite o nome ou a descri&ccedil;&atilde;o do produto">
     </div>
     <div class="col-md-3 col-lg-2">
+      <label class="form-label">Tipo</label>
+      <select class="form-select" name="manualUnitType">
+        <option value="UNIT" <%= (item?.manualUnitType || 'UNIT') === 'UNIT' ? 'selected' : '' %>>Unidade</option>
+        <option value="KG" <%= item?.manualUnitType === 'KG' ? 'selected' : '' %>>Kg</option>
+      </select>
+    </div>
+    <div class="col-md-3 col-lg-2">
       <label class="form-label">Quantidade</label>
       <input class="form-control" name="manualQuantity" type="number" min="1" value="<%= item?.unitQuantity ?? 1 %>" required>
     </div>
-    <div class="col-md-5 col-lg-3">
-      <label class="form-label">Preço unitário</label>
+    <div class="col-md-5 col-lg-2">
+      <label class="form-label">PreÃ§o unitÃ¡rio</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
         <input class="form-control" name="manualPrice" type="number" min="0" step="0.01" required value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="0,00">
       </div>
+    </div>
+    <div class="col-12 col-lg-2">
+      <div class="form-text">Na nota será mostrado como <%= (item?.manualUnitType || 'UNIT') === 'KG' ? 'kg' : 'unidade' %>.</div>
     </div>
   </div>
 </div>

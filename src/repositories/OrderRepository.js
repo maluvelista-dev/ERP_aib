@@ -23,6 +23,7 @@ const itemCreateData = (item) => ({
   code: item.code,
   name: item.name,
   category: item.category,
+  manualUnitType: item.manualUnitType,
   quantity: item.quantity,
   unitQuantity: item.unitQuantity,
   boxQuantity: item.boxQuantity,

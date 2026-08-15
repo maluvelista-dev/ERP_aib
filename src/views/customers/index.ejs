@@ -56,7 +56,16 @@
                       </span>
                     <% } %>
                   </td>
-                  <td><a class="btn btn-sm btn-outline-primary" href="/customers/<%= customer.id %>/edit">Editar</a></td>
+                  <td>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <a class="btn btn-sm btn-outline-primary" href="/customers/<%= customer.id %>/edit">Editar</a>
+                      <% if (currentUser.role === 'admin') { %>
+                        <form action="/customers/<%= customer.id %>/delete" method="post" class="m-0 js-delete-customer-form" data-customer-name="<%= customer.legalName || customer.tradeName || customer.cnpj || 'cliente' %>">
+                          <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+                        </form>
+                      <% } %>
+                    </div>
+                  </td>
                 </tr>
               <% }) %>
             </tbody>

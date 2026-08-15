@@ -233,11 +233,13 @@ class OrderService {
       if (!requestedItem.productId) {
         const unitQuantity = requestedItem.unitQuantity ?? requestedItem.quantity ?? 0;
         const unitPrice = Number(requestedItem.customUnitPrice ?? 0);
+        const manualUnitType = requestedItem.manualUnitType === 'KG' ? 'KG' : 'UNIT';
 
         items.push({
           productId: null,
           code: 'MANUAL',
           name: requestedItem.manualName,
+          manualUnitType,
           category: null,
           quantity: unitQuantity,
           unitQuantity,
@@ -306,6 +308,7 @@ class OrderService {
       const storedUnitQuantity = Number(item.unitQuantity ?? 0);
       const boxQuantity = Number(item.boxQuantity ?? 0);
       const legacyQuantity = Number(item.quantity ?? 0);
+      const manualUnitType = item.manualUnitType === 'KG' ? 'KG' : 'UNIT';
       const unitQuantity = storedUnitQuantity > 0 || boxQuantity > 0
         ? storedUnitQuantity
         : legacyQuantity;
@@ -325,6 +328,7 @@ class OrderService {
 
       return {
         ...item,
+        manualUnitType,
         unitQuantity,
         boxQuantity,
         unitPrice,

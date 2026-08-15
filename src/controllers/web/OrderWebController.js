@@ -25,16 +25,19 @@ const buildOrderPayload = (body) => {
     }))
     .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
   const manualNames = asArray(body.manualProductName);
+  const manualUnitTypes = asArray(body.manualUnitType);
   const manualQuantities = asArray(body.manualQuantity);
   const manualPrices = asArray(body.manualPrice);
 
   manualNames.forEach((manualName, index) => {
     const unitQuantity = Number(manualQuantities[index] ?? 0);
+    const manualUnitType = manualUnitTypes[index] === 'KG' ? 'KG' : 'UNIT';
 
     if (manualName?.trim() && unitQuantity > 0) {
       items.push({
         productId: null,
         manualName: manualName.trim(),
+        manualUnitType,
         unitQuantity,
         boxQuantity: 0,
         customUnitPrice: manualPrices[index] === '' || manualPrices[index] === undefined

@@ -284,10 +284,12 @@ class PdfService {
       const boxQuantity = Number(item.boxQuantity ?? 0);
       const unitPrice = Number(item.unitPrice ?? 0);
       const boxPrice = Number(item.boxPrice ?? 0);
+      const manualUnitLabel = item.manualUnitType === 'KG' ? 'KG' : 'UN';
+      const quantityLabel = item.productId ? 'UN' : manualUnitLabel;
 
       if (unitQuantity > 0) {
         rows.push({
-          quantity: `${unitQuantity} UN`,
+          quantity: `${unitQuantity} ${quantityLabel}`,
           code: item.code,
           description: this.#formatItemDescription(item),
           unitPrice,

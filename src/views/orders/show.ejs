@@ -115,7 +115,7 @@
                       <div class="small text-muted"><%= item.category %></div>
                     <% } %>
                   </td>
-                  <td class="text-end"><%= item.unitQuantity ?? item.quantity ?? 0 %></td>
+                  <td class="text-end"><%= item.productId ? `${item.unitQuantity ?? item.quantity ?? 0} UN` : `${item.unitQuantity ?? item.quantity ?? 0} ${(item.manualUnitType || 'UNIT') === 'KG' ? 'KG' : 'UN'}` %></td>
                   <td class="text-end">R$ <%= Number(item.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></td>
                   <td class="text-end"><%= item.boxQuantity ?? 0 %></td>
                   <td class="text-end">

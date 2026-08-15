@@ -24,6 +24,7 @@ const orderSchema = Joi.object({
       Joi.object({
         productId: Joi.string().allow('', null),
         manualName: Joi.string().trim().max(191).allow('', null),
+        manualUnitType: Joi.string().valid('UNIT', 'KG').default('UNIT'),
         quantity: Joi.number().integer().min(1),
         unitQuantity: Joi.number().integer().min(0).default(0),
         boxQuantity: Joi.number().integer().min(0).default(0),
@@ -45,6 +46,10 @@ const orderSchema = Joi.object({
 
           if (!item.productId && (item.customUnitPrice === null || item.customUnitPrice === undefined)) {
             return helpers.message({ custom: 'Informe o preço do produto manual' });
+          }
+
+          if (!item.productId && item.manualUnitType === 'KG' && unitQuantity <= 0) {
+            return helpers.message({ custom: 'Informe a quantidade em kg do produto manual' });
           }
 
           return item;

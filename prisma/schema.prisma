@@ -118,6 +118,7 @@ model OrderItem {
   code         String
   name         String
   category     String?
+  manualUnitType String? @db.VarChar(10)
   quantity     Int
   unitQuantity Int      @default(0)
   boxQuantity  Int      @default(0)

@@ -119,6 +119,19 @@ document.addEventListener('submit', (event) => {
   const deleteOrderForm = event.target.closest('.js-delete-order-form');
 
   if (!deleteOrderForm) {
+    const deleteCustomerForm = event.target.closest('.js-delete-customer-form');
+
+    if (!deleteCustomerForm) {
+      return;
+    }
+
+    const customerName = deleteCustomerForm.dataset.customerName || 'cliente';
+    const confirmedCustomer = window.confirm(`Excluir definitivamente ${customerName}?`);
+
+    if (!confirmedCustomer) {
+      event.preventDefault();
+    }
+
     return;
   }
 

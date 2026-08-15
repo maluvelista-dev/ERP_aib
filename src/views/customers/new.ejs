@@ -9,7 +9,7 @@
         <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
         <form action="<%= customer.id ? `/customers/${customer.id}` : '/customers' %>" method="post" class="row g-3">
           <div class="col-12"><div class="alert alert-info mb-0">Preencha apenas as informa&ccedil;&otilde;es dispon&iacute;veis. Todos os campos podem ser completados ou alterados posteriormente.</div></div>
-          <div class="col-md-4"><label class="form-label">CNPJ</label><input class="form-control" name="cnpj" value="<%= customer.cnpj || '' %>"></div>
+          <div class="col-md-4"><label class="form-label">CPF/CNPJ</label><input class="form-control" name="cnpj" value="<%= customer.cnpj || '' %>"></div>
           <div class="col-md-8"><label class="form-label">Raz&atilde;o social</label><input class="form-control" name="legalName" value="<%= customer.legalName || '' %>"></div>
           <div class="col-md-6"><label class="form-label">Nome fantasia</label><input class="form-control" name="tradeName" value="<%= customer.tradeName || '' %>"></div>
           <div class="col-md-3"><label class="form-label">Telefone</label><input class="form-control" name="phone" value="<%= customer.phone || '' %>"></div>
