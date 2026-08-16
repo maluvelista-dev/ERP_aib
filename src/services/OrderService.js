@@ -20,19 +20,22 @@ const filenamePart = (value, fallback = 'cliente') => {
 
 class OrderService {
   async list(filters = {}, currentUser = null) {
-    const canFilterByCollaborator = currentUser?.role === 'admin';
+    if (!currentUser?.id) {
+      return [];
+    }
+
     const orders = await OrderRepository.findRecent({
-      createdById: canFilterByCollaborator ? filters.createdById : null
+      createdById: currentUser.id
     });
 
     return orders.map((order) => this.#withTotals(order));
   }
 
-  async findById(id) {
-    const order = await OrderRepository.findById(id);
+  async findById(id, currentUser) {
+    const order = await OrderRepository.findOwnedById(id, currentUser.id);
 
     if (!order) {
-      throw new AppError('Order not found', 404);
+      throw new AppError('Pedido não encontrado para este usuário', 404);
     }
 
     return this.#withTotals(order);
@@ -68,7 +71,7 @@ class OrderService {
 
   async create(payload, user) {
     const data = OrderModel.validateCreate(payload);
-    const customer = await CustomerRepository.findById(data.customerId);
+    const customer = await CustomerRepository.findOwnedById(data.customerId, user.sub);
 
     if (!customer || customer.active === false) {
       throw new AppError('Invalid customer for order issuance', 422);
@@ -121,16 +124,16 @@ class OrderService {
     });
 
     if (data.sendWhatsapp) {
-      return this.generatePdfAndSendWhatsapp(order.id);
+      return this.generatePdfAndSendWhatsapp(order.id, { id: user.sub });
     }
 
     return this.#withTotals(order);
   }
 
-  async update(id, payload) {
-    const currentOrder = await this.findById(id);
+  async update(id, payload, currentUser) {
+    const currentOrder = await this.findById(id, currentUser);
     const data = OrderModel.validateCreate(payload);
-    const customer = await CustomerRepository.findById(data.customerId);
+    const customer = await CustomerRepository.findOwnedById(data.customerId, currentUser.id);
 
     if (!customer || customer.active === false) {
       throw new AppError('Invalid customer for order issuance', 422);
@@ -178,14 +181,14 @@ class OrderService {
     await StorageService.deletePdf(currentOrder.pdfUrl);
 
     if (data.sendWhatsapp) {
-      return this.generatePdfAndSendWhatsapp(order.id);
+      return this.generatePdfAndSendWhatsapp(order.id, currentUser);
     }
 
     return this.#withTotals(order);
   }
 
-  async generatePdf(id) {
-    const order = await this.findById(id);
+  async generatePdf(id, currentUser) {
+    const order = await this.findById(id, currentUser);
     const buffer = await PdfService.generateOrderPdf(order);
     const customerName = order.customerSnapshot?.legalName || order.customerSnapshot?.tradeName;
     const customerFilename = filenamePart(customerName);
@@ -201,8 +204,8 @@ class OrderService {
     return this.#withTotals(updatedOrder);
   }
 
-  async generatePdfAndSendWhatsapp(id) {
-    const orderWithPdf = await this.generatePdf(id);
+  async generatePdfAndSendWhatsapp(id, currentUser) {
+    const orderWithPdf = await this.generatePdf(id, currentUser);
 
     try {
       await WhatsappService.sendOrderPdf({
@@ -218,8 +221,8 @@ class OrderService {
     }
   }
 
-  async remove(id) {
-    const order = await this.findById(id);
+  async remove(id, currentUser) {
+    const order = await this.findById(id, currentUser);
     await OrderRepository.destroy(id);
     await StorageService.deletePdf(order.pdfUrl);
 
@@ -227,10 +230,7 @@ class OrderService {
   }
 
   async clearHistory(filters = {}, currentUser) {
-    const createdById = currentUser.role === 'admin'
-      ? (filters.createdById || null)
-      : currentUser.id;
-    const result = await OrderRepository.clearHistory(createdById);
+    const result = await OrderRepository.clearHistory(currentUser.id);
 
     await Promise.all(result.pdfUrls.map((pdfUrl) => StorageService.deletePdf(pdfUrl)));
     return result.count;

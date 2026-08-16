@@ -1,8 +1,8 @@
 import DashboardService from '../../services/DashboardService.js';
 
 class DashboardWebController {
-  async show(_req, res) {
-    const summary = await DashboardService.summary();
+  async show(req, res) {
+    const summary = await DashboardService.summary(req.currentUser);
 
     res.render('dashboard/show', {
       title: 'Dashboard',

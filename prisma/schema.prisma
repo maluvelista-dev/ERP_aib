@@ -19,13 +19,15 @@ model User {
   updatedAt    DateTime @updatedAt
 
   orders       Order[]
+  customers    Customer[]
 
   @@map("users")
 }
 
 model Customer {
   id             String   @id @default(uuid())
-  cnpj           String?  @unique
+  cnpj           String?
+  createdById    String
   legalName      String?
   tradeName      String?
   phone          String?
@@ -43,7 +45,10 @@ model Customer {
   updatedAt      DateTime @updatedAt
 
   orders         Order[]
+  createdBy      User     @relation(fields: [createdById], references: [id])
 
+  @@unique([createdById, cnpj])
+  @@index([createdById])
   @@map("customers")
 }
 

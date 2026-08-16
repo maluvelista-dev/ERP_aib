@@ -1,7 +1,6 @@
 import CustomerService from '../../services/CustomerService.js';
 import OrderService from '../../services/OrderService.js';
 import ProductService from '../../services/ProductService.js';
-import UserService from '../../services/UserService.js';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -70,12 +69,10 @@ const buildOrderPayload = (body) => {
 
 class OrderWebController {
   async index(req, res) {
-    const selectedCollaboratorId = req.query.createdById ?? '';
-    const canFilterByCollaborator = req.currentUser.role === 'admin';
-    const [orders, collaborators] = await Promise.all([
-      OrderService.list({ createdById: selectedCollaboratorId }, req.currentUser),
-      canFilterByCollaborator ? UserService.list() : Promise.resolve([])
-    ]);
+    const selectedCollaboratorId = '';
+    const canFilterByCollaborator = false;
+    const orders = await OrderService.list({}, req.currentUser);
+    const collaborators = [];
 
     res.render('orders/index', {
       title: 'Pedidos',
@@ -86,9 +83,9 @@ class OrderWebController {
     });
   }
 
-  async new(_req, res) {
+  async new(req, res) {
     const [customers, products] = await Promise.all([
-      CustomerService.list(),
+      CustomerService.list(req.currentUser),
       ProductService.list()
     ]);
 
@@ -103,8 +100,8 @@ class OrderWebController {
 
   async edit(req, res) {
     const [order, customers, products] = await Promise.all([
-      OrderService.findById(req.params.id),
-      CustomerService.list(),
+      OrderService.findById(req.params.id, req.currentUser),
+      CustomerService.list(req.currentUser),
       ProductService.list()
     ]);
 
@@ -118,7 +115,7 @@ class OrderWebController {
   }
 
   async show(req, res) {
-    const order = await OrderService.findById(req.params.id);
+    const order = await OrderService.findById(req.params.id, req.currentUser);
 
     res.render('orders/show', {
       title: `Pedido ${order.orderNumber}`,
@@ -174,7 +171,7 @@ class OrderWebController {
 
   async update(req, res) {
     try {
-      const order = await OrderService.update(req.params.id, buildOrderPayload(req.body));
+      const order = await OrderService.update(req.params.id, buildOrderPayload(req.body), req.currentUser);
       req.session.flash = { success: `Pedido ${order.orderNumber} atualizado. Gere um novo PDF.` };
       res.redirect(`/orders/${order.id}`);
     } catch (error) {
@@ -189,12 +186,12 @@ class OrderWebController {
   }
 
   async generatePdf(req, res) {
-    const order = await OrderService.generatePdf(req.params.id);
+    const order = await OrderService.generatePdf(req.params.id, req.currentUser);
     res.redirect(order.pdfUrl);
   }
 
   async remove(req, res) {
-    const order = await OrderService.remove(req.params.id);
+    const order = await OrderService.remove(req.params.id, req.currentUser);
     req.session.flash = { success: `Pedido ${order.orderNumber} excluído com sucesso.` };
     res.redirect('/orders');
   }

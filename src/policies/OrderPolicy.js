@@ -6,7 +6,7 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   show() {
-    return this.index();
+    return this.#ownsOrder();
   }
 
   create() {
@@ -14,7 +14,7 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   generatePdf() {
-    return this.index();
+    return this.#ownsOrder();
   }
 
   clearHistory() {
@@ -22,15 +22,18 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   sendWhatsapp() {
-    return this.index();
+    return this.#ownsOrder();
   }
 
   destroy() {
-    return this.isAdminOrManager()
-      || Boolean(this.user?.id && this.record?.createdById === this.user.id);
+    return this.#ownsOrder();
   }
 
   update() {
     return this.destroy();
+  }
+
+  #ownsOrder() {
+    return Boolean(this.user?.id && this.record?.createdById === this.user.id);
   }
 }

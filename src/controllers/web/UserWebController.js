@@ -12,17 +12,16 @@ class UserWebController {
   }
 
   async show(req, res) {
-    const [user, summary, orders] = await Promise.all([
+    const [user, summary] = await Promise.all([
       UserService.findById(req.params.id),
-      OrderService.collaboratorSummary(req.params.id),
-      OrderService.list({ createdById: req.params.id }, { role: 'admin' })
+      OrderService.collaboratorSummary(req.params.id)
     ]);
 
     res.render('users/show', {
       title: 'Perfil do Colaborador',
       user,
       summary,
-      orders
+      orders: []
     });
   }
 

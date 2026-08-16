@@ -3,16 +3,16 @@ import OrderRepository from '../repositories/OrderRepository.js';
 import ProductRepository from '../repositories/ProductRepository.js';
 
 class DashboardService {
-  async summary() {
+  async summary(currentUser) {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
 
     const [recentOrders, customers, products] = await Promise.all([
-      OrderRepository.findRecent(5),
-      CustomerRepository.findAll(500),
+      OrderRepository.findRecent({ createdById: currentUser.id }, 5),
+      CustomerRepository.findForOwner(currentUser.id, { limit: 500 }),
       ProductRepository.findAll(500)
     ]);
-    const ordersToday = await OrderRepository.countFromStartOfDay(start);
+    const ordersToday = await OrderRepository.countByCollaboratorFromDate(currentUser.id, start);
 
     return {
       ordersToday,

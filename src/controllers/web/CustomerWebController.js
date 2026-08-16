@@ -18,7 +18,7 @@ class CustomerWebController {
   }
 
   async edit(req, res) {
-    const customer = await CustomerService.findById(req.params.id);
+    const customer = await CustomerService.findById(req.params.id, req.currentUser);
 
     res.render('customers/new', {
       title: 'Editar Cliente',
@@ -29,7 +29,7 @@ class CustomerWebController {
 
   async create(req, res) {
     try {
-      await CustomerService.create(req.body);
+      await CustomerService.create(req.body, req.currentUser);
       req.session.flash = { success: 'Cliente criado com sucesso.' };
       res.redirect('/customers');
     } catch (error) {
@@ -43,7 +43,7 @@ class CustomerWebController {
 
   async update(req, res) {
     try {
-      await CustomerService.update(req.params.id, req.body);
+      await CustomerService.update(req.params.id, req.body, req.currentUser);
       req.session.flash = { success: 'Cliente atualizado com sucesso.' };
       res.redirect('/customers');
     } catch (error) {
@@ -56,13 +56,13 @@ class CustomerWebController {
   }
 
   async activate(req, res) {
-    await CustomerService.activate(req.params.id);
+    await CustomerService.activate(req.params.id, req.currentUser);
     req.session.flash = { success: 'Cliente reativado com sucesso.' };
     res.redirect('/customers');
   }
 
   async toggleActive(req, res) {
-    const customer = await CustomerService.toggleActive(req.params.id);
+    const customer = await CustomerService.toggleActive(req.params.id, req.currentUser);
     req.session.flash = {
       success: customer.active ? 'Cliente ativado com sucesso.' : 'Cliente desativado com sucesso.'
     };
@@ -70,7 +70,7 @@ class CustomerWebController {
   }
 
   async remove(req, res) {
-    await CustomerService.remove(req.params.id);
+    await CustomerService.remove(req.params.id, req.currentUser);
     req.session.flash = { success: 'Cliente excluído com sucesso.' };
     res.redirect('/customers');
   }

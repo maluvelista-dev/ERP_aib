@@ -54,7 +54,12 @@ const seller = await prisma.user.upsert({
 });
 
 const customer = await prisma.customer.upsert({
-  where: { cnpj: '12345678000190' },
+  where: {
+    createdById_cnpj: {
+      createdById: seller.id,
+      cnpj: '12345678000190'
+    }
+  },
   update: {
     legalName: 'TechSolutions Tecnologia Ltda',
     tradeName: 'TechSolutions',
@@ -62,6 +67,7 @@ const customer = await prisma.customer.upsert({
     active: true
   },
   create: {
+    createdById: seller.id,
     cnpj: '12345678000190',
     legalName: 'TechSolutions Tecnologia Ltda',
     tradeName: 'TechSolutions',

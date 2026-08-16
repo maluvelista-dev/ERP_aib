@@ -123,6 +123,13 @@ class OrderRepository extends BaseRepository {
     });
   }
 
+  async findOwnedById(id, createdById) {
+    return this.model.findFirst({
+      where: { id, createdById },
+      include: includeOrderRelations
+    });
+  }
+
   async replaceItemsAndUpdate(id, data, items) {
     return prisma.$transaction(async (transaction) => {
       await transaction.orderItem.deleteMany({ where: { orderId: id } });

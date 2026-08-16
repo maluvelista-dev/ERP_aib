@@ -6,7 +6,7 @@ export class CustomerPolicy extends ApplicationPolicy {
   }
 
   show() {
-    return this.index();
+    return this.#ownsCustomer();
   }
 
   create() {
@@ -14,18 +14,22 @@ export class CustomerPolicy extends ApplicationPolicy {
   }
 
   update() {
-    return this.index();
+    return this.#ownsCustomer();
   }
 
   destroy() {
-    return this.isAdmin() || this.isSeller();
+    return this.#ownsCustomer();
   }
 
   activate() {
-    return this.isAdmin();
+    return this.#ownsCustomer();
   }
 
   toggleActive() {
-    return this.isAdmin();
+    return this.#ownsCustomer();
+  }
+
+  #ownsCustomer() {
+    return Boolean(this.user?.id && this.record?.createdById === this.user.id);
   }
 }

@@ -12,6 +12,7 @@ import { DashboardPolicy } from '../../policies/DashboardPolicy.js';
 import { OrderPolicy } from '../../policies/OrderPolicy.js';
 import { ProductPolicy } from '../../policies/ProductPolicy.js';
 import { UserPolicy } from '../../policies/UserPolicy.js';
+import CustomerRepository from '../../repositories/CustomerRepository.js';
 import UserRepository from '../../repositories/UserRepository.js';
 import OrderRepository from '../../repositories/OrderRepository.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
@@ -55,13 +56,13 @@ router.post(
 router.get(
   '/customers/:id/edit',
   requireWebAuth,
-  webAuthorize(CustomerPolicy, 'update'),
+  webAuthorize(CustomerPolicy, 'update', (req) => CustomerRepository.findAnyById(req.params.id)),
   asyncHandler((req, res) => CustomerWebController.edit(req, res))
 );
 router.post(
   '/customers/:id',
   requireWebAuth,
-  webAuthorize(CustomerPolicy, 'update'),
+  webAuthorize(CustomerPolicy, 'update', (req) => CustomerRepository.findAnyById(req.params.id)),
   asyncHandler((req, res) => CustomerWebController.update(req, res))
 );
 
@@ -160,7 +161,7 @@ router.get(
 router.get(
   '/orders/:id',
   requireWebAuth,
-  webAuthorize(OrderPolicy, 'show'),
+  webAuthorize(OrderPolicy, 'show', (req) => OrderRepository.findById(req.params.id)),
   asyncHandler((req, res) => OrderWebController.show(req, res))
 );
 router.post(
@@ -184,7 +185,7 @@ router.post(
 router.post(
   '/orders/:id/pdf',
   requireWebAuth,
-  webAuthorize(OrderPolicy, 'generatePdf'),
+  webAuthorize(OrderPolicy, 'generatePdf', (req) => OrderRepository.findById(req.params.id)),
   asyncHandler((req, res) => OrderWebController.generatePdf(req, res))
 );
 router.post(
@@ -196,19 +197,19 @@ router.post(
 router.post(
   '/customers/:id/activate',
   requireWebAuth,
-  webAuthorize(CustomerPolicy, 'activate'),
+  webAuthorize(CustomerPolicy, 'activate', (req) => CustomerRepository.findAnyById(req.params.id)),
   asyncHandler((req, res) => CustomerWebController.activate(req, res))
 );
 router.post(
   '/customers/:id/toggle-active',
   requireWebAuth,
-  webAuthorize(CustomerPolicy, 'toggleActive'),
+  webAuthorize(CustomerPolicy, 'toggleActive', (req) => CustomerRepository.findAnyById(req.params.id)),
   asyncHandler((req, res) => CustomerWebController.toggleActive(req, res))
 );
 router.post(
   '/customers/:id/delete',
   requireWebAuth,
-  webAuthorize(CustomerPolicy, 'destroy'),
+  webAuthorize(CustomerPolicy, 'destroy', (req) => CustomerRepository.findAnyById(req.params.id)),
   asyncHandler((req, res) => CustomerWebController.remove(req, res))
 );
 export default router;
