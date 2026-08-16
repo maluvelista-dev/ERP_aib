@@ -22,27 +22,27 @@
 }
 
 :root[data-theme="dark"] {
-  --brand-ink: #f8fafc;
-  --brand-muted: #cbd5e1;
-  --brand-border: #334155;
-  --brand-surface: #111827;
-  --brand-surface-soft: #172033;
-  --brand-page: #0b1120;
-  --brand-soft-red: rgba(255, 62, 69, .14);
-  --brand-input: #182235;
-  --brand-input-border: #3b475c;
-  --brand-input-hover: #526075;
-  --brand-table-row: #111827;
-  --brand-table-row-alt: #172033;
+  --brand-ink: #fff8f1;
+  --brand-muted: #d7c6bb;
+  --brand-border: #4d3933;
+  --brand-surface: #1b1513;
+  --brand-surface-soft: #251b18;
+  --brand-page: #100c0b;
+  --brand-soft-red: rgba(255, 76, 69, .16);
+  --brand-input: #241a17;
+  --brand-input-border: #533d36;
+  --brand-input-hover: #704d42;
+  --brand-table-row: #1b1513;
+  --brand-table-row-alt: #251b18;
   --brand-shadow: rgba(0, 0, 0, .32);
   color-scheme: dark;
 }
 
 :root[data-theme="dark"] .dashboard-shortcut-icon {
   background:
-    linear-gradient(145deg, rgba(30, 41, 59, .98), rgba(17, 24, 39, .88)),
+    linear-gradient(145deg, rgba(45, 31, 26, .98), rgba(27, 21, 19, .9)),
     var(--brand-surface);
-  border-color: rgba(148, 163, 184, .22);
+  border-color: rgba(220, 174, 144, .2);
   box-shadow:
     0 10px 18px rgba(0, 0, 0, .34),
     inset 0 1px 0 rgba(255, 255, 255, .08);
@@ -68,15 +68,20 @@ body {
 }
 
 .app-sidebar {
-  position: relative;
+  position: sticky;
+  top: 0;
   isolation: isolate;
   overflow: hidden;
+  height: 100vh;
   width: 272px;
   flex: 0 0 272px;
   background:
     radial-gradient(circle at 85% 7%, rgba(255, 245, 190, .98) 0 4px, rgba(255, 178, 55, .62) 5px 11px, transparent 28px),
     radial-gradient(circle at 72% 23%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
     radial-gradient(circle at 91% 39%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
+    radial-gradient(circle at 84% 56%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
+    radial-gradient(circle at 94% 74%, rgba(255, 243, 181, .72) 0 2px, rgba(242, 157, 44, .25) 4px 8px, transparent 20px),
+    radial-gradient(circle at 76% 90%, rgba(255, 233, 145, .65) 0 2px, rgba(242, 157, 44, .2) 4px 7px, transparent 18px),
     radial-gradient(ellipse at 82% 18%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
   border-right: 1px solid var(--brand-red-dark);
   box-shadow: 6px 0 20px rgba(35, 31, 32, .16);
@@ -107,7 +112,7 @@ body {
 
 .sidebar-brand-showcase {
   position: relative;
-  height: 310px;
+  height: 260px;
   padding: 46px 20px 20px;
 }
 
@@ -139,18 +144,23 @@ body {
 .sidebar-brand-showcase .app-brand-logo {
   position: absolute;
   z-index: 2;
-  top: 145px;
-  right: 18px;
+  top: 34px;
+  left: 22px;
   width: 112px;
   height: 112px;
   filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .3));
+}
+
+.sidebar-brand-showcase .sidebar-brand-copy {
+  position: absolute;
+  top: 164px;
+  left: 20px;
 }
 
 .sidebar-navigation {
   position: relative;
   z-index: 2;
   padding-top: .4rem;
-  background: linear-gradient(90deg, rgba(237, 35, 61, .96), rgba(237, 35, 61, .72) 74%, transparent);
 }
 
 .app-brand {
@@ -203,6 +213,9 @@ body {
     radial-gradient(circle at 84% 8%, rgba(255, 245, 190, .98) 0 4px, rgba(255, 178, 55, .62) 5px 11px, transparent 28px),
     radial-gradient(circle at 70% 22%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
     radial-gradient(circle at 91% 37%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
+    radial-gradient(circle at 83% 55%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
+    radial-gradient(circle at 93% 73%, rgba(255, 243, 181, .72) 0 2px, rgba(242, 157, 44, .25) 4px 8px, transparent 20px),
+    radial-gradient(circle at 75% 89%, rgba(255, 233, 145, .65) 0 2px, rgba(242, 157, 44, .2) 4px 7px, transparent 18px),
     radial-gradient(ellipse at 82% 17%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
   color: #ffffff;
 }
@@ -233,16 +246,22 @@ body {
 .mobile-sidebar-header {
   position: relative;
   align-items: flex-start;
-  min-height: 270px;
+  min-height: 240px;
   padding: 42px 20px 20px;
 }
 
 .mobile-sidebar-header .mobile-brand-logo {
   position: absolute;
-  right: 24px;
-  bottom: 18px;
+  left: 22px;
+  top: 32px;
   width: 108px;
   filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .3));
+}
+
+.mobile-sidebar-header .sidebar-brand-copy {
+  position: absolute;
+  top: 158px;
+  left: 20px;
 }
 
 .mobile-sidebar-header .btn-close {
@@ -259,8 +278,6 @@ body {
 
 .mobile-sidebar-navigation {
   padding: .65rem;
-  border-radius: 10px;
-  background: linear-gradient(90deg, rgba(237, 35, 61, .96), rgba(237, 35, 61, .7) 78%, transparent);
 }
 
 .offcanvas nav a {
