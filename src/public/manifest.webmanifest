@@ -1,0 +1,15 @@
+{
+  "name": "Velas AIB",
+  "short_name": "Velas AIB",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#100c0b",
+  "theme_color": "#ed233d",
+  "icons": [
+    {
+      "src": "/assets/images/velas-aib-logo-official.png",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

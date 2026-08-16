@@ -80,8 +80,6 @@ body {
     radial-gradient(circle at 72% 23%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
     radial-gradient(circle at 91% 39%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
     radial-gradient(circle at 84% 56%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
-    radial-gradient(circle at 94% 74%, rgba(255, 243, 181, .72) 0 2px, rgba(242, 157, 44, .25) 4px 8px, transparent 20px),
-    radial-gradient(circle at 76% 90%, rgba(255, 233, 145, .65) 0 2px, rgba(242, 157, 44, .2) 4px 7px, transparent 18px),
     radial-gradient(ellipse at 82% 18%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
   border-right: 1px solid var(--brand-red-dark);
   box-shadow: 6px 0 20px rgba(35, 31, 32, .16);
@@ -214,8 +212,6 @@ body {
     radial-gradient(circle at 70% 22%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
     radial-gradient(circle at 91% 37%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
     radial-gradient(circle at 83% 55%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
-    radial-gradient(circle at 93% 73%, rgba(255, 243, 181, .72) 0 2px, rgba(242, 157, 44, .25) 4px 8px, transparent 20px),
-    radial-gradient(circle at 75% 89%, rgba(255, 233, 145, .65) 0 2px, rgba(242, 157, 44, .2) 4px 7px, transparent 18px),
     radial-gradient(ellipse at 82% 17%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
   color: #ffffff;
 }
