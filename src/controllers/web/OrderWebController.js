@@ -26,6 +26,7 @@ const buildOrderPayload = (body) => {
     .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
   const manualNames = asArray(body.manualProductName);
   const manualUnitTypes = asArray(body.manualUnitType);
+  const manualColors = asArray(body.manualColor);
   const manualQuantities = asArray(body.manualQuantity);
   const manualPrices = asArray(body.manualPrice);
 
@@ -38,6 +39,7 @@ const buildOrderPayload = (body) => {
         productId: null,
         manualName: manualName.trim(),
         manualUnitType,
+        manualColor: manualColors[index]?.trim() || null,
         unitQuantity,
         boxQuantity: 0,
         customUnitPrice: manualPrices[index] === '' || manualPrices[index] === undefined
@@ -69,7 +71,7 @@ const buildOrderPayload = (body) => {
 class OrderWebController {
   async index(req, res) {
     const selectedCollaboratorId = req.query.createdById ?? '';
-    const canFilterByCollaborator = req.currentUser.role === 'manager';
+    const canFilterByCollaborator = req.currentUser.role === 'admin';
     const [orders, collaborators] = await Promise.all([
       OrderService.list({ createdById: selectedCollaboratorId }, req.currentUser),
       canFilterByCollaborator ? UserService.list() : Promise.resolve([])
@@ -194,6 +196,17 @@ class OrderWebController {
   async remove(req, res) {
     const order = await OrderService.remove(req.params.id);
     req.session.flash = { success: `Pedido ${order.orderNumber} excluído com sucesso.` };
+    res.redirect('/orders');
+  }
+
+  async clearHistory(req, res) {
+    const count = await OrderService.clearHistory(
+      { createdById: req.body.createdById },
+      req.currentUser
+    );
+    req.session.flash = {
+      success: count === 1 ? '1 pedido foi removido do histórico.' : `${count} pedidos foram removidos do histórico.`
+    };
     res.redirect('/orders');
   }
 }

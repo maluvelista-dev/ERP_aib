@@ -5,9 +5,13 @@
     <button class="btn btn-sm btn-outline-danger js-remove-manual-order-item" type="button">Remover</button>
   </div>
   <div class="row g-2 align-items-end">
-    <div class="col-lg-6">
+    <div class="col-lg-4">
       <label class="form-label">Nome do produto</label>
       <input class="form-control" name="manualProductName" maxlength="191" required value="<%= item?.name || '' %>" placeholder="Digite o nome ou a descri&ccedil;&atilde;o do produto">
+    </div>
+    <div class="col-md-4 col-lg-2">
+      <label class="form-label">Cor</label>
+      <input class="form-control" name="manualColor" maxlength="80" value="<%= item?.manualColor || '' %>" placeholder="Ex.: Branca">
     </div>
     <div class="col-md-3 col-lg-2">
       <label class="form-label">Tipo</label>
@@ -21,7 +25,7 @@
       <input class="form-control" name="manualQuantity" type="number" min="1" value="<%= item?.unitQuantity ?? 1 %>" required>
     </div>
     <div class="col-md-5 col-lg-2">
-      <label class="form-label">PreÃ§o unitÃ¡rio</label>
+      <label class="form-label">Pre&ccedil;o unit&aacute;rio</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
         <input class="form-control" name="manualPrice" type="number" min="0" step="0.01" required value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="0,00">

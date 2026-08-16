@@ -24,6 +24,7 @@ const itemCreateData = (item) => ({
   name: item.name,
   category: item.category,
   manualUnitType: item.manualUnitType,
+  manualColor: item.manualColor,
   quantity: item.quantity,
   unitQuantity: item.unitQuantity,
   boxQuantity: item.boxQuantity,
@@ -139,6 +140,17 @@ class OrderRepository extends BaseRepository {
 
   async destroy(id) {
     return this.model.delete({ where: { id } });
+  }
+
+  async clearHistory(createdById = null) {
+    const where = createdById ? { createdById } : {};
+    const orders = await this.model.findMany({ where, select: { pdfUrl: true } });
+    const result = await this.model.deleteMany({ where });
+
+    return {
+      count: result.count,
+      pdfUrls: orders.map((order) => order.pdfUrl).filter(Boolean)
+    };
   }
 }
 

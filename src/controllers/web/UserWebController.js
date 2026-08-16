@@ -15,7 +15,7 @@ class UserWebController {
     const [user, summary, orders] = await Promise.all([
       UserService.findById(req.params.id),
       OrderService.collaboratorSummary(req.params.id),
-      OrderService.list({ createdById: req.params.id }, { role: 'manager' })
+      OrderService.list({ createdById: req.params.id }, { role: 'admin' })
     ]);
 
     res.render('users/show', {
@@ -36,6 +36,26 @@ class UserWebController {
       req.session.flash = { error: `Não foi possível alterar o colaborador: ${error.message}` };
     }
 
+    res.redirect('/collaborators');
+  }
+
+  async approve(req, res) {
+    try {
+      const user = await UserService.approve(req.params.id, req.currentUser);
+      req.session.flash = { success: `${user.name} foi aprovado e já pode entrar no sistema.` };
+    } catch (error) {
+      req.session.flash = { error: `Não foi possível aprovar o cadastro: ${error.message}` };
+    }
+    res.redirect('/collaborators');
+  }
+
+  async reject(req, res) {
+    try {
+      const user = await UserService.reject(req.params.id, req.currentUser);
+      req.session.flash = { success: `O cadastro de ${user.name} foi recusado e excluído.` };
+    } catch (error) {
+      req.session.flash = { error: `Não foi possível recusar o cadastro: ${error.message}` };
+    }
     res.redirect('/collaborators');
   }
 }

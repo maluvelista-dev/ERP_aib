@@ -9,7 +9,7 @@
         <div class="d-flex justify-content-between align-items-start gap-3">
           <div>
             <h2 class="h6 mb-1"><%= user.name %></h2>
-            <div class="small text-muted"><%= user.email %> - <%= user.role %></div>
+            <div class="small text-muted"><%= user.email %> - <%= user.role === 'admin' ? 'Administrador' : 'Colaborador' %></div>
           </div>
           <a class="btn btn-sm btn-outline-secondary" href="/collaborators">Voltar</a>
         </div>

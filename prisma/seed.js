@@ -19,7 +19,6 @@ const defaultProductCategory = await prisma.productCategory.upsert({
 });
 
 const passwordHash = await bcrypt.hash('Admin@123456', Number(process.env.BCRYPT_SALT_ROUNDS ?? 12));
-const managerPasswordHash = await bcrypt.hash('Manager@123456', Number(process.env.BCRYPT_SALT_ROUNDS ?? 12));
 const sellerPasswordHash = await bcrypt.hash('Seller@123456', Number(process.env.BCRYPT_SALT_ROUNDS ?? 12));
 
 const admin = await prisma.user.upsert({
@@ -50,22 +49,6 @@ const seller = await prisma.user.upsert({
     email: 'seller@ordersweb.com',
     passwordHash: sellerPasswordHash,
     role: 'SELLER',
-    active: true
-  }
-});
-
-await prisma.user.upsert({
-  where: { email: 'manager@ordersweb.com' },
-  update: {
-    name: 'Sales Manager',
-    role: 'MANAGER',
-    active: true
-  },
-  create: {
-    name: 'Sales Manager',
-    email: 'manager@ordersweb.com',
-    passwordHash: managerPasswordHash,
-    role: 'MANAGER',
     active: true
   }
 });
@@ -184,7 +167,6 @@ if (!existingOrder) {
 
 console.log('Seed completed');
 console.log('Admin login: admin@ordersweb.com / Admin@123456');
-console.log('Manager login: manager@ordersweb.com / Manager@123456');
 console.log('Seller login: seller@ordersweb.com / Seller@123456');
 
 await prisma.$disconnect();

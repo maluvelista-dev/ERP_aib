@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<main class="login-page min-vh-100 d-flex align-items-center justify-content-center px-3 py-4">
+  <section class="content-panel login-panel p-4 w-100">
+    <img class="login-logo mb-3" src="/assets/images/velas-aib-logo-official.png" alt="Velas AIB">
+    <h1 class="h4 mb-1">Criar cadastro</h1>
+    <p class="text-muted mb-4">Informe seus dados. O administrador precisa aprovar seu acesso.</p>
+
+    <% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+    <form action="/register" method="post" class="d-grid gap-3">
+      <div>
+        <label class="form-label" for="name">Nome completo</label>
+        <input class="form-control" id="name" name="name" value="<%= form.name ?? '' %>" minlength="2" maxlength="120" autocomplete="name" required>
+      </div>
+      <div>
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" id="email" name="email" type="email" value="<%= form.email ?? '' %>" maxlength="191" autocomplete="email" required>
+      </div>
+      <div>
+        <label class="form-label" for="password">Senha</label>
+        <input class="form-control" id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+        <div class="form-text">Use pelo menos 8 caracteres.</div>
+      </div>
+      <button class="btn btn-primary" type="submit">Enviar cadastro</button>
+      <a class="btn btn-outline-secondary" href="/login">Voltar para o login</a>
+    </form>
+  </section>
+</main>
+<%- include('../partials/foot') %>

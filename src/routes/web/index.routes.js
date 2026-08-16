@@ -23,6 +23,8 @@ router.use(loadCurrentUser);
 router.get('/', (_req, res) => res.redirect('/dashboard'));
 router.get('/login', redirectAuthenticated, AuthWebController.loginForm);
 router.post('/login', redirectAuthenticated, asyncHandler((req, res) => AuthWebController.login(req, res)));
+router.get('/register', redirectAuthenticated, (req, res) => AuthWebController.registerForm(req, res));
+router.post('/register', redirectAuthenticated, asyncHandler((req, res) => AuthWebController.register(req, res)));
 router.post('/logout', requireWebAuth, AuthWebController.logout);
 
 router.get(
@@ -106,6 +108,18 @@ router.post(
   webAuthorize(UserPolicy, 'toggleActive', (req) => UserRepository.findById(req.params.id)),
   asyncHandler((req, res) => UserWebController.toggleActive(req, res))
 );
+router.post(
+  '/collaborators/:id/approve',
+  requireWebAuth,
+  webAuthorize(UserPolicy, 'approve', (req) => UserRepository.findById(req.params.id)),
+  asyncHandler((req, res) => UserWebController.approve(req, res))
+);
+router.post(
+  '/collaborators/:id/reject',
+  requireWebAuth,
+  webAuthorize(UserPolicy, 'reject', (req) => UserRepository.findById(req.params.id)),
+  asyncHandler((req, res) => UserWebController.reject(req, res))
+);
 
 router.get(
   '/orders',
@@ -154,6 +168,12 @@ router.post(
   requireWebAuth,
   webAuthorize(OrderPolicy, 'create'),
   asyncHandler((req, res) => OrderWebController.create(req, res))
+);
+router.post(
+  '/orders/clear-history',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'clearHistory'),
+  asyncHandler((req, res) => OrderWebController.clearHistory(req, res))
 );
 router.post(
   '/orders/:id',

@@ -18,7 +18,7 @@ export class CustomerPolicy extends ApplicationPolicy {
   }
 
   destroy() {
-    return this.isAdmin();
+    return this.isAdmin() || this.isSeller();
   }
 
   activate() {

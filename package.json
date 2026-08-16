@@ -14,13 +14,15 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
     "prisma:status": "prisma migrate status",
     "prisma:studio": "prisma studio",
     "seed": "prisma db seed",
     "import:products": "node prisma/import-products.js",
     "catalog:sql": "node scripts/generate-catalog-sql.mjs",
     "catalog:verify": "node scripts/verify-catalog-import.mjs",
-    "users:bootstrap": "node scripts/bootstrap-production-users.mjs"
+    "users:bootstrap": "node scripts/bootstrap-production-users.mjs",
+    "admin:reset": "node scripts/reset-admin-password.mjs"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.9.1",

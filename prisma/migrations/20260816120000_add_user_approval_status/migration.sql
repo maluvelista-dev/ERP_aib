@@ -1,0 +1,2 @@
+ALTER TABLE `users`
+  ADD COLUMN `approvalStatus` ENUM('PENDING', 'APPROVED') NOT NULL DEFAULT 'APPROVED' AFTER `active`;

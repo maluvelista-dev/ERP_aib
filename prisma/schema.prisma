@@ -14,6 +14,7 @@ model User {
   passwordHash String
   role         Role     @default(SELLER)
   active       Boolean  @default(true)
+  approvalStatus ApprovalStatus @default(APPROVED)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -119,6 +120,7 @@ model OrderItem {
   name         String
   category     String?
   manualUnitType String? @db.VarChar(10)
+  manualColor  String?  @db.VarChar(80)
   quantity     Int
   unitQuantity Int      @default(0)
   boxQuantity  Int      @default(0)
@@ -134,8 +136,12 @@ model OrderItem {
 
 enum Role {
   ADMIN
-  MANAGER
   SELLER
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
 }
 
 enum OrderStatus {

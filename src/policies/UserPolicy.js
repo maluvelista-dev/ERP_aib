@@ -2,11 +2,11 @@ import { ApplicationPolicy } from './ApplicationPolicy.js';
 
 export class UserPolicy extends ApplicationPolicy {
   index() {
-    return this.isManager();
+    return this.isAdmin();
   }
 
   show() {
-    return this.isManager() || this.ownsRecord();
+    return this.isAdmin() || this.ownsRecord();
   }
 
   create() {
@@ -22,7 +22,7 @@ export class UserPolicy extends ApplicationPolicy {
       return false;
     }
 
-    return this.isManager() && this.record?.role === 'SELLER';
+    return this.isAdmin() && this.record?.role === 'SELLER';
   }
 
   activate() {
@@ -30,6 +30,14 @@ export class UserPolicy extends ApplicationPolicy {
   }
 
   toggleActive() {
+    return this.destroy();
+  }
+
+  approve() {
+    return this.destroy();
+  }
+
+  reject() {
     return this.destroy();
   }
 }

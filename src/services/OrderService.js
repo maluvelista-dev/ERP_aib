@@ -20,7 +20,7 @@ const filenamePart = (value, fallback = 'cliente') => {
 
 class OrderService {
   async list(filters = {}, currentUser = null) {
-    const canFilterByCollaborator = currentUser?.role === 'manager';
+    const canFilterByCollaborator = currentUser?.role === 'admin';
     const orders = await OrderRepository.findRecent({
       createdById: canFilterByCollaborator ? filters.createdById : null
     });
@@ -226,6 +226,16 @@ class OrderService {
     return order;
   }
 
+  async clearHistory(filters = {}, currentUser) {
+    const createdById = currentUser.role === 'admin'
+      ? (filters.createdById || null)
+      : currentUser.id;
+    const result = await OrderRepository.clearHistory(createdById);
+
+    await Promise.all(result.pdfUrls.map((pdfUrl) => StorageService.deletePdf(pdfUrl)));
+    return result.count;
+  }
+
   async #buildItems(requestedItems) {
     const items = [];
 
@@ -240,6 +250,7 @@ class OrderService {
           code: 'MANUAL',
           name: requestedItem.manualName,
           manualUnitType,
+          manualColor: requestedItem.manualColor || null,
           category: null,
           quantity: unitQuantity,
           unitQuantity,

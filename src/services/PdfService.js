@@ -225,10 +225,6 @@ class PdfService {
       .text('NOTAS: 1 - PAGAMENTO FATURADO SUJEITO A APROVAÇÃO DE CADASTRO E CONSULTA AO SPC/SERASA.', 36, notesY, {
         width: 523,
         align: 'center'
-      })
-      .text('2 - AS MERCADORIAS VIAJAM POR CONTA E RISCO DO(S) COMPRADOR(ES).', {
-        width: 523,
-        align: 'center'
       });
 
     doc.font('Helvetica-Bold').fontSize(10).text('DIADEMA,', 36, signatureY);
@@ -325,7 +321,11 @@ class PdfService {
   }
 
   #formatItemDescription(item) {
-    return [item.name, item.category].filter(Boolean).join(' - ');
+    return [
+      item.name,
+      item.category,
+      !item.productId && item.manualColor ? `Cor: ${item.manualColor}` : null
+    ].filter(Boolean).join(' - ');
   }
 
   #formatDeliveryDays(deliveryDays) {

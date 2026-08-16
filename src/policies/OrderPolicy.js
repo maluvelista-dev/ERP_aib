@@ -17,6 +17,10 @@ export class OrderPolicy extends ApplicationPolicy {
     return this.index();
   }
 
+  clearHistory() {
+    return this.index();
+  }
+
   sendWhatsapp() {
     return this.index();
   }

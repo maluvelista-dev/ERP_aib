@@ -1,0 +1,3 @@
+UPDATE `users` SET `role` = 'ADMIN' WHERE `role` = 'MANAGER';
+
+ALTER TABLE `users` MODIFY `role` ENUM('ADMIN', 'SELLER') NOT NULL DEFAULT 'SELLER';

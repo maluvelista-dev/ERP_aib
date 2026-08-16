@@ -25,6 +25,7 @@ const orderSchema = Joi.object({
         productId: Joi.string().allow('', null),
         manualName: Joi.string().trim().max(191).allow('', null),
         manualUnitType: Joi.string().valid('UNIT', 'KG').default('UNIT'),
+        manualColor: Joi.string().trim().max(80).allow('', null),
         quantity: Joi.number().integer().min(1),
         unitQuantity: Joi.number().integer().min(0).default(0),
         boxQuantity: Joi.number().integer().min(0).default(0),

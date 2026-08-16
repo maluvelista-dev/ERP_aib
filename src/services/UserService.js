@@ -10,14 +10,38 @@ const serializeUser = (user) => ({
   email: user.email,
   role: user.role.toLowerCase(),
   active: user.active,
+  approvalStatus: user.approvalStatus.toLowerCase(),
   createdAt: user.createdAt,
   updatedAt: user.updatedAt
 });
 
 class UserService {
+  async register(payload) {
+    const data = UserModel.validateRegistration(payload);
+    const existingUser = await UserRepository.findByEmail(data.email);
+
+    if (existingUser) {
+      throw new AppError('Já existe um cadastro com este e-mail', 409);
+    }
+
+    const passwordHash = await bcrypt.hash(data.password, env.bcryptSaltRounds);
+    const user = await UserRepository.create({
+      name: data.name,
+      email: data.email,
+      passwordHash,
+      role: 'seller',
+      active: false,
+      approvalStatus: 'PENDING'
+    });
+
+    return serializeUser(user);
+  }
+
   async list() {
     const users = await UserRepository.findAll(100);
-    return users.map(serializeUser);
+    return users
+      .filter((user) => user.role === 'SELLER')
+      .map(serializeUser);
   }
 
   async findById(id) {
@@ -103,6 +127,39 @@ class UserService {
 
     const updatedUser = await UserRepository.update(id, { active: !user.active });
     return serializeUser(updatedUser);
+  }
+
+  async approve(id, currentUser) {
+    const user = await UserRepository.findById(id);
+
+    if (!user || user.role !== 'SELLER') {
+      throw new AppError('Cadastro de colaborador não encontrado', 404);
+    }
+
+    if (currentUser.id === id) {
+      throw new AppError('Você não pode aprovar a própria conta', 422);
+    }
+
+    const updatedUser = await UserRepository.update(id, {
+      approvalStatus: 'APPROVED',
+      active: true
+    });
+    return serializeUser(updatedUser);
+  }
+
+  async reject(id, currentUser) {
+    const user = await UserRepository.findById(id);
+
+    if (!user || user.role !== 'SELLER' || user.approvalStatus !== 'PENDING') {
+      throw new AppError('Cadastro pendente não encontrado', 404);
+    }
+
+    if (currentUser.id === id) {
+      throw new AppError('Você não pode recusar a própria conta', 422);
+    }
+
+    await UserRepository.delete(id);
+    return user;
   }
 }
 

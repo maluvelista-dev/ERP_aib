@@ -16,7 +16,8 @@ class UserRepository extends BaseRepository {
     return this.model.findFirst({
       where: {
         id,
-        active: true
+        active: true,
+        approvalStatus: 'APPROVED'
       }
     });
   }
@@ -46,6 +47,10 @@ class UserRepository extends BaseRepository {
       where: { id },
       data: nextData
     });
+  }
+
+  async delete(id) {
+    return this.model.delete({ where: { id } });
   }
 }
 

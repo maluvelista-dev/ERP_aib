@@ -13,6 +13,14 @@
               <div class="small text-muted"><%= orders.length %> pedido(s) encontrado(s)</div>
             </div>
             <a class="btn btn-sm btn-primary" href="/orders/new">Novo pedido</a>
+            <% if (orders.length > 0) { %>
+              <form action="/orders/clear-history" method="post" onsubmit="return confirm('Tem certeza que deseja limpar este histórico de pedidos? Esta ação não pode ser desfeita.')">
+                <% if (canFilterByCollaborator && selectedCollaboratorId) { %>
+                  <input type="hidden" name="createdById" value="<%= selectedCollaboratorId %>">
+                <% } %>
+                <button class="btn btn-sm btn-outline-danger" type="submit"><%= currentUser.role === 'admin' ? 'Limpar histórico' : 'Limpar meus pedidos' %></button>
+              </form>
+            <% } %>
           </div>
 
           <% if (canFilterByCollaborator) { %>

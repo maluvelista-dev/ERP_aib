@@ -29,15 +29,15 @@ export class ApplicationPolicy {
   }
 
   isManager() {
-    return this.user?.role === 'manager';
+    return false;
   }
 
   isSeller() {
-    return this.user?.role === 'seller' || this.isManager();
+    return this.user?.role === 'seller';
   }
 
   isAdminOrManager() {
-    return this.isAdmin() || this.isManager();
+    return this.isAdmin();
   }
 
   ownsRecord() {

@@ -14,6 +14,7 @@
           <table class="table table-sm table-hover mb-0">
             <thead>
               <tr>
+                <th>Nº</th>
                 <th>CNPJ</th>
                 <th>Razao social</th>
                 <th>Nome fantasia</th>
@@ -25,8 +26,9 @@
               </tr>
             </thead>
             <tbody>
-              <% customers.forEach((customer) => { %>
+              <% customers.forEach((customer, index) => { %>
                 <tr>
+                  <td><%= String(index + 1).padStart(2, '0') %></td>
                   <td><%= customer.cnpj || '-' %></td>
                   <td><%= customer.legalName || 'Cliente sem nome' %></td>
                   <td><%= customer.tradeName || '-' %></td>
@@ -59,7 +61,7 @@
                   <td>
                     <div class="d-flex gap-2 flex-wrap">
                       <a class="btn btn-sm btn-outline-primary" href="/customers/<%= customer.id %>/edit">Editar</a>
-                      <% if (currentUser.role === 'admin') { %>
+                      <% if (currentUser.role === 'admin' || currentUser.role === 'seller') { %>
                         <form action="/customers/<%= customer.id %>/delete" method="post" class="m-0 js-delete-customer-form" data-customer-name="<%= customer.legalName || customer.tradeName || customer.cnpj || 'cliente' %>">
                           <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
                         </form>

@@ -31,14 +31,21 @@
                     </a>
                   </td>
                   <td><%= user.email %></td>
-                  <td><%= user.role %></td>
+                  <td><%= user.role === 'admin' ? 'Administrador' : 'Colaborador' %></td>
                   <td>
-                    <span class="badge text-bg-<%= user.active ? 'success' : 'secondary' %>">
-                      <%= user.active ? 'Ativo' : 'Inativo' %>
+                    <span class="badge text-bg-<%= user.approvalStatus === 'pending' ? 'warning' : user.active ? 'success' : 'secondary' %>">
+                      <%= user.approvalStatus === 'pending' ? 'Aguardando aprovação' : user.active ? 'Ativo' : 'Inativo' %>
                     </span>
                   </td>
                   <td class="text-end">
-                    <% if (currentUser.id !== user.id && user.role === 'seller') { %>
+                    <% if (user.approvalStatus === 'pending') { %>
+                      <form action="/collaborators/<%= user.id %>/approve" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-success" type="submit">Aceitar</button>
+                      </form>
+                      <form action="/collaborators/<%= user.id %>/reject" method="post" class="d-inline" onsubmit="return confirm('Recusar e excluir permanentemente este cadastro?')">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Recusar</button>
+                      </form>
+                    <% } else if (currentUser.id !== user.id && user.role === 'seller') { %>
                       <form action="/collaborators/<%= user.id %>/toggle-active" method="post" class="d-inline">
                         <button class="btn btn-sm btn-outline-<%= user.active ? 'danger' : 'primary' %>" type="submit">
                           <%= user.active ? 'Desativar' : 'Ativar' %>

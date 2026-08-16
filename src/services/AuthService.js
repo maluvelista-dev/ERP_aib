@@ -4,13 +4,18 @@ import { env } from '../config/env.js';
 import { AuthModel } from '../models/AuthModel.js';
 import UserRepository from '../repositories/UserRepository.js';
 import { AppError } from '../utils/AppError.js';
+import UserService from './UserService.js';
 
 class AuthService {
+  async register(payload) {
+    return UserService.register(payload);
+  }
+
   async login(payload) {
     const data = AuthModel.validateLogin(payload);
     const user = await this.#findUserWithWakeRetry(data.email);
 
-    if (!user || user.active === false) {
+    if (!user) {
       throw new AppError('Invalid credentials', 401);
     }
 
@@ -18,6 +23,14 @@ class AuthService {
 
     if (!passwordMatches) {
       throw new AppError('Invalid credentials', 401);
+    }
+
+    if (user.approvalStatus === 'PENDING') {
+      throw new AppError('Registration pending approval', 403);
+    }
+
+    if (user.active === false) {
+      throw new AppError('User inactive', 403);
     }
 
     const role = user.role.toLowerCase();
