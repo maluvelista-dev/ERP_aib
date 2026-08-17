@@ -30,6 +30,10 @@ export class TtlCache {
     return value;
   }
 
+  delete(key) {
+    return this.entries.delete(key);
+  }
+
   clear() {
     this.entries.clear();
   }

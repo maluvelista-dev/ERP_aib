@@ -40,6 +40,16 @@ function applyTheme(theme) {
 
 applyTheme(getPreferredTheme());
 
+function resetPdfButtons() {
+  document.querySelectorAll('.js-generate-pdf-form button[type="submit"]').forEach((button) => {
+    button.disabled = false;
+    button.textContent = button.dataset.idleLabel || 'Gerar PDF';
+    button.removeAttribute('aria-busy');
+  });
+}
+
+window.addEventListener('pageshow', resetPdfButtons);
+
 document.addEventListener('click', (event) => {
   const removeButton = event.target.closest('.js-remove-order-item');
 
@@ -122,6 +132,7 @@ document.addEventListener('submit', (event) => {
     const button = pdfForm.querySelector('button[type="submit"]');
 
     if (button) {
+      button.dataset.idleLabel = button.textContent.trim();
       button.disabled = true;
       button.textContent = 'Gerando PDF...';
       button.setAttribute('aria-busy', 'true');

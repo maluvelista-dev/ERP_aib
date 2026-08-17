@@ -1,19 +1,27 @@
 import UserRepository from '../repositories/UserRepository.js';
+import { TtlCache } from '../utils/TtlCache.js';
+
+const activeUserCache = new TtlCache({ ttlMs: 15000, maxEntries: 500 });
+
+const serializeCurrentUser = (user) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: user.role.toLowerCase(),
+  active: user.active
+});
 
 export const loadCurrentUser = async (req, res, next) => {
   try {
     const userId = req.session?.userId;
-    const user = userId ? await UserRepository.findActiveById(userId) : null;
+    let currentUser = userId ? activeUserCache.get(userId) : null;
 
-    req.currentUser = user
-      ? {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role.toLowerCase(),
-          active: user.active
-        }
-      : null;
+    if (userId && !currentUser) {
+      const user = await UserRepository.findActiveById(userId);
+      currentUser = user ? activeUserCache.set(userId, serializeCurrentUser(user)) : null;
+    }
+
+    req.currentUser = currentUser;
 
     res.locals.currentUser = req.currentUser;
     res.locals.flash = req.session?.flash ?? null;

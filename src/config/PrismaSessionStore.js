@@ -1,7 +1,9 @@
 import session from 'express-session';
 import { prisma } from './prisma.js';
+import { TtlCache } from '../utils/TtlCache.js';
 
 const DEFAULT_TTL_MS = 1000 * 60 * 60 * 8;
+const sessionCache = new TtlCache({ ttlMs: 30000, maxEntries: 1000 });
 
 const serialize = (sessionData) => JSON.parse(JSON.stringify(sessionData));
 
@@ -22,6 +24,12 @@ export class PrismaSessionStore extends session.Store {
   #lastTouched = new Map();
 
   get(sessionId, callback) {
+    const cachedSession = sessionCache.get(sessionId);
+    if (cachedSession) {
+      callback(null, serialize(cachedSession));
+      return;
+    }
+
     prisma.webSession.findUnique({ where: { id: sessionId } })
       .then(async (record) => {
         if (!record) return callback(null, null);
@@ -31,7 +39,8 @@ export class PrismaSessionStore extends session.Store {
           return callback(null, null);
         }
 
-        return callback(null, record.data);
+        sessionCache.set(sessionId, serialize(record.data));
+        return callback(null, serialize(record.data));
       })
       .catch(callback);
   }
@@ -45,7 +54,10 @@ export class PrismaSessionStore extends session.Store {
       update: { data, expiresAt },
       create: { id: sessionId, data, expiresAt }
     })
-      .then(() => this.#lastTouched.set(sessionId, Date.now()))
+      .then(() => {
+        sessionCache.set(sessionId, data);
+        this.#lastTouched.set(sessionId, Date.now());
+      })
       .then(() => this.#cleanupExpiredSessions())
       .then(() => callback(null))
       .catch(callback);
@@ -53,6 +65,7 @@ export class PrismaSessionStore extends session.Store {
 
   destroy(sessionId, callback = () => {}) {
     this.#lastTouched.delete(sessionId);
+    sessionCache.delete(sessionId);
     prisma.webSession.deleteMany({ where: { id: sessionId } })
       .then(() => callback(null))
       .catch(callback);
@@ -61,6 +74,7 @@ export class PrismaSessionStore extends session.Store {
   touch(sessionId, sessionData, callback = () => {}) {
     const now = Date.now();
     const lastTouched = this.#lastTouched.get(sessionId) ?? 0;
+    sessionCache.set(sessionId, serialize(sessionData));
 
     if (now - lastTouched < 5 * 60 * 1000) {
       callback(null);
