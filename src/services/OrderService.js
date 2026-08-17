@@ -210,19 +210,13 @@ class OrderService {
 
   async generatePdfAndSendWhatsapp(id, currentUser) {
     const orderWithPdf = await this.generatePdf(id, currentUser);
+    const whatsappUrl = WhatsappService.buildOrderShareUrl({
+      customer: orderWithPdf.customerSnapshot,
+      order: orderWithPdf,
+      pdfUrl: orderWithPdf.pdfUrl
+    });
 
-    try {
-      await WhatsappService.sendOrderPdf({
-        customer: orderWithPdf.customerSnapshot,
-        order: orderWithPdf,
-        pdfUrl: orderWithPdf.pdfUrl
-      });
-
-      return this.#withTotals(await OrderRepository.markWhatsappSent(id));
-    } catch (error) {
-      await OrderRepository.markWhatsappError(id, error.message);
-      throw error;
-    }
+    return { ...orderWithPdf, whatsappUrl };
   }
 
   async remove(id, currentUser) {

@@ -17,6 +17,8 @@ const required = (key, fallback = undefined) => {
 export const env = {
   nodeEnv,
   port: Number(process.env.PORT ?? 3333),
+  publicAppUrl: process.env.PUBLIC_APP_URL
+    ?? (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : `http://localhost:${process.env.PORT ?? 3333}`),
   jwtSecret: required('JWT_SECRET', nodeEnv === 'production' ? undefined : 'dev-secret-change-me'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '8h',
   sessionSecret: required('SESSION_SECRET', nodeEnv === 'production' ? undefined : 'dev-session-secret-change-me'),
@@ -28,11 +30,6 @@ export const env = {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean),
-  whatsapp: {
-    token: process.env.WHATSAPP_TOKEN,
-    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
-    apiVersion: process.env.WHATSAPP_API_VERSION ?? 'v20.0'
-  },
   company: {
     name: process.env.COMPANY_NAME ?? 'COMMERCIAL COMPANY LLC',
     cnpj: process.env.COMPANY_CNPJ ?? '00.123.456/0001-00',

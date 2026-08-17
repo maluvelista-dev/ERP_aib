@@ -227,6 +227,10 @@ class OrderWebController {
       );
 
       req.session.flash = { success: `Pedido ${order.orderNumber} criado com sucesso.` };
+      if (order.whatsappUrl) {
+        res.redirect(order.whatsappUrl);
+        return;
+      }
       res.redirect('/orders');
     } catch (error) {
       const validationDetails = Array.isArray(error.details) && error.details.length
@@ -247,6 +251,10 @@ class OrderWebController {
     try {
       const order = await OrderService.update(req.params.id, buildOrderPayload(req.body), req.currentUser);
       req.session.flash = { success: `Pedido ${order.orderNumber} atualizado. Gere um novo PDF.` };
+      if (order.whatsappUrl) {
+        res.redirect(order.whatsappUrl);
+        return;
+      }
       res.redirect(`/orders/${order.id}`);
     } catch (error) {
       const validationDetails = Array.isArray(error.details) && error.details.length
@@ -267,6 +275,11 @@ class OrderWebController {
   async generatePdf(req, res) {
     const order = await OrderService.generatePdf(req.params.id, req.currentUser);
     res.redirect(order.pdfUrl);
+  }
+
+  async shareWhatsapp(req, res) {
+    const order = await OrderService.generatePdfAndSendWhatsapp(req.params.id, req.currentUser);
+    res.redirect(order.whatsappUrl);
   }
 
   async remove(req, res) {
