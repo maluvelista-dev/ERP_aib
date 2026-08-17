@@ -206,7 +206,7 @@ class PdfService {
         .strokeColor('#231f20')
         .stroke();
       doc.font('Helvetica-Bold').fontSize(9).text('OBSERVAÇÃO:', 45, notesY + 8);
-      doc.font('Helvetica').fontSize(8.5).text(observation, 45, notesY + 21, {
+      doc.font('Helvetica-Bold').fontSize(8.5).text(observation, 45, notesY + 21, {
         width: 505,
         height: 27,
         ellipsis: true

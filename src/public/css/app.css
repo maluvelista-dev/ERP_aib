@@ -76,11 +76,8 @@ body {
   width: 272px;
   flex: 0 0 272px;
   background:
-    radial-gradient(circle at 85% 7%, rgba(255, 245, 190, .98) 0 4px, rgba(255, 178, 55, .62) 5px 11px, transparent 28px),
-    radial-gradient(circle at 72% 23%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
-    radial-gradient(circle at 91% 39%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
-    radial-gradient(circle at 84% 56%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
-    radial-gradient(ellipse at 82% 18%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
+    linear-gradient(rgba(20, 13, 12, .16), rgba(20, 13, 12, .34)),
+    url("/assets/images/velas-capa-catalogo.png") center top / cover no-repeat;
   border-right: 1px solid var(--brand-red-dark);
   box-shadow: 6px 0 20px rgba(35, 31, 32, .16);
 }
@@ -208,11 +205,8 @@ body {
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(circle at 84% 8%, rgba(255, 245, 190, .98) 0 4px, rgba(255, 178, 55, .62) 5px 11px, transparent 28px),
-    radial-gradient(circle at 70% 22%, rgba(255, 244, 181, .9) 0 3px, rgba(244, 144, 35, .45) 5px 9px, transparent 25px),
-    radial-gradient(circle at 91% 37%, rgba(255, 244, 181, .8) 0 3px, rgba(244, 144, 35, .35) 5px 10px, transparent 27px),
-    radial-gradient(circle at 83% 55%, rgba(255, 238, 160, .84) 0 3px, rgba(242, 157, 44, .32) 5px 9px, transparent 23px),
-    radial-gradient(ellipse at 82% 17%, #6b493d 0, #302724 34%, #171717 68%, #0c0c0d 100%);
+    linear-gradient(rgba(20, 13, 12, .16), rgba(20, 13, 12, .34)),
+    url("/assets/images/velas-capa-catalogo.png") center top / cover no-repeat;
   color: #ffffff;
 }
 
