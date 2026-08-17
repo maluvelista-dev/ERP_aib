@@ -1,6 +1,7 @@
 import CustomerService from '../../services/CustomerService.js';
 import OrderService from '../../services/OrderService.js';
 import ProductService from '../../services/ProductService.js';
+import UserService from '../../services/UserService.js';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -67,18 +68,81 @@ const buildOrderPayload = (body) => {
   };
 };
 
+const buildOrderFormState = (body, existingOrder = null) => {
+  const productIds = asArray(body.productId);
+  const unitQuantities = asArray(body.unitQuantity);
+  const boxQuantities = asArray(body.boxQuantity);
+  const customUnitPrices = asArray(body.customUnitPrice);
+  const customBoxPrices = asArray(body.customBoxPrice);
+  const manualNames = asArray(body.manualProductName);
+  const manualUnitTypes = asArray(body.manualUnitType);
+  const manualColors = asArray(body.manualColor);
+  const manualQuantities = asArray(body.manualQuantity);
+  const manualPrices = asArray(body.manualPrice);
+  const catalogItems = productIds.map((productId, index) => ({
+    productId,
+    unitQuantity: unitQuantities[index] ?? 0,
+    boxQuantity: boxQuantities[index] ?? 0,
+    unitPrice: customUnitPrices[index] === '' ? null : customUnitPrices[index],
+    boxPrice: customBoxPrices[index] === '' ? null : customBoxPrices[index]
+  }));
+  const manualItems = manualNames.map((name, index) => ({
+    productId: null,
+    name,
+    manualUnitType: manualUnitTypes[index] === 'KG' ? 'KG' : 'UNIT',
+    manualColor: manualColors[index] ?? '',
+    unitQuantity: manualQuantities[index] ?? 0,
+    boxQuantity: 0,
+    unitPrice: manualPrices[index] === '' ? null : manualPrices[index],
+    boxPrice: null
+  }));
+
+  return {
+    ...(existingOrder ? { id: existingOrder.id } : {}),
+    customerId: body.customerId,
+    sellerPhone: body.sellerPhone,
+    bonusProductId: body.bonusProductId,
+    discountPercent: body.discountPercent,
+    deliveryDays: asArray(body.deliveryDays),
+    receivedTime: body.receivedTime,
+    fiscalEmail: body.fiscalEmail,
+    contactEmail: body.contactEmail,
+    paymentTerm: body.paymentTerm,
+    notes: body.notes,
+    sendWhatsapp: body.sendWhatsapp === 'on',
+    items: [...catalogItems, ...manualItems]
+  };
+};
+
+const consumeOrderDraft = (req, mode, orderId = null) => {
+  const draft = req.session.orderFormDraft;
+  delete req.session.orderFormDraft;
+
+  if (!draft || draft.mode !== mode || (orderId && draft.orderId !== orderId)) {
+    return null;
+  }
+
+  return draft.order;
+};
+
 class OrderWebController {
   async index(req, res) {
-    const selectedCollaboratorId = '';
-    const canFilterByCollaborator = false;
-    const orders = await OrderService.list({}, req.currentUser);
-    const collaborators = [];
+    const canFilterByCollaborator = req.currentUser.role === 'admin';
+    const selectedCollaboratorId = canFilterByCollaborator ? String(req.query.createdById ?? '') : '';
+    const selectedPeriod = ['week', '15days', '30days'].includes(req.query.period)
+      ? req.query.period
+      : '';
+    const [orders, collaborators] = await Promise.all([
+      OrderService.list({ createdById: selectedCollaboratorId, period: selectedPeriod }, req.currentUser),
+      canFilterByCollaborator ? UserService.list() : Promise.resolve([])
+    ]);
 
     res.render('orders/index', {
       title: 'Pedidos',
       orders,
       collaborators,
       selectedCollaboratorId,
+      selectedPeriod,
       canFilterByCollaborator
     });
   }
@@ -89,11 +153,14 @@ class OrderWebController {
       ProductService.list()
     ]);
 
+    const draft = consumeOrderDraft(req, 'create');
+
     res.render('orders/new', {
       title: 'Novo Pedido',
       customers,
       products,
-      order: null,
+      order: draft,
+      editMode: false,
       error: res.locals.flash?.error ?? null
     });
   }
@@ -105,11 +172,14 @@ class OrderWebController {
       ProductService.list()
     ]);
 
+    const draft = consumeOrderDraft(req, 'edit', req.params.id);
+
     res.render('orders/new', {
       title: `Editar Pedido ${order.orderNumber}`,
       customers,
       products,
-      order,
+      order: draft ?? order,
+      editMode: true,
       error: res.locals.flash?.error ?? null
     });
   }
@@ -165,6 +235,10 @@ class OrderWebController {
       req.session.flash = {
         error: `Não foi possível criar o pedido: ${error.message}${validationDetails}`
       };
+      req.session.orderFormDraft = {
+        mode: 'create',
+        order: buildOrderFormState(req.body)
+      };
       res.redirect('/orders/new');
     }
   }
@@ -180,6 +254,11 @@ class OrderWebController {
         : '';
       req.session.flash = {
         error: `Não foi possível atualizar o pedido: ${error.message}${validationDetails}`
+      };
+      req.session.orderFormDraft = {
+        mode: 'edit',
+        orderId: req.params.id,
+        order: buildOrderFormState(req.body, { id: req.params.id })
       };
       res.redirect(`/orders/${req.params.id}/edit`);
     }

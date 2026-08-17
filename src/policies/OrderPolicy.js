@@ -6,7 +6,7 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   show() {
-    return this.#ownsOrder();
+    return this.isAdmin() || this.#ownsOrder();
   }
 
   create() {

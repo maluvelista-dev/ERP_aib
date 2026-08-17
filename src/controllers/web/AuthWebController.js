@@ -30,7 +30,13 @@ class AuthWebController {
   async login(req, res) {
     try {
       const result = await AuthService.login(req.body);
+      await new Promise((resolve, reject) => {
+        req.session.regenerate((error) => error ? reject(error) : resolve());
+      });
       req.session.userId = result.user.id;
+      await new Promise((resolve, reject) => {
+        req.session.save((error) => error ? reject(error) : resolve());
+      });
       res.redirect('/dashboard');
     } catch (error) {
       const invalidCredentials = error?.statusCode === 401 || error?.statusCode === 422;

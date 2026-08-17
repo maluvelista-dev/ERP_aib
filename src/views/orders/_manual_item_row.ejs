@@ -31,8 +31,5 @@
         <input class="form-control" name="manualPrice" type="number" min="0" step="0.01" required value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="0,00">
       </div>
     </div>
-    <div class="col-12 col-lg-2">
-      <div class="form-text">Na nota será mostrado como <%= (item?.manualUnitType || 'UNIT') === 'KG' ? 'kg' : 'unidade' %>.</div>
-    </div>
   </div>
 </div>

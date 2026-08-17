@@ -49,6 +49,7 @@ model Customer {
 
   @@unique([createdById, cnpj])
   @@index([createdById])
+  @@index([createdById, active, createdAt])
   @@map("customers")
 }
 
@@ -69,6 +70,7 @@ model Product {
   productCategory ProductCategory? @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
 
+  @@index([active, categoryId, sortOrder])
   @@map("products")
 }
 
@@ -114,7 +116,19 @@ model Order {
   createdBy        User        @relation(fields: [createdById], references: [id])
   items            OrderItem[]
 
+  @@index([createdById, createdAt])
   @@map("orders")
+}
+
+model WebSession {
+  id        String   @id @db.VarChar(191)
+  data      Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([expiresAt])
+  @@map("web_sessions")
 }
 
 model OrderItem {

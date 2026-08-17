@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '../generated/prisma/client.js';
+import { env } from './env.js';
 
 const databaseUrlValue = process.env.DATABASE_URL;
 
@@ -34,7 +35,7 @@ const adapter = new PrismaMariaDb({
   database: databaseUrl.pathname.replace('/', ''),
   ssl: sslEnabled,
   connectTimeout: 20000,
-  connectionLimit: 5
+  connectionLimit: env.databaseConnectionLimit
 });
 
 export const prisma = new PrismaClient({

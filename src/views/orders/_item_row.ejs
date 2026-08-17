@@ -1,7 +1,10 @@
 <%
   const item = typeof currentItem === 'undefined' ? null : currentItem;
   const selectedProduct = item ? products.find((product) => String(product.id) === String(item.productId)) : null;
-  const hasSavedPrices = Boolean(item);
+  const hasSavedPrices = Boolean(item && (
+    (item.unitPrice !== null && item.unitPrice !== undefined)
+    || (item.boxPrice !== null && item.boxPrice !== undefined)
+  ));
 %>
 <div class="order-item-row border rounded p-3 mb-3">
   <div class="row g-2 align-items-end">
@@ -53,7 +56,7 @@
       <label class="form-label">Pre&ccedil;o personalizado por unidade</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
-        <input class="form-control js-custom-unit-price" name="customUnitPrice" type="number" min="0" step="0.01" value="<%= item ? Number(item.unitPrice).toFixed(2) : '' %>" placeholder="Usar pre&ccedil;o original">
+        <input class="form-control js-custom-unit-price" name="customUnitPrice" type="number" min="0" step="0.01" value="<%= item?.unitPrice === null || item?.unitPrice === undefined ? '' : Number(item.unitPrice).toFixed(2) %>" placeholder="Usar pre&ccedil;o original">
       </div>
       <div class="form-text js-original-unit-price"><%- selectedProduct ? `Pre&ccedil;o original: R$ ${Number(selectedProduct.unitPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Selecione um produto para consultar o pre&ccedil;o original.' %></div>
     </div>

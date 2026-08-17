@@ -1,6 +1,6 @@
 <%- include('../partials/head') %>
 <%
-  const editing = Boolean(order);
+  const editing = typeof editMode !== 'undefined' ? editMode : Boolean(order?.id);
   const selectedDeliveryDays = new Set(order?.deliveryDays || []);
   const catalogItems = order?.items?.filter((item) => item.productId) || [];
   const manualItems = order?.items?.filter((item) => !item.productId) || [];
@@ -140,7 +140,7 @@
           </div>
 
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="sendWhatsapp" name="sendWhatsapp">
+            <input class="form-check-input" type="checkbox" id="sendWhatsapp" name="sendWhatsapp" <%= order?.sendWhatsapp ? 'checked' : '' %>>
             <label class="form-check-label" for="sendWhatsapp">Gerar e enviar pelo WhatsApp</label>
           </div>
 

@@ -52,6 +52,15 @@ class ProductRepository extends BaseRepository {
     });
   }
 
+  async findByIds(ids) {
+    if (!ids.length) return [];
+
+    return this.model.findMany({
+      where: { id: { in: ids } },
+      include: { productCategory: true }
+    });
+  }
+
   async nextSortOrder() {
     const result = await this.model.aggregate({
       _max: { sortOrder: true }

@@ -24,15 +24,18 @@ class OrderService {
       return [];
     }
 
-    const orders = await OrderRepository.findRecent({
-      createdById: currentUser.id
-    });
+    const isAdmin = currentUser.role === 'admin';
+    const createdById = isAdmin ? (filters.createdById || undefined) : currentUser.id;
+    const startDate = this.#startDateForPeriod(filters.period);
+    const orders = await OrderRepository.findRecent({ createdById, startDate }, 500);
 
     return orders.map((order) => this.#withTotals(order));
   }
 
   async findById(id, currentUser) {
-    const order = await OrderRepository.findOwnedById(id, currentUser.id);
+    const order = currentUser.role === 'admin'
+      ? await OrderRepository.findById(id)
+      : await OrderRepository.findOwnedById(id, currentUser.id);
 
     if (!order) {
       throw new AppError('Pedido não encontrado para este usuário', 404);
@@ -52,20 +55,21 @@ class OrderService {
     const startOfLastFifteenDays = new Date(startOfToday);
     startOfLastFifteenDays.setDate(startOfLastFifteenDays.getDate() - 14);
 
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastThirtyDays = new Date(startOfToday);
+    startOfLastThirtyDays.setDate(startOfLastThirtyDays.getDate() - 29);
 
-    const [today, week, lastFifteenDays, month] = await Promise.all([
+    const [today, week, lastFifteenDays, lastThirtyDays] = await Promise.all([
       OrderRepository.countByCollaboratorFromDate(collaboratorId, startOfToday),
       OrderRepository.countByCollaboratorFromDate(collaboratorId, startOfWeek),
       OrderRepository.countByCollaboratorFromDate(collaboratorId, startOfLastFifteenDays),
-      OrderRepository.countByCollaboratorFromDate(collaboratorId, startOfMonth)
+      OrderRepository.countByCollaboratorFromDate(collaboratorId, startOfLastThirtyDays)
     ]);
 
     return {
       today,
       week,
       lastFifteenDays,
-      month
+      lastThirtyDays
     };
   }
 
@@ -238,6 +242,9 @@ class OrderService {
 
   async #buildItems(requestedItems) {
     const items = [];
+    const productIds = [...new Set(requestedItems.map((item) => item.productId).filter(Boolean))];
+    const products = await ProductRepository.findByIds(productIds);
+    const productsById = new Map(products.map((product) => [product.id, product]));
 
     for (const requestedItem of requestedItems) {
       if (!requestedItem.productId) {
@@ -262,7 +269,7 @@ class OrderService {
         continue;
       }
 
-      const product = await ProductRepository.findById(requestedItem.productId);
+      const product = productsById.get(requestedItem.productId);
 
       if (!product || product.active === false) {
         throw new AppError(`Invalid product: ${requestedItem.productId}`, 422);
@@ -312,6 +319,29 @@ class OrderService {
       name: product.name,
       category: product.productCategory?.name || product.category
     };
+  }
+
+  #startDateForPeriod(period) {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    if (period === 'week') {
+      const dayOfWeek = start.getDay();
+      start.setDate(start.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      return start;
+    }
+
+    if (period === '15days') {
+      start.setDate(start.getDate() - 14);
+      return start;
+    }
+
+    if (period === '30days') {
+      start.setDate(start.getDate() - 29);
+      return start;
+    }
+
+    return undefined;
   }
 
   #withTotals(order) {

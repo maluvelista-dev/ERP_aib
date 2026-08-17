@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { randomInt } from 'node:crypto';
 import { BaseModel } from './BaseModel.js';
 
 const orderSchema = Joi.object({
@@ -68,6 +69,8 @@ export class OrderModel extends BaseModel {
   }
 
   static buildOrderNumber() {
-    return `#${Date.now().toString().slice(-6)}`;
+    const timePart = Date.now().toString().slice(-7);
+    const randomPart = randomInt(100, 1000);
+    return `#${timePart}${randomPart}`;
   }
 }

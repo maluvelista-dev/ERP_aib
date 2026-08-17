@@ -7,6 +7,7 @@ import ProductWebController from '../../controllers/web/ProductWebController.js'
 import UserWebController from '../../controllers/web/UserWebController.js';
 import { loadCurrentUser, redirectAuthenticated, requireWebAuth } from '../../middlewares/webAuthMiddleware.js';
 import { webAuthorize } from '../../middlewares/webAuthorizeMiddleware.js';
+import { loginRateLimit, registrationRateLimit } from '../../middlewares/rateLimit.js';
 import { CustomerPolicy } from '../../policies/CustomerPolicy.js';
 import { DashboardPolicy } from '../../policies/DashboardPolicy.js';
 import { OrderPolicy } from '../../policies/OrderPolicy.js';
@@ -23,9 +24,9 @@ router.use(loadCurrentUser);
 
 router.get('/', (_req, res) => res.redirect('/dashboard'));
 router.get('/login', redirectAuthenticated, AuthWebController.loginForm);
-router.post('/login', redirectAuthenticated, asyncHandler((req, res) => AuthWebController.login(req, res)));
+router.post('/login', redirectAuthenticated, loginRateLimit, asyncHandler((req, res) => AuthWebController.login(req, res)));
 router.get('/register', redirectAuthenticated, (req, res) => AuthWebController.registerForm(req, res));
-router.post('/register', redirectAuthenticated, asyncHandler((req, res) => AuthWebController.register(req, res)));
+router.post('/register', redirectAuthenticated, registrationRateLimit, asyncHandler((req, res) => AuthWebController.register(req, res)));
 router.post('/logout', requireWebAuth, AuthWebController.logout);
 
 router.get(

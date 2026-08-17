@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+
 const required = (key, fallback = undefined) => {
   const value = process.env[key] ?? fallback;
 
@@ -13,12 +15,19 @@ const required = (key, fallback = undefined) => {
 };
 
 export const env = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   port: Number(process.env.PORT ?? 3333),
-  jwtSecret: required('JWT_SECRET', 'dev-secret-change-me'),
+  jwtSecret: required('JWT_SECRET', nodeEnv === 'production' ? undefined : 'dev-secret-change-me'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '8h',
-  sessionSecret: required('SESSION_SECRET', 'dev-session-secret-change-me'),
+  sessionSecret: required('SESSION_SECRET', nodeEnv === 'production' ? undefined : 'dev-session-secret-change-me'),
   bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS ?? 12),
+  databaseConnectionLimit: Number(process.env.DATABASE_CONNECTION_LIMIT ?? 10),
+  catalogCacheTtlMs: Number(process.env.CATALOG_CACHE_TTL_MS ?? 60000),
+  pdfConcurrency: Number(process.env.PDF_CONCURRENCY ?? 2),
+  allowedOrigins: String(process.env.ALLOWED_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   whatsapp: {
     token: process.env.WHATSAPP_TOKEN,
     phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,

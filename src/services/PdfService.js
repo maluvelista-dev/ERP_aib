@@ -1,6 +1,9 @@
 import PDFDocument from 'pdfkit';
 import path from 'node:path';
 import { env } from '../config/env.js';
+import { ConcurrencyLimiter } from '../utils/ConcurrencyLimiter.js';
+
+const pdfLimiter = new ConcurrencyLimiter(env.pdfConcurrency);
 
 const PAGE = {
   margin: 36,
@@ -25,7 +28,7 @@ const table = {
 
 class PdfService {
   async generateOrderPdf(order) {
-    return new Promise((resolve, reject) => {
+    return pdfLimiter.run(() => new Promise((resolve, reject) => {
       const doc = new PDFDocument({ margin: PAGE.margin, size: 'A4', bufferPages: true });
       const chunks = [];
 
@@ -36,7 +39,7 @@ class PdfService {
       this.#drawPage(doc, order);
 
       doc.end();
-    });
+    }));
   }
 
   #drawPage(doc, order) {

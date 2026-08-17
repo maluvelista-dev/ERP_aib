@@ -2,14 +2,33 @@ import ProductRepository from '../repositories/ProductRepository.js';
 import ProductCategoryService from './ProductCategoryService.js';
 import { ProductModel } from '../models/ProductModel.js';
 import { AppError } from '../utils/AppError.js';
+import { env } from '../config/env.js';
+import { TtlCache } from '../utils/TtlCache.js';
+
+const productListCache = new TtlCache({
+  ttlMs: env.catalogCacheTtlMs,
+  maxEntries: 200
+});
+
+const cacheKeyFor = (filters) => JSON.stringify({
+  categoryId: filters.categoryId || null,
+  search: filters.search?.trim().toLowerCase() || null,
+  includeInactive: Boolean(filters.includeInactive)
+});
 
 class ProductService {
   async list(filters = {}) {
-    return ProductRepository.findActive({
+    const cacheKey = cacheKeyFor(filters);
+    const cached = productListCache.get(cacheKey);
+    if (cached) return cached;
+
+    const products = await ProductRepository.findActive({
       categoryId: filters.categoryId || null,
       search: filters.search || null,
       includeInactive: Boolean(filters.includeInactive)
     });
+
+    return productListCache.set(cacheKey, products);
   }
 
   async findById(id) {
@@ -34,7 +53,7 @@ class ProductService {
     const category = await this.#resolveCategory(data);
     const sortOrder = await ProductRepository.nextSortOrder();
 
-    return ProductRepository.create({
+    const product = await ProductRepository.create({
       ...data,
       categoryId: category.id,
       category: category.name,
@@ -43,6 +62,8 @@ class ProductService {
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
       boxPrice: ProductModel.normalizeMoney(data.boxPrice)
     });
+    productListCache.clear();
+    return product;
   }
    
   async update(id, payload) {
@@ -57,7 +78,7 @@ class ProductService {
 
     const category = await this.#resolveCategory(data);
 
-    return ProductRepository.update(id, {
+    const updatedProduct = await ProductRepository.update(id, {
       ...data,
       categoryId: category.id,
       category: category.name,
@@ -65,11 +86,15 @@ class ProductService {
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
       boxPrice: ProductModel.normalizeMoney(data.boxPrice)
     });
+    productListCache.clear();
+    return updatedProduct;
   }
 
   async remove(id) {
     await this.findById(id);
-    return ProductRepository.softDelete(id);
+    const product = await ProductRepository.softDelete(id);
+    productListCache.clear();
+    return product;
   }
 
   async #resolveCategory(data) {

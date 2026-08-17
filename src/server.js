@@ -1,5 +1,6 @@
 import app from './app.js';
 import { env } from './config/env.js';
+import { prisma } from './config/prisma.js';
 
 const server = app.listen(env.port, () => {
   console.log(`OrdersWeb API running on port ${env.port}`);
@@ -13,3 +14,26 @@ server.on('error', (error) => {
 
   throw error;
 });
+
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 70000;
+server.requestTimeout = 120000;
+
+let shuttingDown = false;
+const shutdown = (signal) => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`${signal} received. Finishing active requests...`);
+
+  const forceExit = setTimeout(() => process.exit(1), 15000);
+  forceExit.unref();
+
+  server.close(async () => {
+    clearTimeout(forceExit);
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

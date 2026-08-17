@@ -36,8 +36,17 @@
                   <% }) %>
                 </select>
               </div>
+              <div>
+                <label class="form-label" for="period">Per&iacute;odo</label>
+                <select class="form-select form-select-sm" id="period" name="period">
+                  <option value="">Todos</option>
+                  <option value="week" <%= selectedPeriod === 'week' ? 'selected' : '' %>>Esta semana</option>
+                  <option value="15days" <%= selectedPeriod === '15days' ? 'selected' : '' %>>&Uacute;ltimos 15 dias</option>
+                  <option value="30days" <%= selectedPeriod === '30days' ? 'selected' : '' %>>&Uacute;ltimos 30 dias</option>
+                </select>
+              </div>
               <button class="btn btn-sm btn-primary" type="submit">Aplicar filtro</button>
-              <% if (selectedCollaboratorId) { %>
+              <% if (selectedCollaboratorId || selectedPeriod) { %>
                 <a class="btn btn-sm btn-outline-secondary" href="/orders">Limpar</a>
               <% } %>
             </form>

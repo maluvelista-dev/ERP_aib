@@ -72,7 +72,8 @@ class OrderRepository extends BaseRepository {
   async findRecent(filters = {}, limit = 50) {
     return this.model.findMany({
       where: {
-        ...(filters.createdById ? { createdById: filters.createdById } : {})
+        ...(filters.createdById ? { createdById: filters.createdById } : {}),
+        ...(filters.startDate ? { createdAt: { gte: filters.startDate } } : {})
       },
       take: limit,
       orderBy: { createdAt: 'desc' },

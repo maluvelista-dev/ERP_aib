@@ -1,9 +1,5 @@
-ALTER TABLE `customers`
-  ADD COLUMN IF NOT EXISTS `createdById` VARCHAR(191)
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL AFTER `id`;
-
-DROP INDEX IF EXISTS `customers_cnpj_key` ON `customers`;
-
+-- Completa com segurança a migration de escopo de clientes quando o banco
+-- manteve o ALTER TABLE inicial, mas interrompeu as comparações por collation.
 CREATE TEMPORARY TABLE `customer_owner_map` (
   `oldCustomerId` VARCHAR(191) NOT NULL,
   `ownerId` VARCHAR(191) NOT NULL,
@@ -72,9 +68,14 @@ SET existing_order.`customerId` = ownership.`newCustomerId`;
 
 DROP TEMPORARY TABLE `customer_owner_map`;
 
-ALTER TABLE `customers` MODIFY `createdById` VARCHAR(191) NOT NULL;
-CREATE UNIQUE INDEX `customers_createdById_cnpj_key` ON `customers`(`createdById`, `cnpj`);
+ALTER TABLE `customers`
+  MODIFY `createdById` VARCHAR(191)
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;
+
+CREATE UNIQUE INDEX `customers_createdById_cnpj_key`
+  ON `customers`(`createdById`, `cnpj`);
 CREATE INDEX `customers_createdById_idx` ON `customers`(`createdById`);
+
 ALTER TABLE `customers`
   ADD CONSTRAINT `customers_createdById_fkey`
   FOREIGN KEY (`createdById`) REFERENCES `users`(`id`)
