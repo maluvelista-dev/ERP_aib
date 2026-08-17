@@ -116,6 +116,20 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('submit', (event) => {
+  const pdfForm = event.target.closest('.js-generate-pdf-form');
+
+  if (pdfForm) {
+    const button = pdfForm.querySelector('button[type="submit"]');
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Gerando PDF...';
+      button.setAttribute('aria-busy', 'true');
+    }
+
+    return;
+  }
+
   const deleteOrderForm = event.target.closest('.js-delete-order-form');
 
   if (!deleteOrderForm) {

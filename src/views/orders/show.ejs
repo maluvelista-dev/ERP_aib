@@ -19,7 +19,7 @@
             <% if (order.pdfUrl) { %>
               <a class="btn btn-sm btn-outline-primary" href="<%= order.pdfUrl %>" target="_blank">Abrir PDF</a>
             <% } %>
-            <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0" target="_blank">
+            <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0 js-generate-pdf-form">
               <button class="btn btn-sm btn-primary" type="submit">Gerar PDF</button>
             </form>
             <% if (order.createdById === currentUser.id && order.customerSnapshot.whatsapp) { %>
