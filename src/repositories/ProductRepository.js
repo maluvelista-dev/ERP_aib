@@ -52,6 +52,13 @@ class ProductRepository extends BaseRepository {
     });
   }
 
+  async findByName(name) {
+    return this.model.findFirst({
+      where: { name },
+      include: { productCategory: true }
+    });
+  }
+
   async paginate(filters = {}, skip = 0, take = 25) {
     const search = filters.search?.trim();
     const where = {

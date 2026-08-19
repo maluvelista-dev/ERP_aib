@@ -84,27 +84,44 @@ class ProductService {
   async create(payload) {
     const data = ProductModel.validateCreate(payload);
     const code = ProductModel.normalizeCode(data.code);
-    const existing = await ProductRepository.findByCode(code);
+    const name = ProductModel.normalizeName(data.name);
+    const [existingByCode, existingByName] = await Promise.all([
+      ProductRepository.findByCode(code),
+      ProductRepository.findByName(name)
+    ]);
 
-    if (existing) {
-      throw new AppError('A product with this code already exists', 409);
+    if (existingByCode) {
+      throw new AppError(`Já existe um produto com o código ${code}`, 409);
+    }
+
+    if (existingByName) {
+      throw new AppError(`O produto "${existingByName.name}" já existe no catálogo`, 409);
     }
 
     const category = await this.#resolveCategory(data);
     const sortOrder = await ProductRepository.nextSortOrder();
 
-    const product = await ProductRepository.create({
-      ...data,
-      categoryId: category.id,
-      category: category.name,
-      code,
-      sortOrder,
-      unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
-      boxPrice: ProductModel.normalizeMoney(data.boxPrice),
-      unitsPerBox: data.unitsPerBox === '' || data.unitsPerBox === null || data.unitsPerBox === undefined
-        ? null
-        : Number(data.unitsPerBox)
-    });
+    let product;
+    try {
+      product = await ProductRepository.create({
+        ...data,
+        categoryId: category.id,
+        category: category.name,
+        code,
+        name,
+        sortOrder,
+        unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
+        boxPrice: ProductModel.normalizeMoney(data.boxPrice),
+        unitsPerBox: data.unitsPerBox === '' || data.unitsPerBox === null || data.unitsPerBox === undefined
+          ? null
+          : Number(data.unitsPerBox)
+      });
+    } catch (error) {
+      if (error?.code === 'P2002') {
+        throw new AppError('Este produto já existe no catálogo', 409);
+      }
+      throw error;
+    }
     await clearProductCache();
     return product;
   }
@@ -113,10 +130,18 @@ class ProductService {
     const product = await this.findById(id);
     const data = ProductModel.validateUpdate(payload);
     const code = ProductModel.normalizeCode(data.code);
-    const existing = await ProductRepository.findByCode(code);
+    const name = ProductModel.normalizeName(data.name);
+    const [existingByCode, existingByName] = await Promise.all([
+      ProductRepository.findByCode(code),
+      ProductRepository.findByName(name)
+    ]);
 
-    if (existing && existing.id !== product.id) {
-      throw new AppError('A product with this code already exists', 409);
+    if (existingByCode && existingByCode.id !== product.id) {
+      throw new AppError(`Já existe um produto com o código ${code}`, 409);
+    }
+
+    if (existingByName && existingByName.id !== product.id) {
+      throw new AppError(`O produto "${existingByName.name}" já existe no catálogo`, 409);
     }
 
     const category = await this.#resolveCategory(data);
@@ -126,6 +151,7 @@ class ProductService {
       categoryId: category.id,
       category: category.name,
       code,
+      name,
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
       boxPrice: ProductModel.normalizeMoney(data.boxPrice),
       unitsPerBox: data.unitsPerBox === '' || data.unitsPerBox === null || data.unitsPerBox === undefined

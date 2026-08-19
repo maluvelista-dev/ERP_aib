@@ -24,7 +24,11 @@ export class ProductModel extends BaseModel {
   }
 
   static normalizeCode(code) {
-    return code.toUpperCase();
+    return code.trim().toUpperCase();
+  }
+
+  static normalizeName(name) {
+    return name.trim().replace(/\s+/g, ' ');
   }
 
   static normalizeMoney(value) {
