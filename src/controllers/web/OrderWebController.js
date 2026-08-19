@@ -294,7 +294,12 @@ class OrderWebController {
     req.session.flash = {
       success: count === 1 ? '1 pedido foi removido do histórico.' : `${count} pedidos foram removidos do histórico.`
     };
-    res.redirect('/orders');
+    const selectedCollaboratorId = req.currentUser.role === 'admin' && req.body.createdById
+      ? String(req.body.createdById)
+      : '';
+    res.redirect(selectedCollaboratorId
+      ? `/orders?createdById=${encodeURIComponent(selectedCollaboratorId)}`
+      : '/orders');
   }
 }
 

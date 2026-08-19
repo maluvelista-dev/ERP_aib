@@ -232,7 +232,10 @@ class OrderService {
   }
 
   async clearHistory(filters = {}, currentUser) {
-    const result = await OrderRepository.clearHistory(currentUser.id);
+    const createdById = currentUser.role === 'admin'
+      ? (filters.createdById || null)
+      : currentUser.id;
+    const result = await OrderRepository.clearHistory(createdById);
 
     await Promise.all(result.pdfUrls.map((pdfUrl) => StorageService.deletePdf(pdfUrl)));
     return result.count;

@@ -183,6 +183,19 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('submit', (event) => {
+  const clearHistoryForm = event.target.closest('.js-clear-order-history-form');
+
+  if (clearHistoryForm) {
+    const scope = clearHistoryForm.dataset.historyScope || 'dos pedidos';
+    const confirmed = window.confirm(`Limpar o histórico ${scope}? Esta ação não pode ser desfeita.`);
+
+    if (!confirmed) {
+      event.preventDefault();
+    }
+
+    return;
+  }
+
   const orderForm = event.target.closest('.js-order-form');
 
   if (orderForm) {

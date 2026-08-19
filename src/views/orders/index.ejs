@@ -14,7 +14,12 @@
             </div>
             <a class="btn btn-sm btn-primary" href="/orders/new">Novo pedido</a>
             <% if (orders.length > 0) { %>
-              <form action="/orders/clear-history" method="post" onsubmit="return confirm('Tem certeza que deseja limpar este histórico de pedidos? Esta ação não pode ser desfeita.')">
+              <form
+                action="/orders/clear-history"
+                method="post"
+                class="js-clear-order-history-form"
+                data-history-scope="<%= canFilterByCollaborator ? (selectedCollaboratorId ? 'do colaborador selecionado' : 'de todos os colaboradores') : 'dos seus pedidos' %>"
+              >
                 <% if (canFilterByCollaborator && selectedCollaboratorId) { %>
                   <input type="hidden" name="createdById" value="<%= selectedCollaboratorId %>">
                 <% } %>
