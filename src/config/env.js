@@ -17,8 +17,6 @@ const required = (key, fallback = undefined) => {
 export const env = {
   nodeEnv,
   port: Number(process.env.PORT ?? 3333),
-  publicAppUrl: process.env.PUBLIC_APP_URL
-    ?? (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : `http://localhost:${process.env.PORT ?? 3333}`),
   jwtSecret: required('JWT_SECRET', nodeEnv === 'production' ? undefined : 'dev-secret-change-me'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '8h',
   sessionSecret: required('SESSION_SECRET', nodeEnv === 'production' ? undefined : 'dev-session-secret-change-me'),

@@ -18,7 +18,8 @@
             Cadastre ao menos um cliente ativo antes de criar pedidos.
           </div>
         <% } %>
-        <form action="<%= editing ? `/orders/${order.id}` : '/orders' %>" method="post" class="d-grid gap-4">
+        <form action="<%= editing ? `/orders/${order.id}` : '/orders' %>" method="post" class="d-grid gap-4 js-order-form">
+          <input type="hidden" name="submissionToken" value="<%= submissionToken %>">
           <div>
             <label class="form-label">Cliente</label>
             <select class="form-select" name="customerId" required>
@@ -137,11 +138,6 @@
           <div>
             <label class="form-label" for="notes">Observa&ccedil;&atilde;o</label>
             <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Informa&ccedil;&otilde;es adicionais para o pedido e para a nota"><%= order?.notes || '' %></textarea>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="sendWhatsapp" name="sendWhatsapp" <%= order?.sendWhatsapp ? 'checked' : '' %>>
-            <label class="form-check-label" for="sendWhatsapp">Gerar PDF e abrir no WhatsApp</label>
           </div>
 
           <div class="d-flex gap-2">

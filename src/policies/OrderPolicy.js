@@ -21,10 +21,6 @@ export class OrderPolicy extends ApplicationPolicy {
     return this.index();
   }
 
-  sendWhatsapp() {
-    return this.#ownsOrder();
-  }
-
   destroy() {
     return this.#ownsOrder();
   }

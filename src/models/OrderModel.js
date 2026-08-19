@@ -3,6 +3,7 @@ import { randomInt } from 'node:crypto';
 import { BaseModel } from './BaseModel.js';
 
 const orderSchema = Joi.object({
+  submissionToken: Joi.string().guid({ version: 'uuidv4' }),
   customerId: Joi.string().required(),
   sellerPhone: Joi.string().allow('', null),
   receivedTime: Joi.string()
@@ -28,7 +29,7 @@ const orderSchema = Joi.object({
         manualUnitType: Joi.string().valid('UNIT', 'KG').default('UNIT'),
         manualColor: Joi.string().trim().max(80).allow('', null),
         quantity: Joi.number().integer().min(1),
-        unitQuantity: Joi.number().integer().min(0).default(0),
+        unitQuantity: Joi.number().min(0).precision(3).default(0),
         boxQuantity: Joi.number().integer().min(0).default(0),
         customUnitPrice: Joi.number().min(0).precision(2).allow(null),
         customBoxPrice: Joi.number().min(0).precision(2).allow(null)
@@ -39,7 +40,11 @@ const orderSchema = Joi.object({
           const boxQuantity = Number(item.boxQuantity ?? 0);
 
           if (unitQuantity + boxQuantity < 1) {
-            return helpers.error('any.invalid');
+            return helpers.message({ custom: 'Informe a quantidade em unidades ou em caixas' });
+          }
+
+          if (unitQuantity > 0 && boxQuantity > 0) {
+            return helpers.message({ custom: 'Informe unidades ou caixas, nunca os dois no mesmo produto' });
           }
 
           if (!item.productId && !item.manualName) {
@@ -54,13 +59,25 @@ const orderSchema = Joi.object({
             return helpers.message({ custom: 'Informe a quantidade em kg do produto manual' });
           }
 
+          if ((item.productId || item.manualUnitType !== 'KG') && !Number.isInteger(unitQuantity)) {
+            return helpers.message({ custom: 'A quantidade em unidades deve ser um número inteiro' });
+          }
+
           return item;
         })
     )
+    .custom((items, helpers) => {
+      const catalogProductIds = items.map((item) => item.productId).filter(Boolean);
+
+      if (new Set(catalogProductIds).size !== catalogProductIds.length) {
+        return helpers.message({ custom: 'O mesmo produto do catálogo foi adicionado mais de uma vez' });
+      }
+
+      return items;
+    })
     .min(1)
     .required()
     .messages({ 'array.min': 'Adicione ao menos um produto com quantidade maior que zero' }),
-  sendWhatsapp: Joi.boolean().default(false)
 });
 
 export class OrderModel extends BaseModel {

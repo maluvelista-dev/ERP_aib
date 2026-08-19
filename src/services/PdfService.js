@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import path from 'node:path';
 import { env } from '../config/env.js';
 import { ConcurrencyLimiter } from '../utils/ConcurrencyLimiter.js';
+import { buildOrderPdfRows } from '../utils/orderPdfRows.js';
 
 const pdfLimiter = new ConcurrencyLimiter(env.pdfConcurrency);
 
@@ -45,8 +46,33 @@ class PdfService {
   #drawPage(doc, order) {
     this.#drawHeader(doc, order);
     this.#drawCustomerBox(doc, order);
-    const tableBottomY = this.#drawItemsTable(doc, order);
-    this.#drawFooter(doc, tableBottomY, order);
+    const rows = buildOrderPdfRows(order.items);
+    const summaryRowCount = (Number(order.discountPercent ?? 0) > 0 ? 3 : 2)
+      + (order.bonusProductSnapshot ? 1 : 0);
+    const firstPageLastCapacity = (order.notes ? 10 : 13) - summaryRowCount;
+
+    if (rows.length <= firstPageLastCapacity) {
+      const tableBottomY = this.#drawItemsTable(doc, order, rows, table.y, true);
+      this.#drawFooter(doc, tableBottomY, order);
+      return;
+    }
+
+    const firstPageRowsCount = Math.min(14, Math.max(1, firstPageLastCapacity));
+    let remainingRows = rows.slice(firstPageRowsCount);
+    this.#drawItemsTable(doc, order, rows.slice(0, firstPageRowsCount), table.y, false);
+
+    while (remainingRows.length > 0) {
+      doc.addPage();
+      const lastPageCapacity = 24 - summaryRowCount;
+      const isLastPage = remainingRows.length <= lastPageCapacity;
+      const intermediateCount = Math.min(30, remainingRows.length - lastPageCapacity);
+      const pageRows = remainingRows.splice(0, isLastPage ? lastPageCapacity : intermediateCount);
+      const tableBottomY = this.#drawItemsTable(doc, order, pageRows, 50, isLastPage);
+
+      if (isLastPage) {
+        this.#drawFooter(doc, tableBottomY, order);
+      }
+    }
   }
 
   #drawHeader(doc, order) {
@@ -119,48 +145,51 @@ class PdfService {
     this.#field(doc, 'E-mail contato:', order.contactEmail ?? '', 55, 373, 495);
   }
 
-  #drawItemsTable(doc, order) {
-    const rows = this.#buildTableRows(order.items);
-    const summaryRows = Number(order.discountPercent ?? 0) > 0 ? 3 : 2;
-    const bonusRows = order.bonusProductSnapshot ? 1 : 0;
+  #drawItemsTable(doc, order, rows, tableY, includeSummary) {
+    const summaryRows = includeSummary && Number(order.discountPercent ?? 0) > 0 ? 3 : includeSummary ? 2 : 0;
+    const bonusRows = includeSummary && order.bonusProductSnapshot ? 1 : 0;
     const rowCount = Math.max(rows.length + summaryRows + bonusRows, 2);
     const totalTableHeight = table.headerHeight + rowCount * table.rowHeight;
-    const bottomY = table.y + totalTableHeight;
+    const bottomY = tableY + totalTableHeight;
 
-    doc.roundedRect(table.x, table.y, table.width, totalTableHeight, 7)
+    doc.roundedRect(table.x, tableY, table.width, totalTableHeight, 7)
       .lineWidth(1.2)
       .strokeColor('#231f20')
       .stroke();
 
-    this.#drawVerticalLine(doc, table.columns.quantity.x + table.columns.quantity.width, table.y, bottomY);
-    this.#drawVerticalLine(doc, table.columns.code.x + table.columns.code.width, table.y, bottomY);
-    this.#drawVerticalLine(doc, table.columns.description.x + table.columns.description.width, table.y, bottomY);
-    this.#drawVerticalLine(doc, table.columns.unitPrice.x + table.columns.unitPrice.width, table.y, bottomY);
+    this.#drawVerticalLine(doc, table.columns.quantity.x + table.columns.quantity.width, tableY, bottomY);
+    this.#drawVerticalLine(doc, table.columns.code.x + table.columns.code.width, tableY, bottomY);
+    this.#drawVerticalLine(doc, table.columns.description.x + table.columns.description.width, tableY, bottomY);
+    this.#drawVerticalLine(doc, table.columns.unitPrice.x + table.columns.unitPrice.width, tableY, bottomY);
 
     for (let index = 1; index <= rowCount; index += 1) {
-      const y = table.y + table.headerHeight + index * table.rowHeight;
+      const y = tableY + table.headerHeight + index * table.rowHeight;
       this.#drawLine(doc, table.x, y, table.x + table.width);
     }
 
     doc.font('Helvetica-Bold').fontSize(8.5);
-    this.#cell(doc, 'QUANT.', table.columns.quantity, table.y + 6, 'center');
-    this.#cell(doc, 'CÓD. PRODUTO', table.columns.code, table.y + 6, 'center');
-    this.#cell(doc, 'DESCRIÇÃO DO PRODUTO', table.columns.description, table.y + 6, 'center');
-    this.#cell(doc, 'UNITÁRIO', table.columns.unitPrice, table.y + 6, 'center');
-    this.#cell(doc, 'TOTAL', table.columns.total, table.y + 6, 'center');
+    this.#cell(doc, 'QUANT.', table.columns.quantity, tableY + 6, 'center');
+    this.#cell(doc, 'CÓD. PRODUTO', table.columns.code, tableY + 6, 'center');
+    this.#cell(doc, 'DESCRIÇÃO DO PRODUTO', table.columns.description, tableY + 6, 'center');
+    this.#cell(doc, 'UNITÁRIO', table.columns.unitPrice, tableY + 6, 'center');
+    this.#cell(doc, 'TOTAL', table.columns.total, tableY + 6, 'center');
 
     doc.font('Helvetica').fontSize(7.8);
 
     rows.forEach((row, index) => {
-      const y = table.y + table.headerHeight + index * table.rowHeight + 6;
+      const y = tableY + table.headerHeight + index * table.rowHeight + 6;
       this.#cell(doc, row.quantity, table.columns.quantity, y, 'center');
       this.#cell(doc, row.code, table.columns.code, y, 'center');
       this.#cell(doc, row.description, table.columns.description, y, 'left');
-      this.#cell(doc, this.#money(row.unitPrice), table.columns.unitPrice, y, 'right');
+      this.#fitCell(doc, row.unitPriceLabel, table.columns.unitPrice, y, 'right', 7.8, 4.6);
       this.#cell(doc, this.#money(row.totalPrice), table.columns.total, y, 'right');
     });
 
-    let summaryY = table.y + table.headerHeight + rows.length * table.rowHeight + 6;
+    if (!includeSummary) {
+      return bottomY;
+    }
+
+    let summaryY = tableY + table.headerHeight + rows.length * table.rowHeight + 6;
     const subtotal = Number(order.subtotalPrice ?? rows.reduce((sum, row) => sum + row.totalPrice, 0));
     const discountPercent = Number(order.discountPercent ?? 0);
     const discountAmount = Number(order.discountAmount ?? 0);
@@ -216,7 +245,7 @@ class PdfService {
 
     const signatureY = notesY + 54;
 
-    if (signatureY > PAGE.height - 22) {
+    if (signatureY + 25 > PAGE.height - PAGE.margin) {
       doc.addPage();
       this.#drawFooter(doc, PAGE.margin, order);
       return;
@@ -276,59 +305,11 @@ class PdfService {
     doc.fontSize(maxFontSize);
   }
 
-  #buildTableRows(items) {
-    return items.flatMap((item) => {
-      const rows = [];
-      const unitQuantity = Number(item.unitQuantity ?? item.quantity ?? 0);
-      const boxQuantity = Number(item.boxQuantity ?? 0);
-      const unitPrice = Number(item.unitPrice ?? 0);
-      const boxPrice = Number(item.boxPrice ?? 0);
-      const manualUnitLabel = item.manualUnitType === 'KG' ? 'KG' : 'UN';
-      const quantityLabel = item.productId ? 'UN' : manualUnitLabel;
-
-      if (unitQuantity > 0) {
-        rows.push({
-          quantity: `${unitQuantity} ${quantityLabel}`,
-          code: item.code,
-          description: this.#formatItemDescription(item),
-          unitPrice,
-          totalPrice: unitQuantity * unitPrice
-        });
-      }
-
-      if (boxQuantity > 0) {
-        rows.push({
-          quantity: `${boxQuantity} CX`,
-          code: item.code,
-          description: this.#formatItemDescription(item),
-          unitPrice: boxPrice,
-          totalPrice: boxQuantity * boxPrice
-        });
-      }
-
-      return rows.length ? rows : [{
-        quantity: '0 UN',
-        code: item.code,
-        description: this.#formatItemDescription(item),
-        unitPrice,
-        totalPrice: 0
-      }];
-    });
-  }
-
   #money(value) {
     return `R$ ${Number(value ?? 0).toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })}`;
-  }
-
-  #formatItemDescription(item) {
-    return [
-      item.name,
-      item.category,
-      !item.productId && item.manualColor ? `Cor: ${item.manualColor}` : null
-    ].filter(Boolean).join(' - ');
   }
 
   #formatDeliveryDays(deliveryDays) {

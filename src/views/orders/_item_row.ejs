@@ -26,11 +26,11 @@
     </div>
     <div class="col-6 col-lg-1">
       <label class="form-label">Unidades</label>
-      <input class="form-control" name="unitQuantity" type="number" min="0" value="<%= item?.unitQuantity ?? 0 %>" required>
+      <input class="form-control js-unit-quantity" name="unitQuantity" type="number" min="0" value="<%= Number(item?.unitQuantity ?? 0) > 0 ? item.unitQuantity : '' %>" placeholder="0">
     </div>
     <div class="col-6 col-lg-1">
       <label class="form-label">Caixas</label>
-      <input class="form-control" name="boxQuantity" type="number" min="0" value="<%= item?.boxQuantity ?? 0 %>" required>
+      <input class="form-control js-box-quantity" name="boxQuantity" type="number" min="0" value="<%= Number(item?.boxQuantity ?? 0) > 0 ? item.boxQuantity : '' %>" placeholder="0">
     </div>
     <div class="col-lg-2">
       <button class="btn btn-outline-secondary w-100 js-toggle-custom-price" type="button" aria-expanded="<%= hasSavedPrices ? 'true' : 'false' %>">

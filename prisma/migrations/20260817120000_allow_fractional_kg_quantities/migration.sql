@@ -1,0 +1,3 @@
+ALTER TABLE `order_items`
+  MODIFY `quantity` DECIMAL(10, 3) NOT NULL,
+  MODIFY `unitQuantity` DECIMAL(10, 3) NOT NULL DEFAULT 0.000;

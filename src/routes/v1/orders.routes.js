@@ -13,7 +13,5 @@ router.get('/', authorize(OrderPolicy, 'index'), OrderController.list);
 router.get('/:id', authorize(OrderPolicy, 'show', (req) => OrderRepository.findById(req.params.id)), OrderController.findById);
 router.post('/', authorize(OrderPolicy, 'create'), OrderController.create);
 router.post('/:id/pdf', authorize(OrderPolicy, 'generatePdf', (req) => OrderRepository.findById(req.params.id)), OrderController.generatePdf);
-router.post('/:id/send-whatsapp', authorize(OrderPolicy, 'sendWhatsapp', (req) => OrderRepository.findById(req.params.id)), OrderController.sendWhatsapp);
-router.post('/:id/resend-whatsapp', authorize(OrderPolicy, 'sendWhatsapp', (req) => OrderRepository.findById(req.params.id)), OrderController.sendWhatsapp);
 
 export default router;

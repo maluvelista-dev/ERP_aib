@@ -5,7 +5,7 @@ import { OrderModel } from '../models/OrderModel.js';
 import { AppError } from '../utils/AppError.js';
 import PdfService from './PdfService.js';
 import StorageService from './StorageService.js';
-import WhatsappService from './WhatsappService.js';
+import { randomUUID } from 'node:crypto';
 
 const filenamePart = (value, fallback = 'cliente') => {
   const normalized = String(value || '')
@@ -75,6 +75,17 @@ class OrderService {
 
   async create(payload, user) {
     const data = OrderModel.validateCreate(payload);
+    const submissionToken = data.submissionToken || randomUUID();
+    const existingOrder = await OrderRepository.findBySubmissionToken(submissionToken);
+
+    if (existingOrder) {
+      if (existingOrder.createdById !== user.sub) {
+        throw new AppError('Token de envio inválido', 409);
+      }
+
+      return this.#withTotals(existingOrder);
+    }
+
     const customer = await CustomerRepository.findOwnedById(data.customerId, user.sub);
 
     if (!customer || customer.active === false) {
@@ -86,8 +97,9 @@ class OrderService {
     const discountPercent = Number(data.discountPercent ?? 0);
     const discountAmount = subtotalPrice * (discountPercent / 100);
     const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId);
-    const order = await OrderRepository.create({
+    const orderData = {
       orderNumber: OrderModel.buildOrderNumber(),
+      submissionToken,
       customerId: customer.id,
       customerSnapshot: {
         cnpj: customer.cnpj,
@@ -125,10 +137,17 @@ class OrderService {
         name: user.name,
         email: user.email
       }
-    });
+    };
+    let order;
 
-    if (data.sendWhatsapp) {
-      return this.generatePdfAndSendWhatsapp(order.id, { id: user.sub });
+    try {
+      order = await OrderRepository.create(orderData);
+    } catch (error) {
+      if (error?.code !== 'P2002') throw error;
+
+      const concurrentlyCreated = await OrderRepository.findBySubmissionToken(submissionToken);
+      if (!concurrentlyCreated || concurrentlyCreated.createdById !== user.sub) throw error;
+      order = concurrentlyCreated;
     }
 
     return this.#withTotals(order);
@@ -184,10 +203,6 @@ class OrderService {
 
     await StorageService.deletePdf(currentOrder.pdfUrl);
 
-    if (data.sendWhatsapp) {
-      return this.generatePdfAndSendWhatsapp(order.id, currentUser);
-    }
-
     return this.#withTotals(order);
   }
 
@@ -206,17 +221,6 @@ class OrderService {
     }
 
     return this.#withTotals(updatedOrder);
-  }
-
-  async generatePdfAndSendWhatsapp(id, currentUser) {
-    const orderWithPdf = await this.generatePdf(id, currentUser);
-    const whatsappUrl = WhatsappService.buildOrderShareUrl({
-      customer: orderWithPdf.customerSnapshot,
-      order: orderWithPdf,
-      pdfUrl: orderWithPdf.pdfUrl
-    });
-
-    return { ...orderWithPdf, whatsappUrl };
   }
 
   async remove(id, currentUser) {
@@ -258,6 +262,7 @@ class OrderService {
           boxQuantity: 0,
           unitPrice,
           boxPrice: null,
+          unitsPerBox: null,
           totalPrice: unitQuantity * unitPrice
         });
         continue;
@@ -289,6 +294,7 @@ class OrderService {
         boxQuantity,
         unitPrice,
         boxPrice,
+        unitsPerBox: product.unitsPerBox ?? null,
         totalPrice
       });
     }

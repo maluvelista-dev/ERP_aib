@@ -22,11 +22,6 @@
             <form action="/orders/<%= order.id %>/pdf" method="post" class="m-0 js-generate-pdf-form">
               <button class="btn btn-sm btn-primary" type="submit">Gerar PDF</button>
             </form>
-            <% if (order.createdById === currentUser.id && order.customerSnapshot.whatsapp) { %>
-              <form action="/orders/<%= order.id %>/whatsapp" method="post" class="m-0">
-                <button class="btn btn-sm btn-success" type="submit">Abrir WhatsApp</button>
-              </form>
-            <% } %>
             <a class="btn btn-sm btn-outline-secondary" href="/orders">Voltar</a>
           </div>
         </div>
@@ -71,7 +66,6 @@
             <div class="small">E-mail de contato: <%= order.contactEmail || 'Não informado' %></div>
             <div class="small">Prazo de pagamento: <%= order.paymentTerm || 'Não informado' %></div>
             <div class="small">PDF: <%= order.pdfUrl ? 'Gerado' : 'Não gerado' %></div>
-            <div class="small">WhatsApp: o envio é confirmado manualmente no aplicativo</div>
             <% if (order.bonusProductSnapshot) { %>
               <div class="small mt-2">Bonifica&ccedil;&atilde;o: <%= order.bonusProductSnapshot.code %> - <%= order.bonusProductSnapshot.name %></div>
             <% } %>
@@ -85,12 +79,6 @@
             <div class="fs-5 fw-semibold mt-3">
               Total: R$ <%= Number(order.totalPrice ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
             </div>
-            <% if (order.sentAt) { %>
-              <div class="small">Enviado em: <%= new Date(order.sentAt).toLocaleString('pt-BR') %></div>
-            <% } %>
-            <% if (order.whatsappError) { %>
-              <div class="small text-danger">Erro WhatsApp: <%= order.whatsappError %></div>
-            <% } %>
           </div>
         </div>
       </section>

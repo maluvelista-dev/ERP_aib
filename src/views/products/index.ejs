@@ -65,6 +65,7 @@
                 <th>Categoria</th>
                 <th>Pre&ccedil;o unit&aacute;rio</th>
                 <th>Pre&ccedil;o da caixa</th>
+                <th>Unidades por caixa</th>
                 <th>Status</th>
                 <% if (editMode) { %>
                   <th>A&ccedil;&otilde;es</th>
@@ -110,6 +111,17 @@
                       >
                     </td>
                     <td>
+                      <input
+                        class="form-control form-control-sm product-table-input"
+                        name="unitsPerBox"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value="<%= product.unitsPerBox || '' %>"
+                        form="<%= formId %>"
+                      >
+                    </td>
+                    <td>
                       <select class="form-select form-select-sm product-table-input" name="active" form="<%= formId %>">
                         <option value="true" <%= product.active ? 'selected' : '' %>>Ativo</option>
                         <option value="false" <%= product.active ? '' : 'selected' %>>Inativo</option>
@@ -143,6 +155,7 @@
                       <span class="text-muted">Sem pre&ccedil;o</span>
                     <% } %>
                   </td>
+                  <td><%= product.unitsPerBox || '-' %></td>
                   <td>
                     <span class="badge text-bg-<%= product.active ? 'success' : 'secondary' %>">
                       <%= product.active ? 'Ativo' : 'Inativo' %>
@@ -153,7 +166,7 @@
               <% }) %>
               <% if (!products.length) { %>
                 <tr>
-                  <td colspan="<%= editMode ? 7 : 6 %>" class="text-center text-muted py-4">
+                  <td colspan="<%= editMode ? 8 : 7 %>" class="text-center text-muted py-4">
                     Nenhum produto encontrado.
                   </td>
                 </tr>

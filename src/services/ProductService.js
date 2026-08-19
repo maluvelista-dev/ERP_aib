@@ -60,7 +60,10 @@ class ProductService {
       code,
       sortOrder,
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
-      boxPrice: ProductModel.normalizeMoney(data.boxPrice)
+      boxPrice: ProductModel.normalizeMoney(data.boxPrice),
+      unitsPerBox: data.unitsPerBox === '' || data.unitsPerBox === null || data.unitsPerBox === undefined
+        ? null
+        : Number(data.unitsPerBox)
     });
     productListCache.clear();
     return product;
@@ -84,7 +87,10 @@ class ProductService {
       category: category.name,
       code,
       unitPrice: ProductModel.normalizeMoney(data.unitPrice) ?? 0,
-      boxPrice: ProductModel.normalizeMoney(data.boxPrice)
+      boxPrice: ProductModel.normalizeMoney(data.boxPrice),
+      unitsPerBox: data.unitsPerBox === '' || data.unitsPerBox === null || data.unitsPerBox === undefined
+        ? null
+        : Number(data.unitsPerBox)
     });
     productListCache.clear();
     return updatedProduct;

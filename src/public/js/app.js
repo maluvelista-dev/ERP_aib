@@ -48,7 +48,64 @@ function resetPdfButtons() {
   });
 }
 
-window.addEventListener('pageshow', resetPdfButtons);
+function syncQuantityFields(row) {
+  const unitInput = row.querySelector('.js-unit-quantity');
+  const boxInput = row.querySelector('.js-box-quantity');
+  const productInput = row.querySelector('.js-order-product');
+  if (!unitInput || !boxInput) return;
+
+  const unitQuantity = Number(unitInput.value || 0);
+  const boxQuantity = Number(boxInput.value || 0);
+  const hasBoth = unitQuantity > 0 && boxQuantity > 0;
+  const hasProduct = Boolean(productInput?.value);
+  const message = hasBoth
+    ? 'Informe unidades ou caixas, nunca os dois no mesmo produto.'
+    : hasProduct && unitQuantity <= 0 && boxQuantity <= 0
+      ? 'Informe a quantidade em unidades ou em caixas.'
+      : '';
+
+  unitInput.setCustomValidity(message);
+  boxInput.setCustomValidity(message);
+  unitInput.readOnly = !hasBoth && boxQuantity > 0;
+  boxInput.readOnly = !hasBoth && unitQuantity > 0;
+  unitInput.classList.toggle('bg-body-secondary', unitInput.readOnly);
+  boxInput.classList.toggle('bg-body-secondary', boxInput.readOnly);
+}
+
+function syncAllQuantityFields() {
+  document.querySelectorAll('.order-item-row').forEach(syncQuantityFields);
+}
+
+function resetOrderForms() {
+  document.querySelectorAll('.js-order-form').forEach((form) => {
+    delete form.dataset.submitting;
+    const button = form.querySelector('button[type="submit"]');
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = button.dataset.idleLabel || 'Salvar pedido';
+      button.removeAttribute('aria-busy');
+    }
+  });
+}
+
+window.addEventListener('pageshow', () => {
+  resetPdfButtons();
+  resetOrderForms();
+  syncAllQuantityFields();
+});
+
+document.addEventListener('htmx:afterSwap', syncAllQuantityFields);
+
+document.addEventListener('input', (event) => {
+  const quantityInput = event.target.closest('.js-unit-quantity, .js-box-quantity');
+  if (quantityInput) syncQuantityFields(quantityInput.closest('.order-item-row'));
+});
+
+document.addEventListener('change', (event) => {
+  const productInput = event.target.closest('.js-order-product');
+  if (productInput) syncQuantityFields(productInput.closest('.order-item-row'));
+});
 
 document.addEventListener('click', (event) => {
   const removeButton = event.target.closest('.js-remove-order-item');
@@ -126,6 +183,27 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('submit', (event) => {
+  const orderForm = event.target.closest('.js-order-form');
+
+  if (orderForm) {
+    if (orderForm.dataset.submitting === 'true') {
+      event.preventDefault();
+      return;
+    }
+
+    orderForm.dataset.submitting = 'true';
+    const button = orderForm.querySelector('button[type="submit"]');
+
+    if (button) {
+      button.dataset.idleLabel = button.textContent.trim();
+      button.disabled = true;
+      button.textContent = 'Salvando pedido...';
+      button.setAttribute('aria-busy', 'true');
+    }
+
+    return;
+  }
+
   const pdfForm = event.target.closest('.js-generate-pdf-form');
 
   if (pdfForm) {

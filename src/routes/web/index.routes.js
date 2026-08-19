@@ -190,12 +190,6 @@ router.post(
   asyncHandler((req, res) => OrderWebController.generatePdf(req, res))
 );
 router.post(
-  '/orders/:id/whatsapp',
-  requireWebAuth,
-  webAuthorize(OrderPolicy, 'sendWhatsapp', (req) => OrderRepository.findById(req.params.id)),
-  asyncHandler((req, res) => OrderWebController.shareWhatsapp(req, res))
-);
-router.post(
   '/orders/:id/delete',
   requireWebAuth,
   webAuthorize(OrderPolicy, 'destroy', (req) => OrderRepository.findById(req.params.id)),

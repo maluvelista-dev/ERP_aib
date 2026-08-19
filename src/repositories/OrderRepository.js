@@ -30,6 +30,7 @@ const itemCreateData = (item) => ({
   boxQuantity: item.boxQuantity,
   unitPrice: item.unitPrice,
   boxPrice: item.boxPrice,
+  unitsPerBox: item.unitsPerBox,
   totalPrice: item.totalPrice
 });
 
@@ -109,18 +110,10 @@ class OrderRepository extends BaseRepository {
     });
   }
 
-  async markWhatsappSent(id) {
-    return this.update(id, {
-      status: 'WHATSAPP_SENT',
-      whatsappSent: true,
-      sentAt: new Date()
-    });
-  }
-
-  async markWhatsappError(id, errorMessage) {
-    return this.update(id, {
-      status: 'WHATSAPP_ERROR',
-      whatsappError: errorMessage
+  async findBySubmissionToken(submissionToken) {
+    return this.model.findUnique({
+      where: { submissionToken },
+      include: includeOrderRelations
     });
   }
 

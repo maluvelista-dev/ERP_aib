@@ -9,6 +9,7 @@ const productSchema = Joi.object({
   description: Joi.string().allow('', null),
   unitPrice: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow('', null)).default(0),
   boxPrice: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow('', null)).allow(null),
+  unitsPerBox: Joi.alternatives().try(Joi.number().integer().min(1), Joi.string().allow('', null)).allow(null),
   active: Joi.boolean().default(true)
 });
 

@@ -22,9 +22,6 @@ class OrderController {
     return ok(res, await OrderService.generatePdf(req.params.id, req.currentUser));
   });
 
-  sendWhatsapp = asyncHandler(async (req, res) => {
-    return ok(res, await OrderService.generatePdfAndSendWhatsapp(req.params.id, req.currentUser));
-  });
 }
 
 export default new OrderController();

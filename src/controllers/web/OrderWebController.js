@@ -2,6 +2,7 @@ import CustomerService from '../../services/CustomerService.js';
 import OrderService from '../../services/OrderService.js';
 import ProductService from '../../services/ProductService.js';
 import UserService from '../../services/UserService.js';
+import { randomUUID } from 'node:crypto';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -23,7 +24,7 @@ const buildOrderPayload = (body) => {
         ? null
         : Number(customBoxPrices[index])
     }))
-    .filter((item) => item.productId && item.unitQuantity + item.boxQuantity > 0);
+    .filter((item) => item.productId);
   const manualNames = asArray(body.manualProductName);
   const manualUnitTypes = asArray(body.manualUnitType);
   const manualColors = asArray(body.manualColor);
@@ -51,6 +52,7 @@ const buildOrderPayload = (body) => {
   });
 
   return {
+    submissionToken: body.submissionToken,
     customerId: body.customerId,
     sellerPhone: body.sellerPhone,
     receivedTime: body.receivedTime,
@@ -63,8 +65,7 @@ const buildOrderPayload = (body) => {
       ? 0
       : Number(body.discountPercent),
     bonusProductId: body.bonusProductId,
-    items,
-    sendWhatsapp: body.sendWhatsapp === 'on'
+    items
   };
 };
 
@@ -99,6 +100,7 @@ const buildOrderFormState = (body, existingOrder = null) => {
 
   return {
     ...(existingOrder ? { id: existingOrder.id } : {}),
+    submissionToken: body.submissionToken,
     customerId: body.customerId,
     sellerPhone: body.sellerPhone,
     bonusProductId: body.bonusProductId,
@@ -109,7 +111,6 @@ const buildOrderFormState = (body, existingOrder = null) => {
     contactEmail: body.contactEmail,
     paymentTerm: body.paymentTerm,
     notes: body.notes,
-    sendWhatsapp: body.sendWhatsapp === 'on',
     items: [...catalogItems, ...manualItems]
   };
 };
@@ -161,6 +162,7 @@ class OrderWebController {
       products,
       order: draft,
       editMode: false,
+      submissionToken: draft?.submissionToken || randomUUID(),
       error: res.locals.flash?.error ?? null
     });
   }
@@ -180,6 +182,7 @@ class OrderWebController {
       products,
       order: draft ?? order,
       editMode: true,
+      submissionToken: draft?.submissionToken || randomUUID(),
       error: res.locals.flash?.error ?? null
     });
   }
@@ -216,8 +219,10 @@ class OrderWebController {
   }
 
   async create(req, res) {
+    let order;
+
     try {
-      const order = await OrderService.create(
+      order = await OrderService.create(
         buildOrderPayload(req.body),
         {
           sub: req.currentUser.id,
@@ -226,12 +231,6 @@ class OrderWebController {
         }
       );
 
-      req.session.flash = { success: `Pedido ${order.orderNumber} criado com sucesso.` };
-      if (order.whatsappUrl) {
-        res.redirect(order.whatsappUrl);
-        return;
-      }
-      res.redirect('/orders');
     } catch (error) {
       const validationDetails = Array.isArray(error.details) && error.details.length
         ? ` (${error.details.join('; ')})`
@@ -244,18 +243,18 @@ class OrderWebController {
         order: buildOrderFormState(req.body)
       };
       res.redirect('/orders/new');
+      return;
     }
+
+    req.session.flash = { success: `Pedido ${order.orderNumber} criado com sucesso.` };
+    res.redirect('/orders');
   }
 
   async update(req, res) {
+    let order;
+
     try {
-      const order = await OrderService.update(req.params.id, buildOrderPayload(req.body), req.currentUser);
-      req.session.flash = { success: `Pedido ${order.orderNumber} atualizado. Gere um novo PDF.` };
-      if (order.whatsappUrl) {
-        res.redirect(order.whatsappUrl);
-        return;
-      }
-      res.redirect(`/orders/${order.id}`);
+      order = await OrderService.update(req.params.id, buildOrderPayload(req.body), req.currentUser);
     } catch (error) {
       const validationDetails = Array.isArray(error.details) && error.details.length
         ? ` (${error.details.join('; ')})`
@@ -269,17 +268,16 @@ class OrderWebController {
         order: buildOrderFormState(req.body, { id: req.params.id })
       };
       res.redirect(`/orders/${req.params.id}/edit`);
+      return;
     }
+
+    req.session.flash = { success: `Pedido ${order.orderNumber} atualizado. Gere um novo PDF.` };
+    res.redirect(`/orders/${order.id}`);
   }
 
   async generatePdf(req, res) {
     const order = await OrderService.generatePdf(req.params.id, req.currentUser);
     res.redirect(order.pdfUrl);
-  }
-
-  async shareWhatsapp(req, res) {
-    const order = await OrderService.generatePdfAndSendWhatsapp(req.params.id, req.currentUser);
-    res.redirect(order.whatsappUrl);
   }
 
   async remove(req, res) {

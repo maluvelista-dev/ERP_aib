@@ -62,6 +62,7 @@ model Product {
   description String?
   unitPrice   Decimal     @default(0) @db.Decimal(10, 2)
   boxPrice    Decimal?    @db.Decimal(10, 2)
+  unitsPerBox Int?
   active      Boolean     @default(true)
   sortOrder   Int?
   createdAt   DateTime    @default(now())
@@ -91,6 +92,7 @@ model ProductCategory {
 model Order {
   id               String      @id @default(uuid())
   orderNumber      String      @unique
+  submissionToken  String?     @unique @db.VarChar(64)
   customerId       String
   createdById      String
   customerSnapshot Json
@@ -140,11 +142,12 @@ model OrderItem {
   category     String?
   manualUnitType String? @db.VarChar(10)
   manualColor  String?  @db.VarChar(80)
-  quantity     Int
-  unitQuantity Int      @default(0)
+  quantity     Decimal  @db.Decimal(10, 3)
+  unitQuantity Decimal  @default(0) @db.Decimal(10, 3)
   boxQuantity  Int      @default(0)
   unitPrice    Decimal  @default(0) @db.Decimal(10, 2)
   boxPrice     Decimal? @db.Decimal(10, 2)
+  unitsPerBox  Int?
   totalPrice   Decimal  @default(0) @db.Decimal(10, 2)
 
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
