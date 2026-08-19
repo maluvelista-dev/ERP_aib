@@ -2,6 +2,18 @@ import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 class StorageService {
+  resolvePdfPath(publicPath) {
+    if (!publicPath?.startsWith('/files/')) {
+      return null;
+    }
+
+    const storageRoot = path.resolve(process.cwd(), 'storage');
+    const relativePath = publicPath.slice('/files/'.length);
+    const filePath = path.resolve(storageRoot, relativePath);
+
+    return filePath.startsWith(`${storageRoot}${path.sep}`) ? filePath : null;
+  }
+
   async uploadPdf(buffer, destination) {
     const normalizedDestination = destination.replace(/\\/g, '/');
     const storageRoot = path.resolve(process.cwd(), 'storage');
@@ -15,15 +27,9 @@ class StorageService {
   }
 
   async deletePdf(publicPath) {
-    if (!publicPath?.startsWith('/files/')) {
-      return;
-    }
+    const filePath = this.resolvePdfPath(publicPath);
 
-    const storageRoot = path.resolve(process.cwd(), 'storage');
-    const relativePath = publicPath.slice('/files/'.length);
-    const filePath = path.resolve(storageRoot, relativePath);
-
-    if (!filePath.startsWith(`${storageRoot}${path.sep}`)) {
+    if (!filePath) {
       return;
     }
 

@@ -117,6 +117,13 @@ class OrderRepository extends BaseRepository {
     });
   }
 
+  async findByPdfUrl(pdfUrl) {
+    return this.model.findFirst({
+      where: { pdfUrl },
+      include: includeOrderRelations
+    });
+  }
+
   async findOwnedById(id, createdById) {
     return this.model.findFirst({
       where: { id, createdById },

@@ -30,6 +30,13 @@ router.post('/register', redirectAuthenticated, registrationRateLimit, asyncHand
 router.post('/logout', requireWebAuth, AuthWebController.logout);
 
 router.get(
+  '/files/*',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'show', (req) => OrderRepository.findByPdfUrl(req.path)),
+  asyncHandler((req, res) => OrderWebController.openPdf(req, res))
+);
+
+router.get(
   '/dashboard',
   requireWebAuth,
   webAuthorize(DashboardPolicy, 'show'),

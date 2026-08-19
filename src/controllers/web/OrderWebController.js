@@ -3,6 +3,9 @@ import OrderService from '../../services/OrderService.js';
 import ProductService from '../../services/ProductService.js';
 import UserService from '../../services/UserService.js';
 import { randomUUID } from 'node:crypto';
+import path from 'node:path';
+import StorageService from '../../services/StorageService.js';
+import { AppError } from '../../utils/AppError.js';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -127,6 +130,34 @@ const consumeOrderDraft = (req, mode, orderId = null) => {
 };
 
 class OrderWebController {
+  async openPdf(req, res) {
+    const order = req.policyRecord;
+
+    if (!order?.pdfUrl) {
+      throw new AppError('PDF não encontrado', 404);
+    }
+
+    const filePath = StorageService.resolvePdfPath(order.pdfUrl);
+
+    if (!filePath) {
+      throw new AppError('Caminho do PDF inválido', 400);
+    }
+
+    res.setHeader('Content-Disposition', `inline; filename="${path.basename(filePath)}"`);
+    await new Promise((resolve, reject) => {
+      res.sendFile(filePath, (error) => {
+        if (!error) {
+          resolve();
+          return;
+        }
+
+        reject(error.code === 'ENOENT'
+          ? new AppError('Arquivo PDF não encontrado', 404)
+          : error);
+      });
+    });
+  }
+
   async index(req, res) {
     const canFilterByCollaborator = req.currentUser.role === 'admin';
     const selectedCollaboratorId = canFilterByCollaborator ? String(req.query.createdById ?? '') : '';

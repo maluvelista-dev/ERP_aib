@@ -73,14 +73,6 @@ app.use((_req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, private');
   next();
 });
-app.use('/files', express.static('storage', {
-  etag: false,
-  lastModified: false,
-  setHeaders: (res) => {
-    res.setHeader('Cache-Control', 'no-store');
-  }
-}));
-
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
