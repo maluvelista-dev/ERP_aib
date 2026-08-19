@@ -41,7 +41,7 @@
           <td class="orders-status-column"><span class="badge text-bg-secondary"><%= order.status %></span></td>
           <td>
             <% if (order.pdfUrl) { %>
-              <a href="<%= order.pdfUrl %>" target="_blank">Abrir PDF</a>
+              <a href="<%= order.pdfUrl %>">Baixar PDF</a>
             <% } else { %>
               <span class="text-muted">N&atilde;o gerado</span>
             <% } %>

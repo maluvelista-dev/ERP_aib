@@ -7,19 +7,39 @@ class DashboardService {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
 
-    const [recentOrders, customers, products] = await Promise.all([
+    const [recentOrders, customerBase, activeProducts, ordersToday, totalOrders] = await Promise.all([
       OrderRepository.findRecent({ createdById: currentUser.id }, 5),
-      CustomerRepository.findForOwner(currentUser.id, { limit: 500 }),
-      ProductRepository.findAll(500)
+      CustomerRepository.countActive(currentUser.id),
+      ProductRepository.countActive(),
+      OrderRepository.countFromDate(start, currentUser.id),
+      OrderRepository.countAll(currentUser.id)
     ]);
-    const ordersToday = await OrderRepository.countByCollaboratorFromDate(currentUser.id, start);
-
-    return {
+    const summary = {
       ordersToday,
-      customerBase: customers.filter((customer) => customer.active !== false).length,
-      activeProducts: products.filter((product) => product.active !== false).length,
-      recentOrders
+      customerBase,
+      activeProducts,
+      totalOrders,
+      recentOrders,
+      global: null
     };
+
+    if (currentUser.role === 'admin') {
+      const [globalOrdersToday, globalCustomerBase, globalTotalOrders, globalRecentOrders] = await Promise.all([
+        OrderRepository.countFromDate(start),
+        CustomerRepository.countActive(),
+        OrderRepository.countAll(),
+        OrderRepository.findRecent({}, 5)
+      ]);
+      summary.global = {
+        ordersToday: globalOrdersToday,
+        customerBase: globalCustomerBase,
+        activeProducts,
+        totalOrders: globalTotalOrders,
+        recentOrders: globalRecentOrders
+      };
+    }
+
+    return summary;
   }
 }
 

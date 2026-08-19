@@ -20,6 +20,8 @@ model User {
 
   orders       Order[]
   customers    Customer[]
+  auditLogs    AuditLog[]
+  orderDraft   OrderDraft?
 
   @@map("users")
 }
@@ -41,6 +43,8 @@ model Customer {
   state          String?
   active         Boolean  @default(true)
   searchKeywords Json?
+  retentionUntil DateTime?
+  anonymizedAt   DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -93,7 +97,7 @@ model Order {
   id               String      @id @default(uuid())
   orderNumber      String      @unique
   submissionToken  String?     @unique @db.VarChar(64)
-  customerId       String
+  customerId       String?
   createdById      String
   customerSnapshot Json
   sellerSnapshot   Json?
@@ -111,14 +115,18 @@ model Order {
   whatsappSent     Boolean     @default(false)
   sentAt           DateTime?
   whatsappError    String?     @db.Text
+  archivedAt       DateTime?
+  retentionUntil   DateTime?
+  anonymizedAt     DateTime?
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
-  customer         Customer    @relation(fields: [customerId], references: [id])
+  customer         Customer?   @relation(fields: [customerId], references: [id])
   createdBy        User        @relation(fields: [createdById], references: [id])
   items            OrderItem[]
 
   @@index([createdById, createdAt])
+  @@index([archivedAt, retentionUntil])
   @@map("orders")
 }
 
@@ -131,6 +139,35 @@ model WebSession {
 
   @@index([expiresAt])
   @@map("web_sessions")
+}
+
+model OrderDraft {
+  id              String   @id @default(uuid())
+  createdById     String   @unique
+  submissionToken String?  @db.VarChar(64)
+  payload         Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@map("order_drafts")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String   @db.VarChar(80)
+  entityType String   @db.VarChar(40)
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@map("audit_logs")
 }
 
 model OrderItem {

@@ -4,6 +4,8 @@ import { ProductModel } from '../models/ProductModel.js';
 import { AppError } from '../utils/AppError.js';
 import { env } from '../config/env.js';
 import { TtlCache } from '../utils/TtlCache.js';
+import { paginationMeta, paginationParams } from '../utils/pagination.js';
+import { getRedis } from '../config/redis.js';
 
 const productListCache = new TtlCache({
   ttlMs: env.catalogCacheTtlMs,
@@ -16,9 +18,45 @@ const cacheKeyFor = (filters) => JSON.stringify({
   includeInactive: Boolean(filters.includeInactive)
 });
 
+const catalogVersion = async () => {
+  const redis = await getRedis();
+  return redis ? (await redis.get('catalog:version') || '0') : 'local';
+};
+
+const clearProductCache = async () => {
+  productListCache.clear();
+  const redis = await getRedis();
+  if (redis) await redis.incr('catalog:version');
+};
+
 class ProductService {
+  async paginate(filters = {}) {
+    const { page, pageSize, skip } = paginationParams(filters);
+    const cacheKey = `page:${page}:${pageSize}:${cacheKeyFor(filters)}`;
+    const redis = await getRedis();
+    const sharedKey = `catalog:${await catalogVersion()}:${cacheKey}`;
+    if (redis) {
+      const shared = await redis.get(sharedKey);
+      if (shared) return JSON.parse(shared);
+    }
+    const cached = productListCache.get(cacheKey);
+    if (cached) return cached;
+
+    const result = await ProductRepository.paginate(filters, skip, pageSize);
+    const response = { items: result.items, pagination: paginationMeta(result.total, page, pageSize) };
+    productListCache.set(cacheKey, response);
+    if (redis) await redis.set(sharedKey, JSON.stringify(response), { PX: env.catalogCacheTtlMs });
+    return response;
+  }
+
   async list(filters = {}) {
     const cacheKey = cacheKeyFor(filters);
+    const redis = await getRedis();
+    const sharedKey = `catalog:${await catalogVersion()}:${cacheKey}`;
+    if (redis) {
+      const shared = await redis.get(sharedKey);
+      if (shared) return JSON.parse(shared);
+    }
     const cached = productListCache.get(cacheKey);
     if (cached) return cached;
 
@@ -28,7 +66,9 @@ class ProductService {
       includeInactive: Boolean(filters.includeInactive)
     });
 
-    return productListCache.set(cacheKey, products);
+    productListCache.set(cacheKey, products);
+    if (redis) await redis.set(sharedKey, JSON.stringify(products), { PX: env.catalogCacheTtlMs });
+    return products;
   }
 
   async findById(id) {
@@ -65,7 +105,7 @@ class ProductService {
         ? null
         : Number(data.unitsPerBox)
     });
-    productListCache.clear();
+    await clearProductCache();
     return product;
   }
    
@@ -92,14 +132,14 @@ class ProductService {
         ? null
         : Number(data.unitsPerBox)
     });
-    productListCache.clear();
+    await clearProductCache();
     return updatedProduct;
   }
 
   async remove(id) {
     await this.findById(id);
     const product = await ProductRepository.softDelete(id);
-    productListCache.clear();
+    await clearProductCache();
     return product;
   }
 

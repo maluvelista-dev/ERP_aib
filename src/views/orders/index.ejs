@@ -10,10 +10,22 @@
           <div class="d-flex flex-column align-items-start gap-2">
             <div>
               <h2 class="h6 mb-1">Pedidos</h2>
-              <div class="small text-muted"><%= orders.length %> pedido(s) encontrado(s)</div>
+              <div class="small text-muted"><%= pagination.total %> pedido(s) encontrado(s)</div>
             </div>
             <a class="btn btn-sm btn-primary" href="/orders/new">Novo pedido</a>
-            <% if (orders.length > 0) { %>
+            <div class="d-flex gap-2 flex-wrap align-items-center">
+              <a
+                class="btn btn-sm btn-outline-primary js-resume-order-draft <%= draft ? '' : 'd-none' %>"
+                href="/orders/new?resumeDraft=1"
+                data-draft-key="ordersweb.orderDraft.<%= currentUser.id %>"
+              >Retomar rascunho</a>
+              <% if (draft) { %>
+                <form action="/orders/drafts/delete" method="post" class="m-0 js-discard-order-draft" data-draft-key="ordersweb.orderDraft.<%= currentUser.id %>">
+                  <button class="btn btn-sm btn-outline-secondary" type="submit">Descartar rascunho</button>
+                </form>
+              <% } %>
+            </div>
+            <% if (orders.length > 0 && currentUser.role === 'seller') { %>
               <form
                 action="/orders/clear-history"
                 method="post"
@@ -57,7 +69,14 @@
             </form>
           <% } %>
         </div>
+        <% if (selectedCustomer) { %>
+          <div class="alert alert-info d-flex justify-content-between align-items-center gap-2">
+            <span>Pedidos de <strong><%= selectedCustomer.legalName || selectedCustomer.tradeName || selectedCustomer.cnpj || 'Cliente sem nome' %></strong></span>
+            <a class="btn btn-sm btn-outline-secondary" href="/orders">Ver todos</a>
+          </div>
+        <% } %>
         <%- include('_table', { orders }) %>
+        <%- include('../partials/pagination', { pagination, paginationQuery }) %>
       </section>
     </main>
   </div>

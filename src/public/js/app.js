@@ -89,6 +89,92 @@ function resetOrderForms() {
   });
 }
 
+const orderDraftEndpoint = '/orders/drafts';
+let orderDraftTimer;
+
+function readLocalOrderDraft(key) {
+  if (!key) return null;
+  try {
+    return JSON.parse(localStorage.getItem(key));
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalOrderDraft(form) {
+  const key = form.dataset.draftKey;
+  if (!key) return null;
+  const draft = {
+    entries: Array.from(new FormData(form).entries()),
+    savedAt: new Date().toISOString()
+  };
+  try {
+    localStorage.setItem(key, JSON.stringify(draft));
+    return draft;
+  } catch {
+    return draft;
+  }
+}
+
+function removeLocalOrderDraft(key) {
+  if (!key) return;
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    return;
+  }
+}
+
+async function syncOrderDraft(draft, statusElement = null) {
+  if (!draft?.entries?.length) return false;
+  if (statusElement) statusElement.textContent = 'Salvando rascunho...';
+
+  try {
+    const response = await fetch(orderDraftEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ entries: draft.entries })
+    });
+    if (!response.ok) throw new Error('draft_save_failed');
+    if (statusElement) statusElement.textContent = 'Rascunho salvo.';
+    return true;
+  } catch {
+    if (statusElement) statusElement.textContent = 'Sem conexão. Rascunho salvo neste aparelho.';
+    return false;
+  }
+}
+
+function scheduleOrderDraftSave(form) {
+  if (form.dataset.draftEnabled !== 'true' || form.dataset.submitting === 'true') return;
+  const draft = writeLocalOrderDraft(form);
+  const statusElement = form.querySelector('.js-draft-status');
+  if (statusElement) statusElement.textContent = 'Alterações salvas neste aparelho.';
+  clearTimeout(orderDraftTimer);
+  orderDraftTimer = setTimeout(() => syncOrderDraft(draft, statusElement), 800);
+}
+
+async function syncLocalDraftBeforeResume(link) {
+  const draft = readLocalOrderDraft(link.dataset.draftKey);
+  if (draft) await syncOrderDraft(draft);
+  window.location.assign(link.href);
+}
+
+async function initializeOrderDrafts() {
+  const created = new URLSearchParams(window.location.search).get('created') === '1';
+  document.querySelectorAll('.js-resume-order-draft').forEach((link) => {
+    if (created) removeLocalOrderDraft(link.dataset.draftKey);
+    if (readLocalOrderDraft(link.dataset.draftKey)) link.classList.remove('d-none');
+  });
+
+  const form = document.querySelector('.js-order-form[data-draft-enabled="true"]');
+  if (!form) return;
+  const localDraft = readLocalOrderDraft(form.dataset.draftKey);
+  if (form.dataset.resumingDraft === 'true' && form.dataset.draftSynced !== 'true' && localDraft) {
+    const synced = await syncOrderDraft(localDraft, form.querySelector('.js-draft-status'));
+    if (synced) window.location.replace('/orders/new?resumeDraft=1&synced=1');
+  }
+}
+
 window.addEventListener('pageshow', () => {
   resetPdfButtons();
   resetOrderForms();
@@ -96,29 +182,41 @@ window.addEventListener('pageshow', () => {
 });
 
 document.addEventListener('htmx:afterSwap', syncAllQuantityFields);
+document.addEventListener('htmx:afterSwap', (event) => {
+  const form = event.target.closest?.('.js-order-form') || document.querySelector('.js-order-form');
+  if (form) scheduleOrderDraftSave(form);
+});
 
 document.addEventListener('input', (event) => {
   const quantityInput = event.target.closest('.js-unit-quantity, .js-box-quantity');
   if (quantityInput) syncQuantityFields(quantityInput.closest('.order-item-row'));
+  const orderForm = event.target.closest('.js-order-form');
+  if (orderForm) scheduleOrderDraftSave(orderForm);
 });
 
 document.addEventListener('change', (event) => {
   const productInput = event.target.closest('.js-order-product');
   if (productInput) syncQuantityFields(productInput.closest('.order-item-row'));
+  const orderForm = event.target.closest('.js-order-form');
+  if (orderForm) scheduleOrderDraftSave(orderForm);
 });
 
 document.addEventListener('click', (event) => {
   const removeButton = event.target.closest('.js-remove-order-item');
 
   if (removeButton) {
+    const form = removeButton.closest('.js-order-form');
     removeButton.closest('.order-item-row')?.remove();
+    if (form) scheduleOrderDraftSave(form);
     return;
   }
 
   const removeManualButton = event.target.closest('.js-remove-manual-order-item');
 
   if (removeManualButton) {
+    const form = removeManualButton.closest('.js-order-form');
     removeManualButton.closest('.manual-order-item-row')?.remove();
+    if (form) scheduleOrderDraftSave(form);
     return;
   }
 
@@ -137,6 +235,15 @@ document.addEventListener('click', (event) => {
         input.value = '';
       });
     }
+    const form = priceButton.closest('.js-order-form');
+    if (form) scheduleOrderDraftSave(form);
+    return;
+  }
+
+  const resumeDraftLink = event.target.closest('.js-resume-order-draft');
+  if (resumeDraftLink) {
+    event.preventDefault();
+    syncLocalDraftBeforeResume(resumeDraftLink);
   }
 });
 
@@ -183,6 +290,12 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('submit', (event) => {
+  const discardDraftForm = event.target.closest('.js-discard-order-draft');
+  if (discardDraftForm) {
+    removeLocalOrderDraft(discardDraftForm.dataset.draftKey);
+    return;
+  }
+
   const clearHistoryForm = event.target.closest('.js-clear-order-history-form');
 
   if (clearHistoryForm) {
@@ -258,3 +371,10 @@ document.addEventListener('submit', (event) => {
     event.preventDefault();
   }
 });
+
+window.addEventListener('online', () => {
+  const form = document.querySelector('.js-order-form[data-draft-enabled="true"]');
+  if (form) syncOrderDraft(writeLocalOrderDraft(form), form.querySelector('.js-draft-status'));
+});
+
+initializeOrderDrafts();

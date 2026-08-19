@@ -10,10 +10,12 @@
           <div class="d-flex flex-column align-items-start gap-2">
             <div>
               <h2 class="h6 mb-1">Produtos</h2>
-              <div class="small text-muted"><%= products.length %> produto(s) encontrado(s)</div>
+              <div class="small text-muted"><%= pagination.total %> produto(s) encontrado(s)</div>
             </div>
             <div class="d-flex flex-wrap gap-2">
-              <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
+              <% if (currentUser.role === 'admin') { %>
+                <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
+              <% } %>
               <% if (currentUser.role === 'admin') { %>
                 <% if (editMode) { %>
                   <a class="btn btn-sm btn-outline-secondary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>">Finalizar altera&ccedil;&otilde;es</a>
@@ -133,7 +135,7 @@
                         <input
                           type="hidden"
                           name="returnTo"
-                          value="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true"
+                          value="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true&page=<%= pagination.page %>"
                         >
                       </form>
                     </td>
@@ -174,6 +176,7 @@
             </tbody>
           </table>
         </div>
+        <%- include('../partials/pagination', { pagination, paginationQuery }) %>
       </section>
     </main>
   </div>

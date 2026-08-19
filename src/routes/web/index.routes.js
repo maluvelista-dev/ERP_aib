@@ -179,6 +179,18 @@ router.post(
   asyncHandler((req, res) => OrderWebController.create(req, res))
 );
 router.post(
+  '/orders/drafts',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'create'),
+  asyncHandler((req, res) => OrderWebController.saveDraft(req, res))
+);
+router.post(
+  '/orders/drafts/delete',
+  requireWebAuth,
+  webAuthorize(OrderPolicy, 'create'),
+  asyncHandler((req, res) => OrderWebController.discardDraft(req, res))
+);
+router.post(
   '/orders/clear-history',
   requireWebAuth,
   webAuthorize(OrderPolicy, 'clearHistory'),

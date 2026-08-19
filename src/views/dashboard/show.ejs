@@ -37,6 +37,7 @@
           </span>
           <span class="dashboard-shortcut-title">Produtos</span>
         </a>
+        <% if (currentUser.role === 'admin') { %>
         <a class="dashboard-shortcut" href="/products/new">
             <span class="dashboard-shortcut-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
@@ -49,7 +50,21 @@
             </span>
             <span class="dashboard-shortcut-title">Adicionar produto</span>
         </a>
+        <% } %>
       </section>
+
+      <% if (summary.global) { %>
+        <section class="content-panel p-3 mb-4">
+          <h2 class="h6 mb-3">Visão global da administração</h2>
+          <div class="row g-3">
+            <div class="col-6 col-lg-3"><div class="stat-card p-3"><div class="text-muted small">Pedidos hoje</div><div class="fs-3 fw-semibold"><%= summary.global.ordersToday %></div></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card p-3"><div class="text-muted small">Total de pedidos</div><div class="fs-3 fw-semibold"><%= summary.global.totalOrders %></div></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card p-3"><div class="text-muted small">Clientes ativos</div><div class="fs-3 fw-semibold"><%= summary.global.customerBase %></div></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card p-3"><div class="text-muted small">Produtos ativos</div><div class="fs-3 fw-semibold"><%= summary.global.activeProducts %></div></div></div>
+          </div>
+        </section>
+        <h2 class="h6 mb-3">Minha atividade</h2>
+      <% } %>
 
       <div class="row g-3 mb-4">
         <div class="col-md-4">
@@ -71,6 +86,16 @@
           </div>
         </div>
       </div>
+
+      <% if (summary.global) { %>
+        <section class="content-panel p-3 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 mb-0">Últimos pedidos de todos os colaboradores</h2>
+            <a class="btn btn-sm btn-outline-primary" href="/orders">Ver todos</a>
+          </div>
+          <%- include('../orders/_table', { orders: summary.global.recentOrders }) %>
+        </section>
+      <% } %>
 
       <section class="content-panel p-3">
         <div class="d-flex justify-content-between align-items-center mb-3">

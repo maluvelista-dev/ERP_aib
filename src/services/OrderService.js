@@ -6,6 +6,8 @@ import { AppError } from '../utils/AppError.js';
 import PdfService from './PdfService.js';
 import StorageService from './StorageService.js';
 import { randomUUID } from 'node:crypto';
+import { paginationMeta, paginationParams } from '../utils/pagination.js';
+import { env } from '../config/env.js';
 
 const filenamePart = (value, fallback = 'cliente') => {
   const normalized = String(value || '')
@@ -19,6 +21,23 @@ const filenamePart = (value, fallback = 'cliente') => {
 };
 
 class OrderService {
+  async paginate(filters = {}, currentUser = null) {
+    if (!currentUser?.id) return { items: [], pagination: paginationMeta(0, 1, 25) };
+    const isAdmin = currentUser.role === 'admin';
+    const createdById = isAdmin ? (filters.createdById || undefined) : currentUser.id;
+    const startDate = this.#startDateForPeriod(filters.period);
+    const { page, pageSize, skip } = paginationParams(filters);
+    const result = await OrderRepository.paginateRecent({
+      createdById,
+      customerId: filters.customerId || undefined,
+      startDate
+    }, skip, pageSize);
+    return {
+      items: result.items.map((order) => this.#withTotals(order)),
+      pagination: paginationMeta(result.total, page, pageSize)
+    };
+  }
+
   async list(filters = {}, currentUser = null) {
     if (!currentUser?.id) {
       return [];
@@ -128,6 +147,7 @@ class OrderService {
       discountAmount,
       bonusProductSnapshot,
       status: 'draft',
+      retentionUntil: new Date(Date.now() + env.dataRetentionDays * 86400000),
       pdfUrl: null,
       whatsappSent: false,
       sentAt: null,
@@ -225,8 +245,7 @@ class OrderService {
 
   async remove(id, currentUser) {
     const order = await this.findById(id, currentUser);
-    await OrderRepository.destroy(id);
-    await StorageService.deletePdf(order.pdfUrl);
+    await OrderRepository.archive(id);
 
     return order;
   }

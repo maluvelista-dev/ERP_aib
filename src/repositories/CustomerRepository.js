@@ -29,12 +29,25 @@ class CustomerRepository extends BaseRepository {
     });
   }
 
-  async activate(id) {
-    return this.update(id, { active: true });
+  async paginateForOwner(createdById, { includeInactive = false, skip = 0, take = 25 } = {}) {
+    const where = { createdById, ...(includeInactive ? {} : { active: true }) };
+    const [items, total] = await Promise.all([
+      this.model.findMany({ where, skip, take, orderBy: { createdAt: 'desc' } }),
+      this.model.count({ where })
+    ]);
+    return { items, total };
   }
 
-  async deactivate(id) {
-    return this.update(id, { active: false });
+  async countActive(createdById = null) {
+    return this.model.count({ where: { active: true, ...(createdById ? { createdById } : {}) } });
+  }
+
+  async activate(id) {
+    return this.update(id, { active: true, retentionUntil: null, anonymizedAt: null });
+  }
+
+  async deactivate(id, retentionUntil) {
+    return this.update(id, { active: false, retentionUntil });
   }
 
   async search(term, createdById, limit = 20) {

@@ -10,7 +10,7 @@ export class ProductPolicy extends ApplicationPolicy {
   }
 
   create() {
-    return this.index();
+    return this.isAdmin();
   }
 
   update() {

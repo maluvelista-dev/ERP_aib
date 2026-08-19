@@ -6,6 +6,8 @@ import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import StorageService from '../../services/StorageService.js';
 import { AppError } from '../../utils/AppError.js';
+import AuditService from '../../services/AuditService.js';
+import OrderDraftService from '../../services/OrderDraftService.js';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -72,7 +74,7 @@ const buildOrderPayload = (body) => {
   };
 };
 
-const buildOrderFormState = (body, existingOrder = null) => {
+export const buildOrderFormState = (body, existingOrder = null) => {
   const productIds = asArray(body.productId);
   const unitQuantities = asArray(body.unitQuantity);
   const boxQuantities = asArray(body.boxQuantity);
@@ -143,7 +145,9 @@ class OrderWebController {
       throw new AppError('Caminho do PDF inválido', 400);
     }
 
-    res.setHeader('Content-Disposition', `inline; filename="${path.basename(filePath)}"`);
+    await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_DOWNLOADED', entityType: 'ORDER', entityId: order.id });
+
+    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
     await new Promise((resolve, reject) => {
       res.sendFile(filePath, (error) => {
         if (!error) {
@@ -164,17 +168,31 @@ class OrderWebController {
     const selectedPeriod = ['week', '15days', '30days'].includes(req.query.period)
       ? req.query.period
       : '';
-    const [orders, collaborators] = await Promise.all([
-      OrderService.list({ createdById: selectedCollaboratorId, period: selectedPeriod }, req.currentUser),
-      canFilterByCollaborator ? UserService.list() : Promise.resolve([])
+    const selectedCustomerId = String(req.query.customerId ?? '');
+    const selectedCustomer = selectedCustomerId
+      ? await CustomerService.findById(selectedCustomerId, req.currentUser)
+      : null;
+    const [result, collaborators, draft] = await Promise.all([
+      OrderService.paginate({
+        createdById: selectedCollaboratorId,
+        customerId: selectedCustomerId,
+        period: selectedPeriod,
+        page: req.query.page
+      }, req.currentUser),
+      canFilterByCollaborator ? UserService.list() : Promise.resolve([]),
+      OrderDraftService.findForUser(req.currentUser.id)
     ]);
 
     res.render('orders/index', {
       title: 'Pedidos',
-      orders,
+      orders: result.items,
+      pagination: result.pagination,
+      paginationQuery: { createdById: selectedCollaboratorId, customerId: selectedCustomerId, period: selectedPeriod },
       collaborators,
       selectedCollaboratorId,
       selectedPeriod,
+      selectedCustomer,
+      draft,
       canFilterByCollaborator
     });
   }
@@ -185,7 +203,11 @@ class OrderWebController {
       ProductService.list()
     ]);
 
-    const draft = consumeOrderDraft(req, 'create');
+    const validationDraft = consumeOrderDraft(req, 'create');
+    const savedDraft = req.query.resumeDraft === '1'
+      ? await OrderDraftService.findForUser(req.currentUser.id)
+      : null;
+    const draft = validationDraft ?? savedDraft?.payload ?? null;
 
     res.render('orders/new', {
       title: 'Novo Pedido',
@@ -193,6 +215,8 @@ class OrderWebController {
       products,
       order: draft,
       editMode: false,
+      resumingDraft: Boolean(savedDraft),
+      draftSynced: req.query.synced === '1',
       submissionToken: draft?.submissionToken || randomUUID(),
       error: res.locals.flash?.error ?? null
     });
@@ -213,6 +237,8 @@ class OrderWebController {
       products,
       order: draft ?? order,
       editMode: true,
+      resumingDraft: false,
+      draftSynced: false,
       submissionToken: draft?.submissionToken || randomUUID(),
       error: res.locals.flash?.error ?? null
     });
@@ -277,8 +303,9 @@ class OrderWebController {
       return;
     }
 
+    await OrderDraftService.removeForUser(req.currentUser.id);
     req.session.flash = { success: `Pedido ${order.orderNumber} criado com sucesso.` };
-    res.redirect('/orders');
+    res.redirect('/orders?created=1');
   }
 
   async update(req, res) {
@@ -308,11 +335,13 @@ class OrderWebController {
 
   async generatePdf(req, res) {
     const order = await OrderService.generatePdf(req.params.id, req.currentUser);
+    await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
     res.redirect(order.pdfUrl);
   }
 
   async remove(req, res) {
     const order = await OrderService.remove(req.params.id, req.currentUser);
+    await AuditService.log({ actorId: req.currentUser.id, action: 'ORDER_ARCHIVED', entityType: 'ORDER', entityId: order.id });
     req.session.flash = { success: `Pedido ${order.orderNumber} excluído com sucesso.` };
     res.redirect('/orders');
   }
@@ -322,6 +351,12 @@ class OrderWebController {
       { createdById: req.body.createdById },
       req.currentUser
     );
+    await AuditService.log({
+      actorId: req.currentUser.id,
+      action: 'ORDER_HISTORY_ARCHIVED',
+      entityType: 'ORDER',
+      metadata: { count, scopeUserId: req.currentUser.role === 'admin' ? (req.body.createdById || null) : req.currentUser.id }
+    });
     req.session.flash = {
       success: count === 1 ? '1 pedido foi removido do histórico.' : `${count} pedidos foram removidos do histórico.`
     };
@@ -331,6 +366,21 @@ class OrderWebController {
     res.redirect(selectedCollaboratorId
       ? `/orders?createdById=${encodeURIComponent(selectedCollaboratorId)}`
       : '/orders');
+  }
+
+  async saveDraft(req, res) {
+    const draft = await OrderDraftService.save(
+      req.currentUser.id,
+      req.body.entries,
+      buildOrderFormState
+    );
+    res.status(200).json({ data: { id: draft.id, updatedAt: draft.updatedAt } });
+  }
+
+  async discardDraft(req, res) {
+    await OrderDraftService.removeForUser(req.currentUser.id);
+    req.session.flash = { success: 'Rascunho descartado.' };
+    res.redirect('/orders');
   }
 }
 

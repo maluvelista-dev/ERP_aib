@@ -28,9 +28,13 @@
             <tbody>
               <% customers.forEach((customer, index) => { %>
                 <tr>
-                  <td><%= String(index + 1).padStart(2, '0') %></td>
+                  <td><%= String((pagination.page - 1) * pagination.pageSize + index + 1).padStart(2, '0') %></td>
                   <td><%= customer.cnpj || '-' %></td>
-                  <td><%= customer.legalName || 'Cliente sem nome' %></td>
+                  <td>
+                    <a href="/orders?customerId=<%= encodeURIComponent(customer.id) %>" class="text-decoration-none fw-semibold">
+                      <%= customer.legalName || 'Cliente sem nome' %>
+                    </a>
+                  </td>
                   <td><%= customer.tradeName || '-' %></td>
                   <td><%= [customer.street, customer.number, customer.district].filter(Boolean).join(', ') || '-' %></td>
                   <td><%= customer.whatsapp || '-' %></td>
@@ -73,6 +77,7 @@
             </tbody>
           </table>
         </div>
+        <%- include('../partials/pagination', { pagination, paginationQuery }) %>
       </section>
     </main>
   </div>

@@ -52,6 +52,32 @@ class ProductRepository extends BaseRepository {
     });
   }
 
+  async paginate(filters = {}, skip = 0, take = 25) {
+    const search = filters.search?.trim();
+    const where = {
+      ...(filters.includeInactive ? {} : { active: true }),
+      ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+      ...(search ? { OR: [
+        { code: { contains: search } }, { name: { contains: search } },
+        { category: { contains: search } },
+        { productCategory: { name: { contains: search } } }
+      ] } : {})
+    };
+    const [items, total] = await Promise.all([
+      this.model.findMany({
+        where, skip, take,
+        orderBy: [{ sortOrder: { sort: 'asc', nulls: 'last' } }, { name: 'asc' }],
+        include: { productCategory: true }
+      }),
+      this.model.count({ where })
+    ]);
+    return { items, total };
+  }
+
+  async countActive() {
+    return this.model.count({ where: { active: true } });
+  }
+
   async findByIds(ids) {
     if (!ids.length) return [];
 

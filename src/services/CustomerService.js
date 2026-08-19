@@ -1,6 +1,10 @@
 import { CustomerModel } from '../models/CustomerModel.js';
 import CustomerRepository from '../repositories/CustomerRepository.js';
 import { AppError } from '../utils/AppError.js';
+import { paginationMeta, paginationParams } from '../utils/pagination.js';
+import { env } from '../config/env.js';
+
+const retentionDate = () => new Date(Date.now() + env.dataRetentionDays * 86400000);
 
 class CustomerService {
   async list(currentUser, options = {}) {
@@ -9,6 +13,14 @@ class CustomerService {
 
   async listForUser(currentUser) {
     return this.list(currentUser, { includeInactive: currentUser.role === 'admin' });
+  }
+
+  async paginateForUser(currentUser, query = {}) {
+    const { page, pageSize, skip } = paginationParams(query);
+    const result = await CustomerRepository.paginateForOwner(currentUser.id, {
+      includeInactive: currentUser.role === 'admin', skip, take: pageSize
+    });
+    return { items: result.items, pagination: paginationMeta(result.total, page, pageSize) };
   }
 
   async findById(id, currentUser) {
@@ -64,13 +76,13 @@ class CustomerService {
   async toggleActive(id, currentUser) {
     const customer = await this.findById(id, currentUser);
     return customer.active
-      ? CustomerRepository.deactivate(id)
+      ? CustomerRepository.deactivate(id, retentionDate())
       : CustomerRepository.activate(id);
   }
 
   async remove(id, currentUser) {
     await this.findById(id, currentUser);
-    return CustomerRepository.softDelete(id);
+    return CustomerRepository.deactivate(id, retentionDate());
   }
 
   #nullifyEmptyFields(data) {

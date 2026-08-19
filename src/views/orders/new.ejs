@@ -18,8 +18,19 @@
             Cadastre ao menos um cliente ativo antes de criar pedidos.
           </div>
         <% } %>
-        <form action="<%= editing ? `/orders/${order.id}` : '/orders' %>" method="post" class="d-grid gap-4 js-order-form">
+        <form
+          action="<%= editing ? `/orders/${order.id}` : '/orders' %>"
+          method="post"
+          class="d-grid gap-4 js-order-form"
+          data-draft-enabled="<%= editing ? 'false' : 'true' %>"
+          data-draft-key="ordersweb.orderDraft.<%= currentUser.id %>"
+          data-resuming-draft="<%= !editing && resumingDraft ? 'true' : 'false' %>"
+          data-draft-synced="<%= !editing && draftSynced ? 'true' : 'false' %>"
+        >
           <input type="hidden" name="submissionToken" value="<%= submissionToken %>">
+          <% if (!editing) { %>
+            <div class="small text-muted js-draft-status" aria-live="polite">As alterações deste pedido são salvas automaticamente.</div>
+          <% } %>
           <div>
             <label class="form-label">Cliente</label>
             <select class="form-select" name="customerId" required>

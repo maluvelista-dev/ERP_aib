@@ -18,6 +18,8 @@ const includeOrderRelations = {
   }
 };
 
+const visibleOrderFilter = { archivedAt: null };
+
 const itemCreateData = (item) => ({
   productId: item.productId,
   code: item.code,
@@ -40,8 +42,8 @@ class OrderRepository extends BaseRepository {
   }
 
   async findById(id) {
-    return this.model.findUnique({
-      where: { id },
+    return this.model.findFirst({
+      where: { id, ...visibleOrderFilter },
       include: includeOrderRelations
     });
   }
@@ -73,7 +75,9 @@ class OrderRepository extends BaseRepository {
   async findRecent(filters = {}, limit = 50) {
     return this.model.findMany({
       where: {
+        ...visibleOrderFilter,
         ...(filters.createdById ? { createdById: filters.createdById } : {}),
+        ...(filters.customerId ? { customerId: filters.customerId } : {}),
         ...(filters.startDate ? { createdAt: { gte: filters.startDate } } : {})
       },
       take: limit,
@@ -85,6 +89,7 @@ class OrderRepository extends BaseRepository {
   async countFromStartOfDay(startOfDay) {
     return this.model.count({
       where: {
+        ...visibleOrderFilter,
         createdAt: {
           gte: startOfDay
         }
@@ -95,6 +100,7 @@ class OrderRepository extends BaseRepository {
   async countByCollaboratorFromDate(createdById, startDate) {
     return this.model.count({
       where: {
+        ...visibleOrderFilter,
         createdById,
         createdAt: {
           gte: startDate
@@ -117,16 +123,40 @@ class OrderRepository extends BaseRepository {
     });
   }
 
+  async paginateRecent(filters = {}, skip = 0, take = 25) {
+    const where = {
+      ...visibleOrderFilter,
+      ...(filters.createdById ? { createdById: filters.createdById } : {}),
+      ...(filters.customerId ? { customerId: filters.customerId } : {}),
+      ...(filters.startDate ? { createdAt: { gte: filters.startDate } } : {})
+    };
+    const [items, total] = await Promise.all([
+      this.model.findMany({ where, skip, take, orderBy: { createdAt: 'desc' }, include: includeOrderRelations }),
+      this.model.count({ where })
+    ]);
+    return { items, total };
+  }
+
+  async countFromDate(startDate, createdById = null) {
+    return this.model.count({
+      where: { ...visibleOrderFilter, createdAt: { gte: startDate }, ...(createdById ? { createdById } : {}) }
+    });
+  }
+
+  async countAll(createdById = null) {
+    return this.model.count({ where: { ...visibleOrderFilter, ...(createdById ? { createdById } : {}) } });
+  }
+
   async findByPdfUrl(pdfUrl) {
     return this.model.findFirst({
-      where: { pdfUrl },
+      where: { pdfUrl, ...visibleOrderFilter },
       include: includeOrderRelations
     });
   }
 
   async findOwnedById(id, createdById) {
     return this.model.findFirst({
-      where: { id, createdById },
+      where: { id, createdById, ...visibleOrderFilter },
       include: includeOrderRelations
     });
   }
@@ -150,14 +180,17 @@ class OrderRepository extends BaseRepository {
     return this.model.delete({ where: { id } });
   }
 
+  async archive(id) {
+    return this.model.update({ where: { id }, data: { archivedAt: new Date() } });
+  }
+
   async clearHistory(createdById = null) {
-    const where = createdById ? { createdById } : {};
-    const orders = await this.model.findMany({ where, select: { pdfUrl: true } });
-    const result = await this.model.deleteMany({ where });
+    const where = { ...visibleOrderFilter, ...(createdById ? { createdById } : {}) };
+    const result = await this.model.updateMany({ where, data: { archivedAt: new Date() } });
 
     return {
       count: result.count,
-      pdfUrls: orders.map((order) => order.pdfUrl).filter(Boolean)
+      pdfUrls: []
     };
   }
 }

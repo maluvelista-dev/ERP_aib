@@ -18,7 +18,7 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   clearHistory() {
-    return this.index();
+    return this.isSeller();
   }
 
   destroy() {

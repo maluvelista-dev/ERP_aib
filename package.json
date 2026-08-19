@@ -22,7 +22,8 @@
     "catalog:sql": "node scripts/generate-catalog-sql.mjs",
     "catalog:verify": "node scripts/verify-catalog-import.mjs",
     "users:bootstrap": "node scripts/bootstrap-production-users.mjs",
-    "admin:reset": "node scripts/reset-admin-password.mjs"
+    "admin:reset": "node scripts/reset-admin-password.mjs",
+    "data:retention": "node scripts/enforce-data-retention.mjs"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.9.1",
@@ -37,7 +38,8 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.0",
-    "pdfkit": "^0.15.0"
+    "pdfkit": "^0.15.0",
+    "redis": "^6.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.4",

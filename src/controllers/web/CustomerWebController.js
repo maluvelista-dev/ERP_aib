@@ -1,11 +1,14 @@
 import CustomerService from '../../services/CustomerService.js';
+import AuditService from '../../services/AuditService.js';
 
 class CustomerWebController {
   async index(req, res) {
-    const customers = await CustomerService.listForUser(req.currentUser);
+    const result = await CustomerService.paginateForUser(req.currentUser, req.query);
     res.render('customers/index', {
       title: 'Clientes',
-      customers
+      customers: result.items,
+      pagination: result.pagination,
+      paginationQuery: {}
     });
   }
 
@@ -63,6 +66,7 @@ class CustomerWebController {
 
   async toggleActive(req, res) {
     const customer = await CustomerService.toggleActive(req.params.id, req.currentUser);
+    await AuditService.log({ actorId: req.currentUser.id, action: customer.active ? 'CUSTOMER_ACTIVATED' : 'CUSTOMER_DEACTIVATED', entityType: 'CUSTOMER', entityId: customer.id });
     req.session.flash = {
       success: customer.active ? 'Cliente ativado com sucesso.' : 'Cliente desativado com sucesso.'
     };
@@ -71,6 +75,7 @@ class CustomerWebController {
 
   async remove(req, res) {
     await CustomerService.remove(req.params.id, req.currentUser);
+    await AuditService.log({ actorId: req.currentUser.id, action: 'CUSTOMER_ARCHIVED', entityType: 'CUSTOMER', entityId: req.params.id });
     req.session.flash = { success: 'Cliente excluído com sucesso.' };
     res.redirect('/customers');
   }

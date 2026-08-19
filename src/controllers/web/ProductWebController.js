@@ -1,23 +1,27 @@
 import ProductService from '../../services/ProductService.js';
 import ProductCategoryService from '../../services/ProductCategoryService.js';
+import AuditService from '../../services/AuditService.js';
 
 class ProductWebController {
   async index(req, res) {
     const selectedCategoryId = req.query.categoryId ?? '';
     const search = req.query.q ?? '';
     const editMode = req.query.edit === 'true' && req.currentUser?.role === 'admin';
-    const [products, categories] = await Promise.all([
-      ProductService.list({
+    const [result, categories] = await Promise.all([
+      ProductService.paginate({
         categoryId: selectedCategoryId,
         search,
-        includeInactive: editMode
+        includeInactive: editMode,
+        page: req.query.page
       }),
       ProductCategoryService.list()
     ]);
 
     res.render('products/index', {
       title: 'Produtos',
-      products,
+      products: result.items,
+      pagination: result.pagination,
+      paginationQuery: { q: search, categoryId: selectedCategoryId, ...(editMode ? { edit: 'true' } : {}) },
       categories,
       selectedCategoryId,
       search,
@@ -38,7 +42,8 @@ class ProductWebController {
 
   async create(req, res) {
     try {
-      await ProductService.create(req.body);
+      const product = await ProductService.create(req.body);
+      await AuditService.log({ actorId: req.currentUser.id, action: 'PRODUCT_CREATED', entityType: 'PRODUCT', entityId: product.id });
       req.session.flash = { success: 'Produto criado com sucesso.' };
       res.redirect('/products');
     } catch (error) {
@@ -57,6 +62,7 @@ class ProductWebController {
 
     try {
       await ProductService.update(req.params.id, payload);
+      await AuditService.log({ actorId: req.currentUser.id, action: 'PRODUCT_UPDATED', entityType: 'PRODUCT', entityId: req.params.id });
       req.session.flash = { success: 'Produto atualizado com sucesso.' };
       res.redirect(returnTo);
     } catch (error) {

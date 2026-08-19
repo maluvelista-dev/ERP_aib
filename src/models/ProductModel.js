@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { BaseModel } from './BaseModel.js';
+import { AppError } from '../utils/AppError.js';
 
 const productSchema = Joi.object({
   code: Joi.string().min(2).required(),
@@ -32,9 +33,28 @@ export class ProductModel extends BaseModel {
     }
 
     if (typeof value === 'number') {
+      if (!Number.isFinite(value) || value < 0) {
+        throw new AppError('Informe um preço válido', 422);
+      }
+
       return value;
     }
 
-    return Number(value.replace(/\./g, '').replace(',', '.'));
+    const sanitized = String(value).trim().replace(/[^\d,.-]/g, '');
+    if (!/\d/.test(sanitized)) {
+      throw new AppError('Informe um preço válido', 422);
+    }
+
+    const decimalSeparator = sanitized.lastIndexOf(',') > sanitized.lastIndexOf('.') ? ',' : '.';
+    const normalized = decimalSeparator === ','
+      ? sanitized.replace(/\./g, '').replace(',', '.')
+      : sanitized.replace(/,/g, '');
+    const amount = Number(normalized);
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      throw new AppError('Informe um preço válido', 422);
+    }
+
+    return amount;
   }
 }

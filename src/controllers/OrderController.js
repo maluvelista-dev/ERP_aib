@@ -1,6 +1,7 @@
 import OrderService from '../services/OrderService.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { created, ok } from '../utils/response.js';
+import AuditService from '../services/AuditService.js';
 
 class OrderController {
   list = asyncHandler(async (req, res) => {
@@ -19,7 +20,9 @@ class OrderController {
   });
 
   generatePdf = asyncHandler(async (req, res) => {
-    return ok(res, await OrderService.generatePdf(req.params.id, req.currentUser));
+    const order = await OrderService.generatePdf(req.params.id, req.currentUser);
+    await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
+    return ok(res, order);
   });
 
 }
