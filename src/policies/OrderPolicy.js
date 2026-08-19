@@ -14,7 +14,7 @@ export class OrderPolicy extends ApplicationPolicy {
   }
 
   generatePdf() {
-    return this.#ownsOrder();
+    return this.isAdmin() || this.#ownsOrder();
   }
 
   clearHistory() {
