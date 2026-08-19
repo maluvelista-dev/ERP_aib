@@ -171,7 +171,7 @@ class PdfService {
     this.#cell(doc, 'QUANT.', table.columns.quantity, tableY + 6, 'center');
     this.#cell(doc, 'CÓD. PRODUTO', table.columns.code, tableY + 6, 'center');
     this.#cell(doc, 'DESCRIÇÃO DO PRODUTO', table.columns.description, tableY + 6, 'center');
-    this.#cell(doc, 'UNITÁRIO', table.columns.unitPrice, tableY + 6, 'center');
+    this.#cell(doc, 'PREÇO', table.columns.unitPrice, tableY + 6, 'center');
     this.#cell(doc, 'TOTAL', table.columns.total, tableY + 6, 'center');
 
     doc.font('Helvetica').fontSize(7.8);
