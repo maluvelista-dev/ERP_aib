@@ -17,6 +17,7 @@ import CustomerRepository from '../../repositories/CustomerRepository.js';
 import UserRepository from '../../repositories/UserRepository.js';
 import OrderRepository from '../../repositories/OrderRepository.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
+import { measurePdfDatabaseLoad, startPdfMetrics } from '../../middlewares/pdfMetricsMiddleware.js';
 
 const router = Router();
 
@@ -205,7 +206,11 @@ router.post(
 router.post(
   '/orders/:id/pdf',
   requireWebAuth,
-  webAuthorize(OrderPolicy, 'generatePdf', (req) => OrderRepository.findById(req.params.id)),
+  startPdfMetrics,
+  webAuthorize(OrderPolicy, 'generatePdf', (req) => measurePdfDatabaseLoad(
+    req,
+    () => OrderRepository.findById(req.params.id)
+  )),
   asyncHandler((req, res) => OrderWebController.generatePdf(req, res))
 );
 router.post(

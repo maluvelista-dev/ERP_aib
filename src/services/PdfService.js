@@ -3,6 +3,7 @@ import path from 'node:path';
 import { env } from '../config/env.js';
 import { ConcurrencyLimiter } from '../utils/ConcurrencyLimiter.js';
 import { buildOrderPdfRows } from '../utils/orderPdfRows.js';
+import { performance } from 'node:perf_hooks';
 
 const pdfLimiter = new ConcurrencyLimiter(env.pdfConcurrency);
 
@@ -28,13 +29,19 @@ const table = {
 };
 
 class PdfService {
-  async generateOrderPdf(order) {
+  async generateOrderPdf(order, metrics = {}) {
+    const queuedAt = performance.now();
     return pdfLimiter.run(() => new Promise((resolve, reject) => {
+      metrics.queue_wait_ms = performance.now() - queuedAt;
+      const renderStartedAt = performance.now();
       const doc = new PDFDocument({ margin: PAGE.margin, size: 'A4', bufferPages: true });
       const chunks = [];
 
       doc.on('data', (chunk) => chunks.push(chunk));
-      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('end', () => {
+        metrics.render_ms = performance.now() - renderStartedAt;
+        resolve(Buffer.concat(chunks));
+      });
       doc.on('error', reject);
 
       this.#drawPage(doc, order);

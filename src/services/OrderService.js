@@ -8,6 +8,7 @@ import StorageService from './StorageService.js';
 import { randomUUID } from 'node:crypto';
 import { paginationMeta, paginationParams } from '../utils/pagination.js';
 import { env } from '../config/env.js';
+import { performance } from 'node:perf_hooks';
 
 const filenamePart = (value, fallback = 'cliente') => {
   const normalized = String(value || '')
@@ -226,15 +227,28 @@ class OrderService {
     return this.#withTotals(order);
   }
 
-  async generatePdf(id, currentUser) {
-    const order = await this.findById(id, currentUser);
-    const buffer = await PdfService.generateOrderPdf(order);
+  async generatePdf(id, currentUser, preloadedOrder = null, metrics = {}) {
+    let order;
+    if (preloadedOrder) {
+      order = this.#withTotals(preloadedOrder);
+    } else {
+      const databaseStartedAt = performance.now();
+      order = await this.findById(id, currentUser);
+      metrics.database_load_ms = (metrics.database_load_ms ?? 0) + performance.now() - databaseStartedAt;
+    }
+
+    const buffer = await PdfService.generateOrderPdf(order, metrics);
     const customerName = order.customerSnapshot?.legalName || order.customerSnapshot?.tradeName;
     const customerFilename = filenamePart(customerName);
     const orderNumber = filenamePart(order.orderNumber, 'pedido');
     const destination = `orders/${order.id}/${customerFilename}_pedido_${orderNumber}.pdf`;
+    const storageStartedAt = performance.now();
     const pdfUrl = await StorageService.uploadPdf(buffer, destination);
+    metrics.storage_ms = performance.now() - storageStartedAt;
+
+    const updateStartedAt = performance.now();
     const updatedOrder = await OrderRepository.markPdfGenerated(id, pdfUrl);
+    metrics.database_update_ms = performance.now() - updateStartedAt;
 
     if (order.pdfUrl !== pdfUrl) {
       await StorageService.deletePdf(order.pdfUrl);

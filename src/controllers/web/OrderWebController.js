@@ -8,6 +8,8 @@ import StorageService from '../../services/StorageService.js';
 import { AppError } from '../../utils/AppError.js';
 import AuditService from '../../services/AuditService.js';
 import OrderDraftService from '../../services/OrderDraftService.js';
+import { logPdfMetrics } from '../../middlewares/pdfMetricsMiddleware.js';
+import { performance } from 'node:perf_hooks';
 
 const asArray = (value) => value === undefined ? [] : Array.isArray(value) ? value : [value];
 
@@ -334,8 +336,16 @@ class OrderWebController {
   }
 
   async generatePdf(req, res) {
-    const order = await OrderService.generatePdf(req.params.id, req.currentUser);
+    const order = await OrderService.generatePdf(
+      req.params.id,
+      req.currentUser,
+      req.policyRecord,
+      req.pdfMetrics
+    );
+    const auditStartedAt = performance.now();
     await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
+    req.pdfMetrics.audit_ms = performance.now() - auditStartedAt;
+    logPdfMetrics(req, order.id, req.currentUser.id);
     res.redirect(order.pdfUrl);
   }
 
