@@ -10,7 +10,7 @@ class DashboardService {
     const [recentOrders, customerBase, activeProducts, ordersToday, totalOrders] = await Promise.all([
       OrderRepository.findRecent({ createdById: currentUser.id }, 5),
       CustomerRepository.countActive(currentUser.id),
-      ProductRepository.countActive(),
+      ProductRepository.countActive(currentUser.id),
       OrderRepository.countFromDate(start, currentUser.id),
       OrderRepository.countAll(currentUser.id)
     ]);

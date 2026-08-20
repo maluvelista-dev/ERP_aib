@@ -22,6 +22,7 @@ model User {
   customers    Customer[]
   auditLogs    AuditLog[]
   orderDraft   OrderDraft?
+  products     Product[] @relation("UserProducts")
 
   @@map("users")
 }
@@ -59,7 +60,7 @@ model Customer {
 
 model Product {
   id          String      @id @default(uuid())
-  code        String      @unique
+  code        String
   name        String
   category    String
   categoryId  String?
@@ -71,10 +72,19 @@ model Product {
   sortOrder   Int?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  createdById String?
+  sourceProductId String?
 
   productCategory ProductCategory? @relation(fields: [categoryId], references: [id])
+  createdBy User? @relation("UserProducts", fields: [createdById], references: [id], onDelete: Restrict)
+  sourceProduct Product? @relation("ProductPrivateVersions", fields: [sourceProductId], references: [id], onDelete: Restrict)
+  privateVersions Product[] @relation("ProductPrivateVersions")
   orderItems  OrderItem[]
 
+  @@unique([createdById, code])
+  @@unique([createdById, sourceProductId])
+  @@index([createdById, active, categoryId, sortOrder])
+  @@index([sourceProductId])
   @@index([active, categoryId, sortOrder])
   @@map("products")
 }

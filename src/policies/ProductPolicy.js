@@ -14,10 +14,10 @@ export class ProductPolicy extends ApplicationPolicy {
   }
 
   update() {
-    return this.isAdmin();
+    return this.index();
   }
 
   destroy() {
-    return this.isAdmin();
+    return this.index() && this.record?.createdById === this.user?.id;
   }
 }

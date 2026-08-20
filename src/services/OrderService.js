@@ -113,11 +113,11 @@ class OrderService {
       throw new AppError('Invalid customer for order issuance', 422);
     }
 
-    const items = await this.#buildItems(data.items);
+    const items = await this.#buildItems(data.items, user.sub);
     const subtotalPrice = items.reduce((sum, item) => sum + Number(item.totalPrice ?? 0), 0);
     const discountPercent = Number(data.discountPercent ?? 0);
     const discountAmount = subtotalPrice * (discountPercent / 100);
-    const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId);
+    const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId, user.sub);
     const orderData = {
       orderNumber: OrderModel.buildOrderNumber(),
       submissionToken,
@@ -184,11 +184,11 @@ class OrderService {
       throw new AppError('Invalid customer for order issuance', 422);
     }
 
-    const items = await this.#buildItems(data.items);
+    const items = await this.#buildItems(data.items, currentUser.id);
     const subtotalPrice = items.reduce((sum, item) => sum + Number(item.totalPrice ?? 0), 0);
     const discountPercent = Number(data.discountPercent ?? 0);
     const discountAmount = subtotalPrice * (discountPercent / 100);
-    const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId);
+    const bonusProductSnapshot = await this.#buildBonusProductSnapshot(data.bonusProductId, currentUser.id);
     const order = await OrderRepository.replaceItemsAndUpdate(id, {
       customerId: customer.id,
       customerSnapshot: {
@@ -287,10 +287,10 @@ class OrderService {
     return result.count;
   }
 
-  async #buildItems(requestedItems) {
+  async #buildItems(requestedItems, userId) {
     const items = [];
     const productIds = [...new Set(requestedItems.map((item) => item.productId).filter(Boolean))];
-    const products = await ProductRepository.findByIds(productIds);
+    const products = await ProductRepository.findVisibleByIds(productIds, userId);
     const productsById = new Map(products.map((product) => [product.id, product]));
 
     for (const requestedItem of requestedItems) {
@@ -351,12 +351,12 @@ class OrderService {
     return items;
   }
 
-  async #buildBonusProductSnapshot(productId) {
+  async #buildBonusProductSnapshot(productId, userId) {
     if (!productId) {
       return null;
     }
 
-    const product = await ProductRepository.findById(productId);
+    const product = await ProductRepository.findVisibleById(productId, userId);
 
     if (!product || product.active === false) {
       throw new AppError(`Invalid bonus product: ${productId}`, 422);

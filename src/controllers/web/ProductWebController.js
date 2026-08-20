@@ -6,14 +6,14 @@ class ProductWebController {
   async index(req, res) {
     const selectedCategoryId = req.query.categoryId ?? '';
     const search = req.query.q ?? '';
-    const editMode = req.query.edit === 'true' && req.currentUser?.role === 'admin';
+    const editMode = req.query.edit === 'true';
     const [result, categories] = await Promise.all([
       ProductService.paginate({
         categoryId: selectedCategoryId,
         search,
         includeInactive: editMode,
         page: req.query.page
-      }),
+      }, req.currentUser),
       ProductCategoryService.list()
     ]);
 
@@ -42,7 +42,7 @@ class ProductWebController {
 
   async create(req, res) {
     try {
-      const product = await ProductService.create(req.body);
+      const product = await ProductService.create(req.body, req.currentUser);
       await AuditService.log({ actorId: req.currentUser.id, action: 'PRODUCT_CREATED', entityType: 'PRODUCT', entityId: product.id });
       req.session.flash = { success: 'Produto criado com sucesso.' };
       res.redirect('/products');
@@ -61,8 +61,8 @@ class ProductWebController {
     const { returnTo: _returnTo, ...payload } = req.body;
 
     try {
-      await ProductService.update(req.params.id, payload);
-      await AuditService.log({ actorId: req.currentUser.id, action: 'PRODUCT_UPDATED', entityType: 'PRODUCT', entityId: req.params.id });
+      const product = await ProductService.update(req.params.id, payload, req.currentUser);
+      await AuditService.log({ actorId: req.currentUser.id, action: 'PRODUCT_UPDATED', entityType: 'PRODUCT', entityId: product.id });
       req.session.flash = { success: 'Produto atualizado com sucesso.' };
       res.redirect(returnTo);
     } catch (error) {

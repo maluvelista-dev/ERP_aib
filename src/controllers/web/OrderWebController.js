@@ -204,7 +204,7 @@ class OrderWebController {
   async new(req, res) {
     const [customers, products] = await Promise.all([
       CustomerService.list(req.currentUser),
-      ProductService.list()
+      ProductService.list({}, req.currentUser)
     ]);
 
     const validationDraft = consumeOrderDraft(req, 'create');
@@ -230,7 +230,7 @@ class OrderWebController {
     const [order, customers, products] = await Promise.all([
       OrderService.findById(req.params.id, req.currentUser),
       CustomerService.list(req.currentUser),
-      ProductService.list()
+      ProductService.list({}, req.currentUser)
     ]);
 
     const draft = consumeOrderDraft(req, 'edit', req.params.id);
@@ -257,8 +257,8 @@ class OrderWebController {
     });
   }
 
-  async itemRow(_req, res) {
-    const products = await ProductService.list();
+  async itemRow(req, res) {
+    const products = await ProductService.list({}, req.currentUser);
 
     res.render('orders/_item_row', {
       products
@@ -272,7 +272,7 @@ class OrderWebController {
   async productOptions(req, res) {
     const products = await ProductService.list({
       search: req.query.q
-    });
+    }, req.currentUser);
 
     res.render('orders/_product_options', {
       products

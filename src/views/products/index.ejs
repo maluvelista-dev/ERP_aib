@@ -14,12 +14,10 @@
             </div>
             <div class="d-flex flex-wrap gap-2">
               <a class="btn btn-sm btn-primary" href="/products/new">Novo produto</a>
-              <% if (currentUser.role === 'admin') { %>
-                <% if (editMode) { %>
-                  <a class="btn btn-sm btn-outline-secondary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>">Finalizar altera&ccedil;&otilde;es</a>
-                <% } else { %>
-                  <a class="btn btn-sm btn-outline-primary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true">Alterar itens</a>
-                <% } %>
+              <% if (editMode) { %>
+                <a class="btn btn-sm btn-outline-secondary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>">Finalizar altera&ccedil;&otilde;es</a>
+              <% } else { %>
+                <a class="btn btn-sm btn-outline-primary" href="/products?q=<%= encodeURIComponent(search || '') %>&categoryId=<%= encodeURIComponent(selectedCategoryId || '') %>&edit=true">Editar produtos</a>
               <% } %>
             </div>
           </div>
