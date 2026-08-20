@@ -149,7 +149,9 @@ class OrderWebController {
 
     await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_DOWNLOADED', entityType: 'ORDER', entityId: order.id });
 
-    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
+    const disposition = req.query.inline === '1' ? 'inline' : 'attachment';
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `${disposition}; filename="${path.basename(filePath)}"`);
     await new Promise((resolve, reject) => {
       res.sendFile(filePath, (error) => {
         if (!error) {
