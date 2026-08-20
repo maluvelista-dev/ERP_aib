@@ -1,4 +1,4 @@
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 class StorageService {
@@ -24,6 +24,19 @@ class StorageService {
     await writeFile(filePath, buffer);
 
     return publicPath;
+  }
+
+  async pdfExists(publicPath) {
+    const filePath = this.resolvePdfPath(publicPath);
+    if (!filePath) return false;
+
+    try {
+      const file = await stat(filePath);
+      return file.isFile() && file.size > 0;
+    } catch (error) {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    }
   }
 
   async deletePdf(publicPath) {

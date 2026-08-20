@@ -24,6 +24,8 @@ export const env = {
   databaseConnectionLimit: Number(process.env.DATABASE_CONNECTION_LIMIT ?? 10),
   catalogCacheTtlMs: Number(process.env.CATALOG_CACHE_TTL_MS ?? 60000),
   pdfConcurrency: Number(process.env.PDF_CONCURRENCY ?? 2),
+  pdfQueueTimeoutMs: Math.max(5000, Number(process.env.PDF_QUEUE_TIMEOUT_MS ?? 60000)),
+  pdfLockTtlMs: Math.max(60000, Number(process.env.PDF_LOCK_TTL_MS ?? 300000)),
   redisUrl: process.env.REDIS_URL || '',
   dataRetentionDays: Math.max(1, Number(process.env.DATA_RETENTION_DAYS ?? 1825)),
   allowedOrigins: String(process.env.ALLOWED_ORIGINS ?? '')

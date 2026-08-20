@@ -9,6 +9,7 @@ import { randomUUID } from 'node:crypto';
 import { paginationMeta, paginationParams } from '../utils/pagination.js';
 import { env } from '../config/env.js';
 import { performance } from 'node:perf_hooks';
+import PdfCoordinationService from './PdfCoordinationService.js';
 
 const filenamePart = (value, fallback = 'cliente') => {
   const normalized = String(value || '')
@@ -227,7 +228,7 @@ class OrderService {
     return this.#withTotals(order);
   }
 
-  async generatePdf(id, currentUser, preloadedOrder = null, metrics = {}) {
+  async generatePdf(id, currentUser, preloadedOrder = null, metrics = {}, { force = false } = {}) {
     let order;
     if (preloadedOrder) {
       order = this.#withTotals(preloadedOrder);
@@ -237,24 +238,36 @@ class OrderService {
       metrics.database_load_ms = (metrics.database_load_ms ?? 0) + performance.now() - databaseStartedAt;
     }
 
-    const buffer = await PdfService.generateOrderPdf(order, metrics);
-    const customerName = order.customerSnapshot?.legalName || order.customerSnapshot?.tradeName;
-    const customerFilename = filenamePart(customerName);
-    const orderNumber = filenamePart(order.orderNumber, 'pedido');
-    const destination = `orders/${order.id}/${customerFilename}_pedido_${orderNumber}.pdf`;
-    const storageStartedAt = performance.now();
-    const pdfUrl = await StorageService.uploadPdf(buffer, destination);
-    metrics.storage_ms = performance.now() - storageStartedAt;
-
-    const updateStartedAt = performance.now();
-    const updatedOrder = await OrderRepository.markPdfGenerated(id, pdfUrl);
-    metrics.database_update_ms = performance.now() - updateStartedAt;
-
-    if (order.pdfUrl !== pdfUrl) {
-      await StorageService.deletePdf(order.pdfUrl);
+    if (order.pdfUrl && !force) {
+      const storageStartedAt = performance.now();
+      const existingPdfIsAvailable = await StorageService.pdfExists(order.pdfUrl);
+      metrics.storage_ms = performance.now() - storageStartedAt;
+      if (existingPdfIsAvailable) {
+        metrics.reused = true;
+        return order;
+      }
     }
 
-    return this.#withTotals(updatedOrder);
+    return PdfCoordinationService.run(id, metrics, async () => {
+      const buffer = await PdfService.generateOrderPdf(order, metrics);
+      const customerName = order.customerSnapshot?.legalName || order.customerSnapshot?.tradeName;
+      const customerFilename = filenamePart(customerName);
+      const orderNumber = filenamePart(order.orderNumber, 'pedido');
+      const destination = `orders/${order.id}/${customerFilename}_pedido_${orderNumber}.pdf`;
+      const storageStartedAt = performance.now();
+      const pdfUrl = await StorageService.uploadPdf(buffer, destination);
+      metrics.storage_ms = performance.now() - storageStartedAt;
+
+      const updateStartedAt = performance.now();
+      const updatedOrder = await OrderRepository.markPdfGenerated(id, pdfUrl);
+      metrics.database_update_ms = performance.now() - updateStartedAt;
+
+      if (order.pdfUrl !== pdfUrl) {
+        await StorageService.deletePdf(order.pdfUrl);
+      }
+
+      return this.#withTotals({ ...order, ...updatedOrder });
+    });
   }
 
   async remove(id, currentUser) {

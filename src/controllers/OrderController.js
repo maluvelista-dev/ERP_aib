@@ -26,10 +26,11 @@ class OrderController {
       req.params.id,
       req.currentUser,
       req.policyRecord,
-      req.pdfMetrics
+      req.pdfMetrics,
+      { force: req.body?.force === true || req.body?.force === '1' }
     );
     const auditStartedAt = performance.now();
-    await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
+    await AuditService.log({ actorId: req.currentUser.id, action: req.pdfMetrics.reused ? 'PDF_REUSED' : 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
     req.pdfMetrics.audit_ms = performance.now() - auditStartedAt;
     logPdfMetrics(req, order.id, req.currentUser.id);
     return ok(res, order);

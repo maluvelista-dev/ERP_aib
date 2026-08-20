@@ -34,6 +34,7 @@ export const logPdfMetrics = (req, orderId, userId) => {
     storage_ms: round(metrics.storage_ms),
     database_update_ms: round(metrics.database_update_ms),
     audit_ms: round(metrics.audit_ms),
+    reused: Boolean(metrics.reused),
     total_ms: round(performance.now() - metrics.startedAt)
   }));
 };

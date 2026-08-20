@@ -32,7 +32,7 @@ class PdfService {
   async generateOrderPdf(order, metrics = {}) {
     const queuedAt = performance.now();
     return pdfLimiter.run(() => new Promise((resolve, reject) => {
-      metrics.queue_wait_ms = performance.now() - queuedAt;
+      metrics.queue_wait_ms = (metrics.queue_wait_ms ?? 0) + performance.now() - queuedAt;
       const renderStartedAt = performance.now();
       const doc = new PDFDocument({ margin: PAGE.margin, size: 'A4', bufferPages: true });
       const chunks = [];

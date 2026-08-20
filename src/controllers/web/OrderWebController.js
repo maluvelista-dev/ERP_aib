@@ -340,13 +340,19 @@ class OrderWebController {
       req.params.id,
       req.currentUser,
       req.policyRecord,
-      req.pdfMetrics
+      req.pdfMetrics,
+      { force: req.body.force === '1' }
     );
     const auditStartedAt = performance.now();
-    await AuditService.log({ actorId: req.currentUser.id, action: 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
+    await AuditService.log({ actorId: req.currentUser.id, action: req.pdfMetrics.reused ? 'PDF_REUSED' : 'PDF_GENERATED', entityType: 'ORDER', entityId: order.id });
     req.pdfMetrics.audit_ms = performance.now() - auditStartedAt;
     logPdfMetrics(req, order.id, req.currentUser.id);
-    res.redirect(order.pdfUrl);
+    req.session.flash = {
+      success: req.pdfMetrics.reused
+        ? 'O PDF deste pedido já estava disponível.'
+        : 'PDF gerado com sucesso. Use o botão Abrir PDF para visualizar.'
+    };
+    res.redirect(303, `/orders/${order.id}`);
   }
 
   async remove(req, res) {

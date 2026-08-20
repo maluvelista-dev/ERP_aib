@@ -110,9 +110,15 @@ class OrderRepository extends BaseRepository {
   }
 
   async markPdfGenerated(id, pdfUrl) {
-    return this.update(id, {
-      status: 'PDF_GENERATED',
-      pdfUrl
+    return this.model.update({
+      where: { id },
+      data: { status: 'PDF_GENERATED', pdfUrl },
+      select: {
+        id: true,
+        status: true,
+        pdfUrl: true,
+        updatedAt: true
+      }
     });
   }
 

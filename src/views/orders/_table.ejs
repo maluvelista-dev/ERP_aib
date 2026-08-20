@@ -41,7 +41,7 @@
           <td class="orders-status-column"><span class="badge text-bg-secondary"><%= order.status %></span></td>
           <td>
             <% if (order.pdfUrl) { %>
-              <a href="<%= order.pdfUrl %>">Baixar PDF</a>
+              <a href="<%= order.pdfUrl %>">Abrir PDF</a>
             <% } else { %>
               <span class="text-muted">N&atilde;o gerado</span>
             <% } %>
@@ -50,6 +50,7 @@
             <div class="d-inline-flex flex-wrap justify-content-end gap-1">
               <% if (currentUser.role === 'admin' || order.createdById === currentUser.id) { %>
                 <form action="/orders/<%= order.id %>/pdf" method="post" class="d-inline js-generate-pdf-form">
+                  <% if (order.pdfUrl) { %><input type="hidden" name="force" value="1"><% } %>
                   <button class="btn btn-sm btn-outline-primary" type="submit">Gerar PDF</button>
                 </form>
               <% } %>
