@@ -132,10 +132,11 @@ class PdfService {
     doc.roundedRect(boxX, boxY, boxW, boxH, 8).lineWidth(1.1).strokeColor('#231f20').stroke();
     doc.font('Helvetica').fontSize(10).fillColor('#231f20');
 
-    this.#field(doc, 'Cliente:', customer.legalName, 55, 205, 382);
-    this.#field(doc, 'Fone:', customer.whatsapp, 438, 205, 112);
-    this.#field(doc, 'Endereço:', customer.street, 55, 226, 392);
-    this.#field(doc, 'N°', customer.number, 452, 226, 98);
+    this.#field(doc, 'Razão social:', customer.legalName, 55, 205, 292);
+    this.#field(doc, 'Nome fantasia:', customer.tradeName, 352, 205, 198);
+    this.#field(doc, 'Endereço:', customer.street, 55, 226, 292);
+    this.#field(doc, 'N°', customer.number, 352, 226, 73);
+    this.#field(doc, 'Fone:', customer.whatsapp, 430, 226, 120);
     this.#field(doc, 'Bairro:', customer.district, 55, 247, 150);
     this.#field(doc, 'CEP:', customer.zipCode ?? '', 215, 247, 118);
     this.#field(doc, 'Cidade:', customer.city, 340, 247, 116);
